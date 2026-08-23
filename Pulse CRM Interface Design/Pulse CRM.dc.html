@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#f4f3f0; }
+  body { font-family:'IBM Plex Sans', Helvetica, Arial, sans-serif; color:#1c1b19; text-wrap:pretty; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  a { color:#3d5ccc; text-decoration:none; }
+  a:hover { color:#2c44a0; text-decoration:underline; }
+  ::-webkit-scrollbar { width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb { background:#d2cec6; border:3px solid #f4f3f0; border-radius:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  input, textarea, button, select { font-family:inherit; }
+  @keyframes pulseDot { 0%,100% { opacity:1 } 50% { opacity:.35 } }
+</style>
+</helmet>
+
+<div style="height:100vh;min-width:1280px;display:flex;flex-direction:column;overflow:hidden;background:#f4f3f0;font-size:13px;line-height:1.45">
+
+  <div style="height:46px;flex:0 0 46px;display:flex;align-items:center;gap:14px;padding:0 14px;background:#1c1b19;color:#f4f3f0;border-bottom:1px solid #000">
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;letter-spacing:.18em">PULSE</div>
+    <div style="width:1px;height:18px;background:#3a3833"></div>
+    <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#c9c5bd">
+      <span style="width:6px;height:6px;border-radius:50%;background:#4fa87a;animation:pulseDot 2.4s ease-in-out infinite"></span>
+      <span style="font-weight:500;color:#f4f3f0">Sattva Co.</span>
+      <span style="color:#6f6b63">·</span>
+      <span>Shopify synced 4m ago</span>
+      <span style="color:#6f6b63">·</span>
+      <span style="font-family:'IBM Plex Mono',monospace">3,847 customers</span>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px;background:#2a2823;border:1px solid #3a3833;border-radius:4px;padding:5px 9px;width:280px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a857c">⌕</span>
+      <input placeholder="Search customers, orders, conversations" style="flex:1;background:transparent;border:0;outline:none;color:#f4f3f0;font-size:12px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6f6b63;border:1px solid #3a3833;border-radius:3px;padding:1px 4px">⌘K</span>
+    </div>
+    <div style="display:flex;align-items:center;background:#2a2823;border:1px solid #3a3833;border-radius:4px;padding:2px">
+      <sc-for list="{{ roles }}" as="r" hint-placeholder-count="2">
+        <button onClick="{{ r.pick }}" style="border:0;cursor:pointer;border-radius:3px;padding:4px 10px;font-size:11px;font-weight:500;letter-spacing:.04em;background:{{ r.bg }};color:{{ r.fg }}">{{ r.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:26px;height:26px;border-radius:50%;background:#3d5ccc;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">PN</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex">
+
+    <div style="width:196px;flex:0 0 196px;background:#ffffff;border-right:1px solid #e4e1db;display:flex;flex-direction:column;padding:10px 8px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#8a8680;padding:6px 8px 8px">WORKSPACE</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+          <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:0;cursor:pointer;border-radius:4px;padding:7px 8px;font-size:12.5px;font-weight:{{ n.weight }};background:{{ n.bg }};color:{{ n.fg }}">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;width:16px;color:{{ n.icoColor }}">{{ n.ico }}</span>
+            <span style="flex:1">{{ n.label }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ n.badgeColor }}">{{ n.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="flex:1"></div>
+
+      <div style="border:1px solid #e4e1db;border-radius:5px;padding:9px;background:#fbfaf8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680;margin-bottom:7px">DATA LAYER</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px"><span style="width:5px;height:5px;border-radius:50%;background:#2f8558"></span><span style="flex:1;color:#56534d">Shopify orders</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">4m</span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px"><span style="width:5px;height:5px;border-radius:50%;background:#2f8558"></span><span style="flex:1;color:#56534d">WhatsApp API</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">live</span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px"><span style="width:5px;height:5px;border-radius:50%;background:#b5771a"></span><span style="flex:1;color:#56534d">Email sends</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">22m</span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px"><span style="width:5px;height:5px;border-radius:50%;background:#2f8558"></span><span style="flex:1;color:#56534d">Web events</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">1m</span></div>
+        </div>
+      </div>
+      <div style="padding:9px 8px 2px;font-size:10.5px;color:#8a8680;line-height:1.4">Models refreshed nightly 02:00 IST. Scores carry their inputs.</div>
+    </div>
+
+    <div style="flex:1;min-width:0;overflow:auto">
+
+      <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:16px 18px 28px">
+          <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:14px">
+            <div>
+              <div style="font-size:19px;font-weight:600;letter-spacing:-.01em">Retention health</div>
+              <div style="font-size:12px;color:#8a8680">Last 30 days · compared with previous 30 · {{ roleNote }}</div>
+            </div>
+            <div style="flex:1"></div>
+            <div style="display:flex;gap:6px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 9px;color:#56534d">30D ▾</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 9px;color:#56534d">ALL CATEGORIES ▾</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px;padding:11px 12px 9px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680">{{ k.label }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:{{ k.lockColor }}">{{ k.lock }}</span>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:8px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:500;letter-spacing:-.02em;color:{{ k.valColor }}">{{ k.value }}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:{{ k.deltaColor }}">{{ k.delta }}</div>
+                </div>
+                <div style="display:flex;align-items:flex-end;gap:2px;height:24px;margin-top:9px">
+                  <sc-for list="{{ k.bars }}" as="b" hint-placeholder-count="12">
+                    <div style="flex:1;border-radius:1px;background:{{ b.color }};height:{{ b.h }}%"></div>
+                  </sc-for>
+                </div>
+                <div style="font-size:10.5px;color:#8a8680;margin-top:7px;line-height:1.35">{{ k.why }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:360px 1fr;gap:12px;align-items:start">
+
+            <div style="display:flex;flex-direction:column;gap:12px">
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+                <div style="padding:10px 12px;border-bottom:1px solid #eeece7;display:flex;align-items:center">
+                  <div style="font-size:13px;font-weight:600">Segment distribution</div>
+                  <div style="flex:1"></div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">3,847</div>
+                </div>
+                <div style="padding:12px">
+                  <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;gap:1px;margin-bottom:12px">
+                    <sc-for list="{{ segments }}" as="s" hint-placeholder-count="6">
+                      <div style="background:{{ s.color }};width:{{ s.pct }}%"></div>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;flex-direction:column">
+                    <sc-for list="{{ segments }}" as="s" hint-placeholder-count="6">
+                      <button onClick="{{ s.go }}" style="display:flex;align-items:center;gap:8px;border:0;background:transparent;cursor:pointer;padding:5px 4px;border-bottom:1px solid #f2f0ec;text-align:left" style-hover="background:#faf9f7">
+                        <span style="width:7px;height:7px;border-radius:2px;background:{{ s.color }}"></span>
+                        <span style="flex:1;font-size:12px;color:#1c1b19">{{ s.name }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#56534d">{{ s.count }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8a8680;width:38px;text-align:right">{{ s.share }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:10.5px;color:#8a8680;margin-top:9px;line-height:1.4">Rules: VIP = LTV ≥ ₹20k. Loyal = 6+ orders. At risk = gap &gt; 2× personal median. Lapsed = 180d+ silent.</div>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+                <div style="padding:10px 12px;border-bottom:1px solid #eeece7;display:flex;align-items:center">
+                  <div style="font-size:13px;font-weight:600">Churn risk</div>
+                  <div style="flex:1"></div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">MODEL v4 · AUC 0.81</div>
+                </div>
+                <div style="padding:12px">
+                  <sc-for list="{{ riskBuckets }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680;width:52px">{{ r.range }}</span>
+                      <span style="font-size:11.5px;color:#1c1b19;width:56px">{{ r.name }}</span>
+                      <div style="flex:1;height:7px;background:#f2f0ec;border-radius:4px;overflow:hidden">
+                        <div style="height:7px;background:{{ r.color }};width:{{ r.pct }}%"></div>
+                      </div>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#56534d;width:40px;text-align:right">{{ r.count }}</span>
+                    </div>
+                  </sc-for>
+                  <div style="margin-top:12px;border:1px solid #f0ddd7;background:#fbf1ee;border-radius:5px;padding:10px">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#a5503a;margin-bottom:4px">REVENUE AT RISK · NEXT 90D</div>
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500;color:#8f3826">{{ atRiskRevenue }}</div>
+                    <div style="font-size:10.5px;color:#7a5449;margin-top:5px;line-height:1.4">{{ atRiskWhy }}</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+              <div style="padding:10px 12px;border-bottom:1px solid #eeece7;display:flex;align-items:center;gap:10px">
+                <div style="font-size:13px;font-weight:600">Today's queue</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">7 TASKS · RANKED BY VALUE × URGENCY</div>
+                <div style="flex:1"></div>
+                <div style="font-size:11px;color:#3d5ccc;cursor:pointer">Why these? ▾</div>
+              </div>
+              <div>
+                <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="7">
+                  <div style="display:flex;gap:11px;padding:11px 12px;border-bottom:1px solid #f2f0ec;align-items:flex-start" style-hover="background:#fbfaf8">
+                    <div style="width:3px;align-self:stretch;border-radius:2px;background:{{ t.priColor }}"></div>
+                    <div style="width:26px;flex:0 0 26px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:{{ t.typeColor }};border:1px solid {{ t.typeBorder }};background:{{ t.typeBg }};border-radius:3px;padding:2px 0">{{ t.type }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <button onClick="{{ t.open }}" style="border:0;background:transparent;padding:0;cursor:pointer;font-size:13px;font-weight:600;color:#1c1b19" style-hover="color:#3d5ccc">{{ t.title }}</button>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">{{ t.customer }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ t.valueColor }}">{{ t.value }}</span>
+                      </div>
+                      <sc-if value="{{ showWhy }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;gap:6px;align-items:baseline;margin-top:4px">
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680;flex:0 0 auto">WHY</span>
+                          <span style="font-size:11.5px;color:#56534d;line-height:1.4">{{ t.why }}</span>
+                        </div>
+                      </sc-if>
+                      <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border-radius:3px;padding:2px 6px;border:1px solid {{ t.chanBorder }};background:{{ t.chanBg }};color:{{ t.chanColor }}">{{ t.chan }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border-radius:3px;padding:2px 6px;border:1px solid {{ t.consentBorder }};background:{{ t.consentBg }};color:{{ t.consentColor }}">{{ t.consent }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border-radius:3px;padding:2px 6px;border:1px solid #e4e1db;background:#faf9f7;color:#56534d">{{ t.seg }}</span>
+                      </div>
+                    </div>
+                    <button onClick="{{ t.open }}" style="flex:0 0 auto;border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;font-weight:500;color:#1c1b19;cursor:pointer" style-hover="background:#1c1b19;color:#fff;border-color:#1c1b19">{{ t.cta }}</button>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding:9px 12px;font-size:10.5px;color:#8a8680;line-height:1.4;background:#fbfaf8;border-radius:0 0 6px 6px">Ranking inputs: predicted 90-day value × churn probability × channel reachability. Tasks with no consented channel are suppressed, not hidden — see <a href="#">3 suppressed</a>.</div>
+            </div>
+
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px 18px 28px">
+          <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:12px">
+            <div>
+              <div style="font-size:19px;font-weight:600;letter-spacing:-.01em">Customers</div>
+              <div style="font-size:12px;color:#8a8680">3,847 records · synced from Shopify · enriched by Pulse</div>
+            </div>
+            <div style="flex:1"></div>
+            <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:6px 11px;font-size:12px;cursor:pointer">Export CSV</button>
+            <button style="border:1px solid #1c1b19;background:#1c1b19;color:#fff;border-radius:4px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer">Save as segment</button>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px;padding:9px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:7px;border:1px solid #d2cec6;border-radius:4px;padding:5px 9px;width:260px;background:#fbfaf8">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a8680">⌕</span>
+              <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Name, phone, email, order id" style="flex:1;border:0;background:transparent;outline:none;font-size:12px;color:#1c1b19">
+            </div>
+            <div style="width:1px;height:20px;background:#e4e1db"></div>
+            <sc-for list="{{ listFilters }}" as="f" hint-placeholder-count="5">
+              <button onClick="{{ f.pick }}" style="border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer;font-weight:{{ f.weight }}">{{ f.label }}</button>
+            </sc-for>
+            <div style="flex:1"></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a8680">{{ listCount }}</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:210px 96px 58px 90px 92px 150px 92px 1fr;gap:0;padding:7px 12px;border-bottom:1px solid #e4e1db;background:#fbfaf8;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;color:#8a8680">
+              <div>CUSTOMER</div><div>SEGMENT</div><div style="text-align:right">ORD</div><div style="text-align:right">LTV</div><div style="text-align:right">LAST ORDER</div><div style="padding-left:14px">CHURN RISK</div><div>CONSENT</div><div style="padding-left:10px">LAST TOUCH</div>
+            </div>
+            <sc-for list="{{ rows }}" as="c" hint-placeholder-count="14">
+              <div onClick="{{ c.open }}" style="display:grid;grid-template-columns:210px 96px 58px 90px 92px 150px 92px 1fr;padding:8px 12px;border-bottom:1px solid #f2f0ec;cursor:pointer;align-items:center" style-hover="background:#f8fafd">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                  <div style="width:22px;height:22px;border-radius:50%;flex:0 0 22px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600;background:{{ c.avBg }};color:{{ c.avFg }}">{{ c.initials }}</div>
+                  <div style="min-width:0">
+                    <div style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">{{ c.city }}</div>
+                  </div>
+                </div>
+                <div><span style="font-size:10.5px;border-radius:3px;padding:2px 6px;background:{{ c.segBg }};color:{{ c.segFg }};font-weight:500">{{ c.segment }}</span></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right;color:#56534d">{{ c.orders }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right;color:{{ c.ltvColor }}">{{ c.ltv }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-align:right;color:{{ c.lastColor }}">{{ c.last }}</div>
+                <div style="padding-left:14px;display:flex;align-items:center;gap:7px">
+                  <div style="width:44px;height:5px;background:#f2f0ec;border-radius:3px;overflow:hidden"><div style="height:5px;background:{{ c.riskColor }};width:{{ c.risk }}%"></div></div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:{{ c.riskColor }};font-weight:500">{{ c.risk }}</span>
+                  <span style="font-size:10px;color:#8a8680;white-space:nowrap">{{ c.riskWhy }}</span>
+                </div>
+                <div style="display:flex;gap:4px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;border-radius:3px;padding:1px 4px;border:1px solid {{ c.waBorder }};background:{{ c.waBg }};color:{{ c.waColor }}">WA</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;border-radius:3px;padding:1px 4px;border:1px solid {{ c.emBorder }};background:{{ c.emBg }};color:{{ c.emColor }}">EM</span>
+                </div>
+                <div style="padding-left:10px;font-size:11.5px;color:#56534d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.touch }}</div>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fbfaf8">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a8680">{{ listCount }}</div>
+              <div style="flex:1"></div>
+              <div style="display:flex;gap:4px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #d2cec6;background:#fff;border-radius:3px;padding:3px 8px;color:#8a8680">←</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #1c1b19;background:#1c1b19;color:#fff;border-radius:3px;padding:3px 8px">1</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #d2cec6;background:#fff;border-radius:3px;padding:3px 8px">2</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #d2cec6;background:#fff;border-radius:3px;padding:3px 8px">3</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid #d2cec6;background:#fff;border-radius:3px;padding:3px 8px">→</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is360 }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:14px 18px 28px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <button onClick="{{ backToList }}" style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:4px 9px;font-size:11.5px;cursor:pointer;color:#56534d">← Customers</button>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8a8680">CUSTOMER 360 · {{ cust.id }}</div>
+            <div style="flex:1"></div>
+            <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer">Add note</button>
+            <button onClick="{{ goInbox }}" style="border:1px solid #1c1b19;background:#1c1b19;color:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;font-weight:500;cursor:pointer">Open conversation</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:284px 1fr 320px;gap:12px;align-items:start">
+
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px;padding:13px">
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:11px">
+                  <div style="width:38px;height:38px;border-radius:50%;background:#fbf1ee;color:#8f3826;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">AR</div>
+                  <div style="min-width:0">
+                    <div style="font-size:15px;font-weight:600">{{ cust.name }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8a8680">{{ cust.city }} · since {{ cust.since }}</div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;font-size:11.5px"><span style="width:82px;color:#8a8680">Phone</span><span style="font-family:'IBM Plex Mono',monospace">{{ cust.phone }}</span></div>
+                  <div style="display:flex;font-size:11.5px"><span style="width:82px;color:#8a8680">Email</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px">{{ cust.email }}</span></div>
+                  <div style="display:flex;font-size:11.5px"><span style="width:82px;color:#8a8680">Orders</span><span style="font-family:'IBM Plex Mono',monospace">{{ cust.orders }}</span></div>
+                  <div style="display:flex;font-size:11.5px"><span style="width:82px;color:#8a8680">Lifetime</span><span style="font-family:'IBM Plex Mono',monospace;color:{{ cust.ltvColor }}">{{ cust.ltv }}</span></div>
+                  <div style="display:flex;font-size:11.5px"><span style="width:82px;color:#8a8680">Favourite</span><span>Ceramide Repair Serum</span></div>
+                  <div style="display:flex;font-size:11.5px"><span style="width:82px;color:#8a8680">Segment</span><span style="font-size:10.5px;border-radius:3px;padding:1px 6px;background:#fbf1ee;color:#8f3826;font-weight:500">At risk</span></div>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+                <div style="padding:10px 12px;border-bottom:1px solid #eeece7;display:flex;align-items:center">
+                  <div style="font-size:13px;font-weight:600">Scores</div>
+                  <div style="flex:1"></div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">RECOMPUTED 02:14</div>
+                </div>
+                <div style="padding:4px 12px 12px">
+                  <sc-for list="{{ scores }}" as="s" hint-placeholder-count="4">
+                    <div style="padding:10px 0;border-bottom:1px solid #f2f0ec">
+                      <div style="display:flex;align-items:baseline;gap:8px">
+                        <span style="font-size:11.5px;color:#56534d;flex:1">{{ s.label }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:500;color:{{ s.color }}">{{ s.value }}</span>
+                        <span style="font-size:10.5px;font-weight:500;color:{{ s.color }}">{{ s.band }}</span>
+                      </div>
+                      <div style="height:5px;background:#f2f0ec;border-radius:3px;overflow:hidden;margin:7px 0 7px"><div style="height:5px;background:{{ s.color }};width:{{ s.pct }}%"></div></div>
+                      <sc-if value="{{ showWhy }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;gap:6px;align-items:baseline">
+                          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a8680">WHY</span>
+                          <span style="font-size:11px;color:#56534d;line-height:1.45">{{ s.why }}</span>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+                <div style="padding:10px 12px;border-bottom:1px solid #eeece7;font-size:13px;font-weight:600">Consent &amp; reachability</div>
+                <div style="padding:11px 12px;display:flex;flex-direction:column;gap:10px">
+                  <div style="border:1px solid #e8dcc9;background:#fdf7ec;border-radius:5px;padding:9px">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                      <span style="width:6px;height:6px;border-radius:50%;background:#b5771a"></span>
+                      <span style="font-size:12px;font-weight:600;color:#7a5316">WhatsApp · outside 24h window</span>
+                    </div>
+                    <div style="font-size:11px;color:#7a5f38;line-height:1.45">Last inbound message was 5 days ago. Free-form replies are blocked by Meta policy until she messages again — only pre-approved templates can be sent now.</div>
+                    <div style="display:flex;gap:6px;margin-top:8px">
+                      <button onClick="{{ goInbox }}" style="border:1px solid #b5771a;background:#fff;color:#7a5316;border-radius:4px;padding:4px 9px;font-size:11px;font-weight:500;cursor:pointer">Send template</button>
+                      <button style="border:1px solid #e8dcc9;background:#fff;color:#8a8680;border-radius:4px;padding:4px 9px;font-size:11px;cursor:pointer">Policy</button>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:7px">
+                    <div style="display:flex;align-items:center;gap:7px;font-size:11.5px"><span style="width:6px;height:6px;border-radius:50%;background:#2f8558"></span><span style="flex:1">Marketing · WhatsApp</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">OPT-IN 12 MAR</span></div>
+                    <div style="display:flex;align-items:center;gap:7px;font-size:11.5px"><span style="width:6px;height:6px;border-radius:50%;background:#2f8558"></span><span style="flex:1">Marketing · Email</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">OPT-IN 12 MAR</span></div>
+                    <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#8a8680"><span style="width:6px;height:6px;border-radius:50%;background:#c0452f"></span><span style="flex:1">Marketing · SMS</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px">OPTED OUT</span></div>
+                  </div>
+                  <div style="font-size:10.5px;color:#8a8680;line-height:1.4">Consent is stored per channel and per purpose. Campaign sends skip a customer silently only when consent is missing — the skip is logged on this timeline.</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+              <div style="padding:9px 12px;border-bottom:1px solid #eeece7;display:flex;align-items:center;gap:8px;position:sticky;top:0;background:#fff;z-index:2;border-radius:6px 6px 0 0">
+                <div style="font-size:13px;font-weight:600">Unified timeline</div>
+                <div style="flex:1"></div>
+                <sc-for list="{{ tlFilters }}" as="f" hint-placeholder-count="7">
+                  <button onClick="{{ f.pick }}" style="border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};border-radius:3px;padding:3px 7px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:500;cursor:pointer">{{ f.label }}</button>
+                </sc-for>
+              </div>
+              <div style="padding:0 12px 14px">
+                <sc-for list="{{ timeline }}" as="g" hint-placeholder-count="6">
+                  <div>
+                    <div style="display:flex;align-items:center;gap:9px;padding:12px 0 8px;position:sticky;top:38px;background:#fff">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;color:#8a8680">{{ g.day }}</span>
+                      <span style="flex:1;height:1px;background:#f2f0ec"></span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#b5b1a9">{{ g.ago }}</span>
+                    </div>
+                    <sc-for list="{{ g.items }}" as="e" hint-placeholder-count="3">
+                      <div style="display:flex;gap:10px;padding:7px 0">
+                        <div style="width:34px;flex:0 0 34px;display:flex;flex-direction:column;align-items:center;gap:4px">
+                          <div style="width:34px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:{{ e.color }};background:{{ e.bg }};border:1px solid {{ e.border }};border-radius:3px;padding:2px 0">{{ e.kind }}</div>
+                          <div style="width:1px;flex:1;background:#f2f0ec"></div>
+                        </div>
+                        <div style="flex:1;min-width:0;border:1px solid {{ e.cardBorder }};background:{{ e.cardBg }};border-radius:5px;padding:9px 10px">
+                          <div style="display:flex;align-items:baseline;gap:8px">
+                            <span style="font-size:12.5px;font-weight:600;color:#1c1b19">{{ e.title }}</span>
+                            <span style="flex:1"></span>
+                            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">{{ e.time }}</span>
+                          </div>
+                          <div style="font-size:12px;color:#56534d;margin-top:3px;line-height:1.45">{{ e.body }}</div>
+                          <sc-if value="{{ e.hasMeta }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap">
+                              <sc-for list="{{ e.meta }}" as="m" hint-placeholder-count="2">
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border-radius:3px;padding:2px 6px;border:1px solid {{ m.border }};background:{{ m.bg }};color:{{ m.color }}">{{ m.label }}</span>
+                              </sc-for>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+                <div style="text-align:center;padding:12px 0 0"><button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 12px;font-size:11.5px;color:#56534d;cursor:pointer">Load 84 earlier events</button></div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="background:#f5f7fd;border:1px solid #d7dff5;border-radius:6px;padding:12px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#3d5ccc;border:1px solid #c3cff0;background:#fff;border-radius:3px;padding:2px 5px">AI</span>
+                  <span style="font-size:12.5px;font-weight:600;color:#2c3f8f">Customer brief</span>
+                  <span style="flex:1"></span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7b87b5">02:14</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <sc-for list="{{ brief }}" as="b" hint-placeholder-count="4">
+                    <div style="display:flex;gap:7px;align-items:baseline">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a95c0;flex:0 0 auto">{{ b.n }}</span>
+                      <span style="font-size:12px;color:#25304f;line-height:1.5;flex:1">{{ b.text }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:10px;padding-top:9px;border-top:1px solid #dde3f4">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;color:#7b87b5;margin-bottom:5px">DRAWN FROM</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;background:#fff;border:1px solid #d7dff5;border-radius:3px;padding:2px 6px;color:#3d5ccc">3 orders</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;background:#fff;border:1px solid #d7dff5;border-radius:3px;padding:2px 6px;color:#3d5ccc">11 WA msgs</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;background:#fff;border:1px solid #d7dff5;border-radius:3px;padding:2px 6px;color:#3d5ccc">ticket #2841</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;background:#fff;border:1px solid #d7dff5;border-radius:3px;padding:2px 6px;color:#3d5ccc">18 sessions</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+                <div style="padding:10px 12px;border-bottom:1px solid #eeece7;font-size:13px;font-weight:600">Next best action</div>
+                <div style="padding:11px 12px">
+                  <div style="font-size:12.5px;font-weight:600;margin-bottom:4px">Refill nudge with ₹150 credit</div>
+                  <div style="font-size:11.5px;color:#56534d;line-height:1.45;margin-bottom:8px">Serum is 97 days past her typical 45-day repurchase gap. Discount depth chosen from the smallest incentive that converted her cohort (₹150, 34% of 212 similar winbacks).</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border:1px solid #cfe4d8;background:#eef6f1;color:#2f8558;border-radius:3px;padding:2px 6px">EXPECTED +₹1,940</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border:1px solid #e8dcc9;background:#fdf7ec;color:#7a5316;border-radius:3px;padding:2px 6px">TEMPLATE ONLY</span>
+                  </div>
+                  <div style="display:flex;gap:6px">
+                    <button onClick="{{ goInbox }}" style="flex:1;border:1px solid #1c1b19;background:#1c1b19;color:#fff;border-radius:4px;padding:6px 10px;font-size:11.5px;font-weight:500;cursor:pointer">Draft in inbox</button>
+                    <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:6px 10px;font-size:11.5px;color:#56534d;cursor:pointer">Dismiss</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:6px">
+                <div style="padding:10px 12px;border-bottom:1px solid #eeece7;font-size:13px;font-weight:600">Predicted next order</div>
+                <div style="padding:11px 12px">
+                  <div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:500">14 Sep</span><span style="font-size:11px;color:#8a8680">±11 days</span></div>
+                  <div style="font-size:11px;color:#56534d;margin-top:6px;line-height:1.45">Only if reactivated. Without contact the model puts repurchase probability at 18% over 90 days — down from 61% at day 45.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAgent }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;height:100%;min-height:0">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;padding:16px 18px 0;overflow:auto">
+            <div style="max-width:940px;width:100%">
+              <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:14px">
+                <div>
+                  <div style="font-size:19px;font-weight:600;letter-spacing:-.01em">Ask Pulse</div>
+                  <div style="font-size:12px;color:#8a8680">Plain-English questions against your customer, order and event tables. Every answer shows its query.</div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+                <div style="max-width:620px;background:#1c1b19;color:#f4f3f0;border-radius:8px 8px 2px 8px;padding:10px 13px;font-size:13px;line-height:1.5">Which customers bought a face serum twice but never tried the hair range, and are still active?</div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e4e1db;border-radius:8px;margin-bottom:14px">
+                <div style="padding:12px 14px 0;display:flex;align-items:center;gap:7px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#3d5ccc;border:1px solid #c3cff0;background:#f5f7fd;border-radius:3px;padding:2px 5px">AI</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">ANSWERED IN 2.4s · 3 TABLES</span>
+                </div>
+                <div style="padding:9px 14px 12px;font-size:13px;line-height:1.55;color:#1c1b19">
+                  <p style="margin:0 0 8px">274 customers match. They average 2.3 serum orders and ₹4,180 lifetime value, and 81% have bought within the last 60 days — this is a healthy, reachable cross-sell pool rather than a winback list.</p>
+                  <p style="margin:0 0 8px">The strongest signal is browse without purchase: 96 of them viewed a hair product page in the last 30 days and did not order. Those 96 are the ones worth a campaign first.</p>
+                  <p style="margin:0">I treated "active" as an order in the last 90 days, and "hair range" as the 11 SKUs in collection <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:#f4f3f0;border-radius:3px;padding:1px 5px">hair-care</span>. 39 customers were excluded for having no consented channel.</p>
+                </div>
+
+                <div style="margin:0 14px;border:1px solid #e4e1db;border-radius:6px;overflow:hidden">
+                  <div style="display:grid;grid-template-columns:170px 1fr 80px 90px 96px 96px;padding:6px 10px;background:#fbfaf8;border-bottom:1px solid #e4e1db;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:#8a8680">
+                    <div>CUSTOMER</div><div>LAST SERUM SKU</div><div style="text-align:right">SERUMS</div><div style="text-align:right">LTV</div><div style="text-align:right">LAST ORDER</div><div style="text-align:right">HAIR VIEWS</div>
+                  </div>
+                  <sc-for list="{{ sqlRows }}" as="r" hint-placeholder-count="6">
+                    <div style="display:grid;grid-template-columns:170px 1fr 80px 90px 96px 96px;padding:6px 10px;border-bottom:1px solid #f2f0ec;font-size:12px" style-hover="background:#fbfaf8">
+                      <div style="font-weight:500">{{ r.name }}</div>
+                      <div style="color:#56534d">{{ r.sku }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace;text-align:right;color:#56534d">{{ r.serums }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace;text-align:right;color:{{ r.ltvColor }}">{{ r.ltv }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace;text-align:right;color:#56534d">{{ r.last }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace;text-align:right;color:{{ r.viewColor }}">{{ r.views }}</div>
+                    </div>
+                  </sc-for>
+                  <div style="padding:6px 10px;background:#fbfaf8;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">6 of 274 rows</div>
+                </div>
+
+                <div style="margin:12px 14px 0;border:1px solid #e4e1db;border-radius:6px;overflow:hidden">
+                  <button onClick="{{ toggleSql }}" style="width:100%;display:flex;align-items:center;gap:8px;border:0;background:#fbfaf8;padding:8px 10px;cursor:pointer;text-align:left">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#56534d">{{ sqlCaret }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#56534d">SQL &amp; ASSUMPTIONS</span>
+                    <span style="flex:1"></span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">{{ sqlHint }}</span>
+                  </button>
+                  <sc-if value="{{ sqlOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="border-top:1px solid #e4e1db">
+                      <pre style="margin:0;padding:11px 12px;background:#1c1b19;color:#d8d4cc;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;overflow-x:auto">{{ sqlText }}</pre>
+                      <div style="padding:10px 12px">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:#8a8680;margin-bottom:6px">ASSUMPTIONS I MADE</div>
+                        <sc-for list="{{ assumptions }}" as="a" hint-placeholder-count="4">
+                          <div style="display:flex;gap:8px;align-items:baseline;padding:3px 0">
+                            <span style="width:4px;height:4px;border-radius:50%;background:#b5771a;flex:0 0 4px;transform:translateY(-2px)"></span>
+                            <span style="font-size:11.5px;color:#56534d;line-height:1.45">{{ a.text }}</span>
+                          </div>
+                        </sc-for>
+                        <div style="display:flex;gap:6px;margin-top:9px">
+                          <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer">Edit query</button>
+                          <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer">Copy SQL</button>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <div style="display:flex;gap:6px;padding:12px 14px 14px">
+                  <button style="border:1px solid #1c1b19;background:#1c1b19;color:#fff;border-radius:4px;padding:6px 11px;font-size:11.5px;font-weight:500;cursor:pointer">Save 96 as segment</button>
+                  <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:6px 11px;font-size:11.5px;cursor:pointer">Build campaign</button>
+                  <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:6px 11px;font-size:11.5px;cursor:pointer">Export</button>
+                  <div style="flex:1"></div>
+                  <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:6px 9px;font-size:11.5px;color:#8a8680;cursor:pointer">Wrong?</button>
+                </div>
+              </div>
+
+              <div style="position:sticky;bottom:0;background:linear-gradient(#f4f3f000,#f4f3f0 22%);padding:10px 0 16px">
+                <div style="background:#fff;border:1px solid #d2cec6;border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-end">
+                  <textarea placeholder="Ask a follow-up — e.g. of those 96, who has an open support ticket?" rows="2" style="flex:1;border:0;outline:none;resize:none;font-size:13px;line-height:1.5;color:#1c1b19;background:transparent"></textarea>
+                  <button style="border:1px solid #1c1b19;background:#1c1b19;color:#fff;border-radius:4px;padding:7px 13px;font-size:12px;font-weight:500;cursor:pointer">Ask</button>
+                </div>
+                <div style="font-size:10.5px;color:#8a8680;margin-top:6px">Read-only access. Pulse never writes to Shopify from this panel.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="width:250px;flex:0 0 250px;border-left:1px solid #e4e1db;background:#fff;padding:14px 12px;overflow:auto">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680;margin-bottom:9px">SUGGESTED</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px">
+              <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="5">
+                <button style="text-align:left;border:1px solid #e4e1db;background:#fbfaf8;border-radius:5px;padding:8px 9px;font-size:11.5px;color:#1c1b19;line-height:1.4;cursor:pointer" style-hover="border-color:#3d5ccc;background:#f5f7fd">{{ s.text }}</button>
+              </sc-for>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680;margin-bottom:9px">TABLES IN SCOPE</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <sc-for list="{{ tables }}" as="t" hint-placeholder-count="6">
+                <div style="display:flex;align-items:baseline;gap:7px;font-size:11px"><span style="font-family:'IBM Plex Mono',monospace;color:#3d5ccc;flex:1">{{ t.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">{{ t.rows }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;height:100%;min-height:0">
+
+          <div style="width:296px;flex:0 0 296px;border-right:1px solid #e4e1db;background:#fff;display:flex;flex-direction:column;min-height:0">
+            <div style="padding:11px 12px 9px;border-bottom:1px solid #eeece7">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+                <div style="font-size:14px;font-weight:600">Inbox</div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;background:#fbf1ee;color:#8f3826;border-radius:3px;padding:2px 5px">6 OPEN</span>
+                <div style="flex:1"></div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">SLA 2h</span>
+              </div>
+              <div style="display:flex;gap:5px">
+                <sc-for list="{{ inboxFilters }}" as="f" hint-placeholder-count="4">
+                  <button onClick="{{ f.pick }}" style="border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};border-radius:3px;padding:3px 8px;font-size:11px;cursor:pointer;font-weight:{{ f.weight }}">{{ f.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="flex:1;overflow:auto;min-height:0">
+              <sc-for list="{{ convs }}" as="c" hint-placeholder-count="6">
+                <div onClick="{{ c.pick }}" style="padding:10px 12px;border-bottom:1px solid #f2f0ec;cursor:pointer;background:{{ c.bg }};border-left:3px solid {{ c.mark }}">
+                  <div style="display:flex;align-items:center;gap:7px">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:600;border-radius:3px;padding:2px 4px;border:1px solid {{ c.chBorder }};background:{{ c.chBg }};color:{{ c.chColor }}">{{ c.channel }}</span>
+                    <span style="font-size:12.5px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">{{ c.time }}</span>
+                  </div>
+                  <div style="font-size:11.5px;color:#56534d;margin-top:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ c.preview }}</div>
+                  <div style="display:flex;align-items:center;gap:5px;margin-top:6px">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;border-radius:3px;padding:1px 5px;border:1px solid {{ c.stBorder }};background:{{ c.stBg }};color:{{ c.stColor }}">{{ c.status }}</span>
+                    <span style="flex:1"></span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a8680">{{ c.assignee }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:420px;display:flex;flex-direction:column;min-height:0">
+            <div style="padding:9px 14px;border-bottom:1px solid #e4e1db;background:#fff;display:flex;align-items:center;gap:9px">
+              <div style="width:28px;height:28px;border-radius:50%;background:{{ conv.avBg }};color:{{ conv.avFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">{{ conv.initials }}</div>
+              <div>
+                <div style="font-size:13.5px;font-weight:600">{{ conv.name }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8680">{{ conv.handle }}</div>
+              </div>
+              <div style="flex:1"></div>
+              <button onClick="{{ open360 }}" style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer">Open 360</button>
+              <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer">Assign ▾</button>
+              <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;cursor:pointer">Resolve</button>
+            </div>
+
+            <div style="flex:1;overflow:auto;padding:14px 16px;min-height:0;background:#f4f3f0">
+              <sc-for list="{{ messages }}" as="m" hint-placeholder-count="6">
+                <div style="display:flex;justify-content:{{ m.align }};margin-bottom:10px">
+                  <div style="max-width:64%">
+                    <div style="border:1px solid {{ m.border }};background:{{ m.bg }};color:{{ m.fg }};border-radius:{{ m.radius }};padding:9px 12px;font-size:12.5px;line-height:1.5">{{ m.text }}</div>
+                    <div style="display:flex;gap:7px;justify-content:{{ m.align }};margin-top:3px">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a8680">{{ m.meta }}</span>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="border-top:1px solid #e4e1db;background:#fff;padding:10px 14px 12px">
+              <div style="border:1px solid {{ session.border }};background:{{ session.bg }};border-radius:5px;padding:8px 10px;margin-bottom:9px">
+                <div style="display:flex;align-items:center;gap:7px">
+                  <span style="width:6px;height:6px;border-radius:50%;background:{{ session.dot }}"></span>
+                  <span style="font-size:12px;font-weight:600;color:{{ session.titleColor }}">{{ session.title }}</span>
+                  <span style="flex:1"></span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ session.titleColor }}">{{ session.clock }}</span>
+                </div>
+                <div style="font-size:11px;color:{{ session.bodyColor }};margin-top:4px;line-height:1.45">{{ session.body }}</div>
+              </div>
+
+              <sc-if value="{{ templateMode }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px solid #e4e1db;border-radius:5px;margin-bottom:9px">
+                  <div style="padding:7px 10px;border-bottom:1px solid #f2f0ec;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:#8a8680">APPROVED TEMPLATES · MARKETING · WHATSAPP</div>
+                  <sc-for list="{{ templates }}" as="t" hint-placeholder-count="3">
+                    <div onClick="{{ t.pick }}" style="display:flex;gap:9px;align-items:flex-start;padding:8px 10px;border-bottom:1px solid #f2f0ec;cursor:pointer;background:{{ t.bg }}">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:{{ t.badgeColor }};border:1px solid {{ t.badgeBorder }};background:#fff;border-radius:3px;padding:2px 5px;flex:0 0 auto">{{ t.badge }}</span>
+                      <div style="flex:1;min-width:0">
+                        <div style="font-size:12px;font-weight:600">{{ t.name }}</div>
+                        <div style="font-size:11px;color:#56534d;line-height:1.45;margin-top:2px">{{ t.body }}</div>
+                      </div>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a8680;flex:0 0 auto">{{ t.meta }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <div style="border:1px solid #d7dff5;background:#f5f7fd;border-radius:5px;padding:9px 10px;margin-bottom:9px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#3d5ccc;border:1px solid #c3cff0;background:#fff;border-radius:3px;padding:2px 5px">AI DRAFT</span>
+                  <span style="font-size:11px;color:#5a67a0;flex:1">{{ draftWhy }}</span>
+                  <button onClick="{{ useDraft }}" style="border:1px solid #3d5ccc;background:#3d5ccc;color:#fff;border-radius:4px;padding:4px 9px;font-size:11px;font-weight:500;cursor:pointer">Use draft</button>
+                </div>
+                <div style="font-size:12px;color:#25304f;line-height:1.5;background:#fff;border:1px solid #dde3f4;border-radius:4px;padding:8px 10px">{{ draftText }}</div>
+              </div>
+
+              <div style="border:1px solid #d2cec6;border-radius:5px;padding:9px 10px">
+                <textarea key="{{ draftKey }}" defaultValue="{{ composerText }}" rows="3" placeholder="{{ composerPlaceholder }}" style="width:100%;border:0;outline:none;resize:none;font-size:12.5px;line-height:1.5;color:#1c1b19;background:transparent"></textarea>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border-radius:3px;padding:2px 6px;border:1px solid {{ consentChip.border }};background:{{ consentChip.bg }};color:{{ consentChip.color }}">{{ consentChip.label }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680">{{ sendNote }}</span>
+                  <div style="flex:1"></div>
+                  <button style="border:1px solid #d2cec6;background:#fff;border-radius:4px;padding:5px 10px;font-size:11.5px;color:#56534d;cursor:pointer">Save note</button>
+                  <button style="border:1px solid {{ sendBtn.border }};background:{{ sendBtn.bg }};color:{{ sendBtn.fg }};border-radius:4px;padding:6px 13px;font-size:12px;font-weight:500;cursor:{{ sendBtn.cursor }}">{{ sendBtn.label }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="width:268px;flex:0 0 268px;border-left:1px solid #e4e1db;background:#fff;padding:13px 12px;overflow:auto">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680;margin-bottom:8px">CONTEXT</div>
+            <div style="border:1px solid #e4e1db;border-radius:5px;padding:10px;margin-bottom:11px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;font-size:11.5px"><span style="width:78px;color:#8a8680">Segment</span><span style="font-size:10.5px;border-radius:3px;padding:1px 6px;background:{{ conv.segBg }};color:{{ conv.segFg }};font-weight:500">{{ conv.segment }}</span></div>
+                <div style="display:flex;font-size:11.5px"><span style="width:78px;color:#8a8680">Churn risk</span><span style="font-family:'IBM Plex Mono',monospace;color:{{ conv.riskColor }}">{{ conv.risk }}</span></div>
+                <div style="display:flex;font-size:11.5px"><span style="width:78px;color:#8a8680">Orders</span><span style="font-family:'IBM Plex Mono',monospace">{{ conv.orders }}</span></div>
+                <div style="display:flex;font-size:11.5px"><span style="width:78px;color:#8a8680">Lifetime</span><span style="font-family:'IBM Plex Mono',monospace;color:{{ conv.ltvColor }}">{{ conv.ltv }}</span></div>
+                <div style="display:flex;font-size:11.5px"><span style="width:78px;color:#8a8680">Open ticket</span><span>{{ conv.ticket }}</span></div>
+              </div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680;margin-bottom:8px">LAST ORDER</div>
+            <div style="border:1px solid #e4e1db;border-radius:5px;padding:10px;margin-bottom:11px">
+              <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500">{{ conv.orderId }}</span><span style="flex:1"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:{{ conv.ltvColor }}">{{ conv.orderTotal }}</span></div>
+              <div style="font-size:11.5px;color:#56534d;line-height:1.5">{{ conv.orderItems }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8a8680;margin-top:6px">{{ conv.orderMeta }}</div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#8a8680;margin-bottom:8px">AI SUMMARY OF THREAD</div>
+            <div style="border:1px solid #d7dff5;background:#f5f7fd;border-radius:5px;padding:10px;font-size:11.5px;color:#25304f;line-height:1.5">{{ conv.summary }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a95c0;margin-top:6px;line-height:1.4">Based on {{ conv.summarySource }}</div>
+          </div>
+
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;admin&quot;,&quot;agent&quot;],&quot;default&quot;:&quot;admin&quot;,&quot;tsType&quot;:&quot;'admin' | 'agent'&quot;,&quot;section&quot;:&quot;Access&quot;},&quot;showReasoning&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;AI transparency&quot;},&quot;riskThreshold&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:70,&quot;min&quot;:50,&quot;max&quot;:95,&quot;step&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scoring&quot;}}">
+class Component extends DCLogic {
+  state = { screen: 'dash', role: null, tlf: 'ALL', sql: false, conv: 'w1', query: '', seg: 'All', risk: 'All', inboxF: 'All', draftKey: 0, composer: '' };
+
+  inr(n) { return '\u20B9' + n.toLocaleString('en-IN'); }
+  riskColor(r) { return r >= 70 ? '#c0452f' : r >= 40 ? '#b5771a' : '#2f8558'; }
+  segStyle(s) {
+    const m = {
+      'VIP': ['#efeafa', '#5b3fb0'], 'Loyal': ['#eef6f1', '#2f8558'], 'Repeat': ['#eef1fb', '#3d5ccc'],
+      'New': ['#f2f0ec', '#56534d'], 'At risk': ['#fbf1ee', '#8f3826'], 'Lapsed': ['#f4f3f0', '#8a8680']
+    };
+    return m[s] || m['New'];
+  }
+
+  customers() {
+    return [
+      ['Ananya Rao', 'Bengaluru', 'At risk', 3, 6420, '142d ago', 82, '3.2\u00D7 overdue', 1, 1, 'WA \u00B7 5d ago \u00B7 product question'],
+      ['Rhea Menon', 'Mumbai', 'Loyal', 9, 18240, '6d ago', 12, 'on cadence', 1, 1, 'WA \u00B7 2h ago \u00B7 order status'],
+      ['Devika Iyer', 'Chennai', 'VIP', 14, 31900, '3d ago', 8, 'on cadence', 1, 1, 'Email \u00B7 1d ago \u00B7 opened refill'],
+      ['Farhan Qureshi', 'Hyderabad', 'Lapsed', 2, 2760, '218d ago', 91, 'no reply \u00D7 4', 0, 1, 'Email \u00B7 31d ago \u00B7 no open'],
+      ['Kabir Shah', 'Ahmedabad', 'New', 1, 1180, '11d ago', 44, 'first repeat due', 1, 0, 'WA \u00B7 11d ago \u00B7 welcome'],
+      ['Aditya Bose', 'Kolkata', 'At risk', 4, 6980, '96d ago', 74, '2.1\u00D7 overdue', 1, 1, 'Email \u00B7 9d ago \u00B7 opened'],
+      ['Sana Kapoor', 'Delhi', 'Loyal', 8, 14520, '12d ago', 17, 'on cadence', 1, 1, 'WA \u00B7 12d ago \u00B7 delivery'],
+      ['Meera Nair', 'Kochi', 'Repeat', 5, 8150, '27d ago', 31, 'within gap', 1, 1, 'WA \u00B7 4h ago \u00B7 shade advice'],
+      ['Vikram Sethi', 'Jaipur', 'Lapsed', 3, 4110, '187d ago', 88, 'no reply \u00D7 3', 1, 0, 'WA \u00B7 62d ago \u00B7 template'],
+      ['Ishita Ghosh', 'Bengaluru', 'VIP', 11, 27600, '9d ago', 11, 'on cadence', 1, 1, 'Email \u00B7 3d ago \u00B7 clicked'],
+      ['Tara D\u2019Souza', 'Panaji', 'Repeat', 6, 9330, '41d ago', 29, 'within gap', 0, 1, 'Email \u00B7 6d ago \u00B7 opened'],
+      ['Rohan Patil', 'Nashik', 'At risk', 4, 5240, '88d ago', 69, '1.9\u00D7 overdue', 1, 1, 'Ticket \u00B7 22d ago \u00B7 resolved'],
+      ['Zoya Khan', 'Lucknow', 'Repeat', 5, 7480, '35d ago', 26, 'within gap', 1, 1, 'WA \u00B7 8d ago \u00B7 reorder'],
+      ['Nikhil Menon', 'Pune', 'New', 1, 899, '4d ago', 38, 'first repeat due', 1, 1, 'Browse \u00B7 1d ago \u00B7 hair range']
+    ].map(r => {
+      const rc = this.riskColor(r[6]);
+      const seg = this.segStyle(r[2]);
+      return {
+        name: r[0], city: r[1], segment: r[2], orders: r[3], ltvRaw: r[4], last: r[5], risk: r[6], riskWhy: r[7],
+        ltv: this.admin() ? this.inr(r[4]) : '\u2014',
+        ltvColor: this.admin() ? '#1c1b19' : '#b5b1a9',
+        riskColor: rc, segBg: seg[0], segFg: seg[1],
+        initials: r[0].split(' ').map(w => w[0]).join(''),
+        avBg: r[6] >= 70 ? '#fbf1ee' : '#f2f0ec', avFg: r[6] >= 70 ? '#8f3826' : '#56534d',
+        waBorder: r[8] ? '#cfe4d8' : '#eeddd8', waBg: r[8] ? '#eef6f1' : '#fbf1ee', waColor: r[8] ? '#2f8558' : '#c0452f',
+        emBorder: r[9] ? '#cfe4d8' : '#eeddd8', emBg: r[9] ? '#eef6f1' : '#fbf1ee', emColor: r[9] ? '#2f8558' : '#c0452f',
+        touch: r[10],
+        open: () => this.setState({ screen: 'c360' })
+      };
+    });
+  }
+
+  admin() { return (this.state.role ?? this.props.role ?? 'admin') === 'admin'; }
+  why() { return this.props.showReasoning !== false; }
+  threshold() { return this.props.riskThreshold ?? 70; }
+
+  chip(on, label) {
+    return on
+      ? { label, border: '#cfe4d8', bg: '#eef6f1', color: '#2f8558' }
+      : { label, border: '#eeddd8', bg: '#fbf1ee', color: '#c0452f' };
+  }
+
+  timelineData() {
+    const wa = { kind: 'WA', color: '#2f8558', bg: '#eef6f1', border: '#cfe4d8' };
+    const em = { kind: 'EM', color: '#3d5ccc', bg: '#eef1fb', border: '#d7dff5' };
+    const or = { kind: 'ORD', color: '#1c1b19', bg: '#f2f0ec', border: '#e4e1db' };
+    const br = { kind: 'BRW', color: '#8a8680', bg: '#faf9f7', border: '#e4e1db' };
+    const tk = { kind: 'TKT', color: '#b5771a', bg: '#fdf7ec', border: '#e8dcc9' };
+    const cp = { kind: 'CMP', color: '#5b3fb0', bg: '#efeafa', border: '#ddd4f5' };
+    const ai = { kind: 'AI', color: '#3d5ccc', bg: '#f5f7fd', border: '#d7dff5' };
+    const g = (day, ago, items) => ({ day, ago, items });
+    const e = (t, title, body, time, meta) => Object.assign({}, t, {
+      title, body, time,
+      hasMeta: !!(meta && meta.length),
+      meta: (meta || []).map(m => ({ label: m[0], border: m[1][0], bg: m[1][1], color: m[1][2] })),
+      cardBg: '#fff', cardBorder: '#eeece7'
+    });
+    const OK = ['#cfe4d8', '#eef6f1', '#2f8558'], WARN = ['#e8dcc9', '#fdf7ec', '#7a5316'], NEU = ['#e4e1db', '#faf9f7', '#56534d'], BAD = ['#eeddd8', '#fbf1ee', '#8f3826'];
+    return [
+      g('TODAY \u00B7 23 AUG', '', [
+        e(ai, 'Churn score raised 68 \u2192 82', 'Trigger: crossed 3\u00D7 her median repurchase gap with no site session in 14 days. Score inputs unchanged otherwise.', '02:14', [['MODEL v4', NEU], ['+14 PTS', BAD]]),
+        e(cp, 'Winback W1 \u00B7 not sent', 'Campaign selected her, then held the send: WhatsApp session is closed and the campaign uses a free-form body, not an approved template. Queued for template swap.', '06:00', [['HELD', WARN], ['CONSENT OK', OK]])
+      ]),
+      g('21 AUG', '2 days ago', [
+        e(br, 'Viewed Ceramide Repair Serum \u00D7 3', 'Three sessions in one evening, 4m 12s total. Added to cart once, no checkout. Also viewed the 50ml refill pack.', '21:40', [['MOBILE', NEU], ['CART ABANDON', WARN]]),
+        e(em, 'Opened \u201CYour serum is running low\u201D', 'Opened twice, no click. Send was part of the 45-day refill flow.', '09:12', [['2 OPENS', NEU], ['0 CLICKS', NEU]])
+      ]),
+      g('18 AUG', '5 days ago', [
+        e(wa, 'Ananya \u2192 Sattva', '\u201CIs the ceramide serum okay to use with retinol at night? I got some irritation last time.\u201D', '19:03', [['INBOUND', OK], ['STARTED 24H WINDOW', NEU]]),
+        e(ai, 'Draft generated for rep', 'Suggested alternating nights, cited the ingredient FAQ and her past irritation note from ticket #2841. Rep edited two sentences before sending.', '19:04', [['EDITED 32%', NEU]]),
+        e(wa, 'Priya (support) \u2192 Ananya', '\u201CAlternate nights is safest \u2014 serum on retinol-free evenings for two weeks, then judge. Your last order had the 30ml, so that\u2019s about six weeks of alternating use.\u201D', '19:11', [['SENT IN SESSION', OK]])
+      ]),
+      g('12 AUG', '11 days ago', [
+        e(tk, 'Ticket #2841 resolved', 'Delivery ran 6 days late in Bengaluru. Refunded shipping \u20B980. CSAT 3/5 with comment \u201Ctook too long\u201D.', '15:22', [['CSAT 3/5', WARN], ['SHIPPING REFUND', NEU]])
+      ]),
+      g('03 APR', '142 days ago', [
+        e(or, 'Order #10422 \u00B7 \u20B92,340', 'Ceramide Repair Serum 30ml, Rice Water Shampoo 200ml, Biotin gummies 60ct. Prepaid, UPI.', '11:48', [['3 ITEMS', NEU], ['PREPAID', OK]])
+      ]),
+      g('17 FEB', '187 days ago', [
+        e(or, 'Order #9781 \u00B7 \u20B91,760', 'Ceramide Repair Serum 30ml, Niacinamide toner. Prepaid, UPI.', '20:05', [['2 ITEMS', NEU]]),
+        e(em, 'Clicked \u201CBuild your routine\u201D', 'Clicked through to the face-care collection and ordered the same evening.', '19:31', [['CONVERTED', OK]])
+      ])
+    ];
+  }
+
+  convData() {
+    const A = {
+      id: 'w1', name: 'Ananya Rao', handle: '+91 98450 \u00B7\u00B7\u00B7\u00B7 21', initials: 'AR', channel: 'WA',
+      segment: 'At risk', risk: '82 \u00B7 high', riskColor: '#c0452f', orders: 3,
+      ltvRaw: 6420, ticket: '\u2014 (last #2841 closed)', orderId: '#10422', orderTotalRaw: 2340,
+      orderItems: 'Ceramide Repair Serum 30ml \u00B7 Rice Water Shampoo 200ml \u00B7 Biotin gummies 60ct',
+      orderMeta: '03 APR \u00B7 PREPAID UPI \u00B7 DELIVERED 12 APR',
+      summary: 'Asked about layering the serum with retinol; answered 5 days ago and she did not reply. Earlier delivery delay was refunded but she rated it 3/5. No complaint open \u2014 the silence is purchase drift, not a service issue.',
+      summarySource: '11 WhatsApp messages, ticket #2841, 2 orders.',
+      avBg: '#fbf1ee', avFg: '#8f3826', segBg: '#fbf1ee', segFg: '#8f3826',
+      session: {
+        open: false, title: 'Outside the 24-hour window', clock: 'CLOSED 4d 6h AGO',
+        body: 'Her last inbound message was on 18 Aug. WhatsApp only allows free-form replies for 24 hours after a customer writes. Until she messages again, you can send an approved template \u2014 which will reopen the window if she replies.',
+        border: '#e8dcc9', bg: '#fdf7ec', dot: '#b5771a', titleColor: '#7a5316', bodyColor: '#7a5f38'
+      },
+      messages: [
+        ['in', 'Is the ceramide serum okay to use with retinol at night? I got some irritation last time.', '18 AUG 19:03'],
+        ['out', 'Alternate nights is safest \u2014 serum on retinol-free evenings for two weeks, then judge. Your last order had the 30ml, so that\u2019s about six weeks of alternating use.', 'PRIYA \u00B7 18 AUG 19:11 \u00B7 READ'],
+        ['in', 'Got it, thank you \ud83d\ude4f', '18 AUG 19:14'],
+        ['sys', 'Session window closed \u00B7 19 AUG 19:14 \u2014 free-form sending disabled', ''],
+        ['sys', 'Winback W1 held \u00B7 23 AUG 06:00 \u2014 free-form body, session closed', '']
+      ],
+      draftWhy: 'Written from her 142-day gap and the retinol thread',
+      draft: 'Hi Ananya \u2014 it\u2019s been a while since your last serum. Since you\u2019re alternating nights, a 30ml usually runs out around now. Want me to set aside a refill at \u20B9150 off?',
+      templates: true
+    };
+    const B = {
+      id: 'w2', name: 'Rhea Menon', handle: '+91 98204 \u00B7\u00B7\u00B7\u00B7 07', initials: 'RM', channel: 'WA',
+      segment: 'Loyal', risk: '12 \u00B7 low', riskColor: '#2f8558', orders: 9,
+      ltvRaw: 18240, ticket: '#2903 open \u00B7 delivery', orderId: '#11408', orderTotalRaw: 1980,
+      orderItems: 'Rice Water Shampoo 200ml \u00B7 Scalp Serum 50ml',
+      orderMeta: '17 AUG \u00B7 PREPAID UPI \u00B7 IN TRANSIT',
+      summary: 'Order #11408 is two days past its promised date. She has asked once, politely. Ninth order, no prior complaints \u2014 a proactive credit is cheap insurance here.',
+      summarySource: '4 WhatsApp messages, ticket #2903, courier webhook.',
+      avBg: '#eef6f1', avFg: '#2f8558', segBg: '#eef6f1', segFg: '#2f8558',
+      session: {
+        open: true, title: 'Session open \u00B7 free-form allowed', clock: '6h 12m LEFT',
+        body: 'She messaged 17h 48m ago, so you can reply in your own words. After the window closes, only approved templates will send.',
+        border: '#cfe4d8', bg: '#eef6f1', dot: '#2f8558', titleColor: '#256b46', bodyColor: '#3d6b55'
+      },
+      messages: [
+        ['in', 'Hi, my order says in transit since Tuesday. Any update?', 'TODAY 08:41'],
+        ['sys', 'Courier scan \u00B7 Bengaluru hub \u00B7 today 06:12 \u2014 2 days behind promise', ''],
+        ['in', 'It\u2019s a gift, that\u2019s the only reason I\u2019m asking \ud83d\ude42', 'TODAY 08:42']
+      ],
+      draftWhy: 'Written from the courier scan and her 9-order history',
+      draft: 'Hi Rhea \u2014 sorry about this. The parcel cleared the Bengaluru hub this morning and is out for delivery tomorrow. I\u2019ve added \u20B9200 store credit for the delay, and I\u2019ll watch the scan myself until it lands.',
+      templates: false
+    };
+    const C = {
+      id: 'e1', name: 'Kabir Shah', handle: 'kabir.shah@\u00B7\u00B7\u00B7', initials: 'KS', channel: 'EM',
+      segment: 'New', risk: '44 \u00B7 medium', riskColor: '#b5771a', orders: 1,
+      ltvRaw: 1180, ticket: '\u2014', orderId: '#11362', orderTotalRaw: 1180,
+      orderItems: 'Anti-Hairfall Oil 100ml',
+      orderMeta: '12 AUG \u00B7 COD \u00B7 DELIVERED 16 AUG',
+      summary: 'First-time buyer asking how long the oil takes to work. Answering with a realistic timeline now is the single biggest lever on whether he reorders at day 45.',
+      summarySource: '2 emails, 1 order, product FAQ.',
+      avBg: '#f2f0ec', avFg: '#56534d', segBg: '#f2f0ec', segFg: '#56534d',
+      session: {
+        open: true, title: 'Email \u00B7 marketing consent missing', clock: 'TRANSACTIONAL ONLY',
+        body: 'He never opted in to marketing email. You can reply to his own message, but he will be excluded from campaigns until he opts in \u2014 the exclusion is logged on his timeline.',
+        border: '#e8dcc9', bg: '#fdf7ec', dot: '#b5771a', titleColor: '#7a5316', bodyColor: '#7a5f38'
+      },
+      messages: [
+        ['in', 'Hi \u2014 how long before I see results with the hairfall oil? Been two weeks.', '21 AUG 13:20'],
+        ['sys', 'Delivered 16 Aug \u00B7 first purchase \u00B7 no marketing consent', '']
+      ],
+      draftWhy: 'Written from the product FAQ and his delivery date',
+      draft: 'Hi Kabir \u2014 two weeks is early. Most people notice less fall between weeks 6 and 8 with twice-weekly use, and new growth later. You\u2019re on day 7 of use by our count, so keep going \u2014 I\u2019ll check in around week 6.',
+      templates: false
+    };
+    return [A, B, C];
+  }
+
+  renderVals() {
+    const s = this.state, admin = this.admin();
+    const goto = k => () => this.setState({ screen: k });
+    const nav = [
+      ['dash', 'Dashboard', '\u25A0', ''], ['list', 'Customers', '\u2261', '3.8k'],
+      ['c360', 'Customer 360', '\u25CE', ''], ['agent', 'Ask Pulse', '\u2726', ''], ['inbox', 'Inbox', '\u25AD', '6']
+    ].map(n => {
+      const on = s.screen === n[0];
+      return {
+        label: n[1], ico: n[2], badge: n[3], go: goto(n[0]),
+        bg: on ? '#1c1b19' : 'transparent', fg: on ? '#ffffff' : '#56534d',
+        weight: on ? '600' : '400', icoColor: on ? '#8a857c' : '#b5b1a9',
+        badgeColor: on ? '#8a857c' : '#b5b1a9'
+      };
+    });
+
+    const roles = ['admin', 'agent'].map(r => {
+      const on = (s.role ?? this.props.role ?? 'admin') === r;
+      return { label: r === 'admin' ? 'Admin' : 'Agent', bg: on ? '#f4f3f0' : 'transparent', fg: on ? '#1c1b19' : '#8a857c', pick: () => this.setState({ role: r }) };
+    });
+
+    const bars = a => a.map(h => ({ h, color: h > 78 ? '#1c1b19' : '#d2cec6' }));
+    const hidden = { value: 'Hidden', valColor: '#b5b1a9', delta: '', deltaColor: '#b5b1a9', lock: 'ADMIN ONLY', lockColor: '#b5771a', why: 'Your role can act on customers but not see revenue. Ask an admin to change this.', bars: bars([12, 14, 11, 16, 13, 15, 12, 14, 16, 13, 15, 14]) };
+    const kpis = [
+      Object.assign({ label: 'REVENUE 30D' }, admin ? { value: '\u20B918.4L', valColor: '#1c1b19', delta: '+6.2%', deltaColor: '#2f8558', lock: '', lockColor: '#8a8680', why: 'Net of \u20B942,100 returns. Excludes 18 test orders.', bars: bars([54, 62, 48, 71, 66, 80, 58, 74, 69, 88, 76, 92]) } : hidden),
+      Object.assign({ label: 'ORDERS 30D' }, { value: '1,284', valColor: '#1c1b19', delta: '+3.1%', deltaColor: '#2f8558', lock: '', lockColor: '#8a8680', why: 'Paid orders only. COD cancellations removed after 7-day settle.', bars: bars([61, 55, 64, 58, 72, 66, 60, 75, 68, 82, 71, 84]) }),
+      Object.assign({ label: 'AOV' }, admin ? { value: '\u20B91,435', valColor: '#1c1b19', delta: '+2.9%', deltaColor: '#2f8558', lock: '', lockColor: '#8a8680', why: 'Lifted by the 3-step routine bundle, now 14% of orders.', bars: bars([58, 60, 57, 63, 61, 66, 62, 68, 64, 79, 72, 81]) } : hidden),
+      Object.assign({ label: 'REPEAT RATE 90D' }, { value: '31.4%', valColor: '#1c1b19', delta: '\u22120.8pt', deltaColor: '#c0452f', lock: '', lockColor: '#8a8680', why: 'Falling in the supplements cohort: 41-day median gap, up from 34.', bars: bars([70, 74, 72, 76, 73, 71, 69, 72, 68, 66, 64, 62]) })
+    ];
+
+    const segRaw = [['VIP', 214, '#5b3fb0'], ['Loyal', 618, '#2f8558'], ['Repeat', 1102, '#3d5ccc'], ['New', 1284, '#8a8680'], ['At risk', 402, '#c0452f'], ['Lapsed', 227, '#b5771a']];
+    const segments = segRaw.map(x => ({
+      name: x[0], count: x[1].toLocaleString('en-IN'), color: x[2],
+      pct: Math.round(x[1] / 3847 * 100), share: Math.round(x[1] / 3847 * 100) + '%',
+      go: () => this.setState({ screen: 'list', seg: x[0] })
+    }));
+
+    const riskBuckets = [
+      { range: '0\u201339', name: 'Low', count: '2,210', pct: 100, color: '#2f8558' },
+      { range: '40\u201369', name: 'Medium', count: '894', pct: 40, color: '#b5771a' },
+      { range: '70\u201384', name: 'High', count: '512', pct: 23, color: '#c0452f' },
+      { range: '85+', name: 'Critical', count: '231', pct: 10, color: '#8f3826' }
+    ];
+
+    const T = (pri, type, title, cust, val, why, chan, chanOk, consent, consentOk, seg, cta) => ({
+      priColor: pri, type,
+      typeColor: type === 'WIN' ? '#8f3826' : type === 'REP' ? '#2f8558' : type === 'CMP' ? '#5b3fb0' : '#3d5ccc',
+      typeBorder: type === 'WIN' ? '#eeddd8' : type === 'REP' ? '#cfe4d8' : type === 'CMP' ? '#ddd4f5' : '#d7dff5',
+      typeBg: type === 'WIN' ? '#fbf1ee' : type === 'REP' ? '#eef6f1' : type === 'CMP' ? '#efeafa' : '#eef1fb',
+      title, customer: cust, value: admin ? val : '\u2014', valueColor: admin ? '#2f8558' : '#b5b1a9', why,
+      chan, chanBorder: chanOk ? '#cfe4d8' : '#e8dcc9', chanBg: chanOk ? '#eef6f1' : '#fdf7ec', chanColor: chanOk ? '#2f8558' : '#7a5316',
+      consent, consentBorder: consentOk ? '#cfe4d8' : '#eeddd8', consentBg: consentOk ? '#eef6f1' : '#fbf1ee', consentColor: consentOk ? '#2f8558' : '#8f3826',
+      seg, cta, open: () => this.setState({ screen: cta === 'Reply' ? 'inbox' : 'c360' })
+    });
+
+    const tasks = [
+      T('#c0452f', 'WIN', 'Winback before day 150', 'Ananya Rao', '\u20B96,900 predicted', 'Churn 82 \u00B7 3 orders, last 142 days ago, typical gap 45 days \u2014 3.2\u00D7 overdue. Viewed the serum 3\u00D7 on 21 Aug without buying.', 'WA TEMPLATE ONLY', false, 'CONSENT OK', true, 'AT RISK', 'Open'),
+      T('#c0452f', 'REP', 'Answer before SLA \u00B7 41m left', 'Rhea Menon', '\u20B918,240 lifetime', 'Delivery 2 days past promise on order #11408, courier scan stalled at Bengaluru hub. She has asked once and has 9 prior orders with no complaints.', 'SESSION OPEN 6h', true, 'CONSENT OK', true, 'LOYAL', 'Reply'),
+      T('#b5771a', 'CMP', 'Approve hair cross-sell to 96', '96 customers', '\u20B942,000 est. lift', 'Bought serum twice, never bought hair care, viewed a hair page in the last 30 days. Holdout of 10% is set; last comparable campaign lifted 4.1%.', 'EMAIL', true, '96/135 CONSENTED', true, 'REPEAT', 'Open'),
+      T('#b5771a', 'REP', 'First-purchase question unanswered 2d', 'Kabir Shah', '\u20B91,180 lifetime', 'New customer, day 7 of use, asking about results timing. Cohort data: answered within 24h \u2192 47% reorder at day 45; unanswered \u2192 19%.', 'EMAIL REPLY OK', true, 'NO MARKETING CONSENT', false, 'NEW', 'Reply'),
+      T('#b5771a', 'WIN', 'Second-order nudge', 'Nikhil Menon', '\u20B92,400 predicted', 'One order 4 days ago, browsed the hair range yesterday for 3m 40s. Cohort peaks at day 12\u201318 for the second order.', 'WA SESSION OPEN', true, 'CONSENT OK', true, 'NEW', 'Open'),
+      T('#8a8680', 'CMP', 'Fix 3 sends blocked on consent', '3 customers', '\u2014', 'These matched the winback audience but have no consented channel. They are held, not dropped \u2014 request consent or exclude permanently.', 'BLOCKED', false, 'CONSENT MISSING', false, 'LAPSED', 'Open'),
+      T('#8a8680', 'REP', 'Review AI draft accuracy flag', 'Vikram Sethi', '\u20B94,110 lifetime', 'A rep marked an AI draft as wrong: it quoted a 15-day return window; policy is 7 days for opened items. Draft template needs correcting.', 'INTERNAL', true, 'N/A', true, 'LAPSED', 'Open')
+    ];
+
+    const allRows = this.customers();
+    const q = s.query.trim().toLowerCase();
+    const rows = allRows.filter(c => {
+      if (q && (c.name + ' ' + c.city).toLowerCase().indexOf(q) === -1) return false;
+      if (s.seg !== 'All' && c.segment !== s.seg) return false;
+      if (s.risk === 'At risk' && c.risk < this.threshold()) return false;
+      if (s.risk === 'Healthy' && c.risk >= 40) return false;
+      return true;
+    });
+    const listFilters = ['All', 'At risk', 'Healthy'].map(f => {
+      const on = s.risk === f;
+      return { label: f === 'All' ? 'All risk' : f === 'At risk' ? 'Risk \u2265 ' + this.threshold() : 'Healthy < 40', pick: () => this.setState({ risk: f }), border: on ? '#1c1b19' : '#d2cec6', bg: on ? '#1c1b19' : '#fff', fg: on ? '#fff' : '#56534d', weight: on ? '500' : '400' };
+    }).concat(['All', 'VIP', 'Loyal', 'Repeat', 'At risk', 'Lapsed'].map(f => {
+      const on = s.seg === f;
+      return { label: f === 'All' ? 'All segments' : f, pick: () => this.setState({ seg: f }), border: on ? '#1c1b19' : '#d2cec6', bg: on ? '#1c1b19' : '#fff', fg: on ? '#fff' : '#56534d', weight: on ? '500' : '400' };
+    }));
+
+    const tlAll = this.timelineData();
+    const tlKeys = ['ALL', 'ORD', 'WA', 'EM', 'BRW', 'TKT', 'CMP'];
+    const tlFilters = tlKeys.map(k => {
+      const on = s.tlf === k;
+      return { label: k, pick: () => this.setState({ tlf: k }), border: on ? '#1c1b19' : '#e4e1db', bg: on ? '#1c1b19' : '#fff', fg: on ? '#fff' : '#8a8680' };
+    });
+    const timeline = tlAll.map(g => ({
+      day: g.day, ago: g.ago,
+      items: s.tlf === 'ALL' ? g.items : g.items.filter(i => i.kind === s.tlf || (s.tlf === 'ORD' && i.kind === 'ORD'))
+    })).filter(g => g.items.length);
+
+    const scores = [
+      { label: 'Churn risk', value: 82, band: 'HIGH', pct: 82, color: '#c0452f', why: '3 orders, last 142 days ago, typical gap 45 days \u2014 3.2\u00D7 overdue. No site session in 14 days. Ticket #2841 scored 3/5.' },
+      { label: 'Predicted 12-mo value', value: admin ? '\u20B96,900' : '\u2014', band: admin ? 'IF SAVED' : 'HIDDEN', pct: 62, color: admin ? '#3d5ccc' : '#b5b1a9', why: admin ? 'Cohort of 212 similar winbacks: 34% reactivated, averaging 2.1 further orders at \u20B91,640. Drops to \u20B91,180 if no contact by day 180.' : 'Value figures are hidden for the agent role.' },
+      { label: 'Engagement', value: 34, band: 'FALLING', pct: 34, color: '#b5771a', why: 'Email opens 2 of last 6, zero clicks. WhatsApp replies within 4 minutes when she does write \u2014 the channel works, the cadence does not.' },
+      { label: 'Sentiment', value: 'Neutral', band: 'WAS POSITIVE', pct: 50, color: '#8a8680', why: 'Shifted after the late delivery on 12 Aug. Last message ended with thanks, so no active grievance.' }
+    ];
+
+    const brief = [
+      'Three orders in 14 months, all face care, all prepaid \u2014 a considered buyer who has never returned an item.',
+      'She has been silent 142 days against a 45-day habit, but she looked at the serum three times on 21 Aug: intent is there, the trigger is not.',
+      'The one friction point on record is a 6-day delivery delay in April, refunded, rated 3/5 \u2014 worth acknowledging, not apologising for again.',
+      'She has never bought hair care despite viewing it twice; lead with the refill, keep the cross-sell for the reply.'
+    ].map((t, i) => ({ n: (i + 1) + '.', text: t }));
+
+    const sqlRows = [
+      ['Meera Nair', 'Ceramide Repair Serum 30ml', 3, 8150, '27d ago', 4],
+      ['Zoya Khan', 'Niacinamide Clarity Serum', 2, 7480, '35d ago', 2],
+      ['Tara D\u2019Souza', 'Ceramide Repair Serum 50ml', 2, 9330, '41d ago', 6],
+      ['Sana Kapoor', 'Vitamin C Glow Serum', 4, 14520, '12d ago', 1],
+      ['Ishita Ghosh', 'Ceramide Repair Serum 30ml', 3, 27600, '9d ago', 3],
+      ['Aditya Bose', 'Niacinamide Clarity Serum', 2, 6980, '96d ago', 0]
+    ].map(r => ({
+      name: r[0], sku: r[1], serums: r[2], last: r[4], views: r[5],
+      ltv: admin ? this.inr(r[3]) : '\u2014', ltvColor: admin ? '#1c1b19' : '#b5b1a9',
+      viewColor: r[5] > 0 ? '#3d5ccc' : '#b5b1a9'
+    }));
+
+    const sqlText = 'WITH serum_buyers AS (\n  SELECT customer_id, COUNT(*) AS serum_orders, MAX(ordered_at) AS last_serum\n  FROM order_lines ol\n  JOIN products p USING (product_id)\n  WHERE p.collection = \'face-serum\'\n  GROUP BY 1 HAVING COUNT(*) >= 2\n),\nhair_buyers AS (\n  SELECT DISTINCT customer_id FROM order_lines ol\n  JOIN products p USING (product_id)\n  WHERE p.collection = \'hair-care\'\n),\nhair_views AS (\n  SELECT customer_id, COUNT(*) AS views FROM web_events\n  WHERE event = \'product_view\' AND collection = \'hair-care\'\n    AND occurred_at > now() - interval \'30 days\'\n  GROUP BY 1\n)\nSELECT c.name, s.serum_orders, c.lifetime_value,\n       c.last_order_at, COALESCE(v.views, 0) AS hair_views\nFROM customers c\nJOIN serum_buyers s USING (customer_id)\nLEFT JOIN hair_views v USING (customer_id)\nWHERE c.customer_id NOT IN (SELECT customer_id FROM hair_buyers)\n  AND c.last_order_at > now() - interval \'90 days\'\n  AND c.consent_whatsapp OR c.consent_email\nORDER BY hair_views DESC, c.lifetime_value DESC;';
+
+    const assumptions = [
+      { text: '\u201CActive\u201D = an order in the last 90 days. Say \u201Clast 6 months\u201D if you want a wider net.' },
+      { text: '\u201CHair range\u201D = the 11 SKUs tagged hair-care. The 2-in-1 shampoo bar is tagged both hair-care and body, so it counts as hair.' },
+      { text: 'Gift orders and 18 internal test orders are excluded from all counts.' },
+      { text: '39 matching customers have no consented channel and were dropped from the 274, not merely hidden.' }
+    ];
+
+    const suggestions = [
+      'Who churned after a delivery delay in the last 90 days?',
+      'Compare repeat rate for serum vs supplement first purchases',
+      'Which SKU has the shortest repurchase gap?',
+      'Show customers whose second order never came, by city',
+      'What did we spend per reactivated customer last month?'
+    ].map(t => ({ text: t }));
+
+    const tables = [
+      ['customers', '3,847'], ['orders', '12,904'], ['order_lines', '31,220'],
+      ['web_events', '1.2M'], ['messages', '48,310'], ['tickets', '2,918']
+    ].map(t => ({ name: t[0], rows: t[1] }));
+
+    const convList = this.convData();
+    const extras = [
+      { id: 'w3', name: 'Devika Iyer', channel: 'WA', time: '3h', preview: 'Can I add the toner to the order that\u2019s shipping today?', status: 'SESSION 21h', ok: true, assignee: 'PRIYA' },
+      { id: 'e2', name: 'Farhan Qureshi', channel: 'EM', time: '1d', preview: 'Unsubscribe me from the offers but keep order updates please.', status: 'CONSENT CHANGE', ok: false, assignee: 'YOU' },
+      { id: 'w4', name: 'Meera Nair', channel: 'WA', time: '2d', preview: 'Which shade of the tinted SPF suits medium-deep skin?', status: 'UNASSIGNED', ok: true, assignee: '\u2014' }
+    ];
+    const convs = convList.map(c => ({
+      id: c.id, name: c.name, channel: c.channel, time: c.id === 'w1' ? '5d' : c.id === 'w2' ? '17h' : '2d',
+      preview: c.messages[0][1], status: c.session.open ? (c.channel === 'EM' ? 'EMAIL ONLY' : 'SESSION OPEN') : 'TEMPLATE ONLY',
+      ok: c.session.open, assignee: c.id === 'w1' ? 'YOU' : c.id === 'w2' ? 'YOU' : 'PRIYA'
+    })).concat(extras).map(c => {
+      const on = c.id === s.conv;
+      return {
+        name: c.name, time: c.time, preview: c.preview, status: c.status, assignee: c.assignee,
+        channel: c.channel,
+        chBorder: c.channel === 'WA' ? '#cfe4d8' : '#d7dff5', chBg: c.channel === 'WA' ? '#eef6f1' : '#eef1fb', chColor: c.channel === 'WA' ? '#2f8558' : '#3d5ccc',
+        stBorder: c.ok ? '#cfe4d8' : '#e8dcc9', stBg: c.ok ? '#eef6f1' : '#fdf7ec', stColor: c.ok ? '#2f8558' : '#7a5316',
+        bg: on ? '#f8fafd' : '#fff', mark: on ? '#3d5ccc' : 'transparent',
+        pick: () => this.setState({ conv: c.id, composer: '', draftKey: s.draftKey + 1 })
+      };
+    });
+
+    const cv = convList.filter(c => c.id === s.conv)[0] || convList[0];
+    const messages = cv.messages.map(m => {
+      if (m[0] === 'sys') return { align: 'center', text: m[1], meta: m[2], border: '#e4e1db', bg: '#faf9f7', fg: '#8a8680', radius: '4px' };
+      if (m[0] === 'in') return { align: 'flex-start', text: m[1], meta: m[2], border: '#e4e1db', bg: '#ffffff', fg: '#1c1b19', radius: '8px 8px 8px 2px' };
+      return { align: 'flex-end', text: m[1], meta: m[2], border: '#1c1b19', bg: '#1c1b19', fg: '#f4f3f0', radius: '8px 8px 2px 8px' };
+    });
+
+    const templateMode = !cv.session.open && cv.channel === 'WA';
+    const templates = [
+      { name: 'refill_reminder_v3', body: 'Hi {{1}}, your {{2}} is due for a refill. Reply REFILL and we\u2019ll set one aside at {{3}} off.', badge: 'APPROVED', meta: 'UTILITY \u00B7 62% REPLY' },
+      { name: 'winback_offer_v2', body: 'We miss you, {{1}}. Here\u2019s {{2}} off your next order, valid 7 days.', badge: 'APPROVED', meta: 'MARKETING \u00B7 31% REPLY' },
+      { name: 'routine_checkin_v1', body: 'Hi {{1}}, how is the {{2}} working out? Reply and we\u2019ll tune your routine.', badge: 'PENDING', meta: 'IN REVIEW 2d' }
+    ].map((t, i) => ({
+      name: t.name, body: t.body, badge: t.badge, meta: t.meta,
+      badgeColor: t.badge === 'APPROVED' ? '#2f8558' : '#b5771a',
+      badgeBorder: t.badge === 'APPROVED' ? '#cfe4d8' : '#e8dcc9',
+      bg: '#fff',
+      pick: () => this.setState({ composer: t.body, draftKey: s.draftKey + 1 })
+    }));
+
+    const consentOK = cv.id !== 'e1';
+    const sendBlocked = templateMode && !s.composer;
+
+    return {
+      nav, roles, kpis, segments, riskBuckets, tasks, rows, listFilters, tlFilters, timeline, scores, brief,
+      sqlRows, assumptions, suggestions, tables, convs, messages, templates,
+      isDash: s.screen === 'dash', isList: s.screen === 'list', is360: s.screen === 'c360',
+      isAgent: s.screen === 'agent', isInbox: s.screen === 'inbox',
+      showWhy: this.why(),
+      roleNote: admin ? 'admin view \u00B7 revenue visible' : 'agent view \u00B7 revenue hidden',
+      atRiskRevenue: admin ? '\u20B98.42L' : 'Hidden',
+      atRiskWhy: admin ? '743 customers scoring ' + this.threshold() + '+, valued at their predicted 90-day spend if not reactivated. 68% of it sits in 214 repeat buyers, not new ones.' : 'Revenue figures are hidden for the agent role. The customer counts remain visible.',
+      listCount: rows.length + ' shown \u00B7 1\u2013' + rows.length + ' of 3,847',
+      query: s.query,
+      onQuery: e => this.setState({ query: e.target.value }),
+      backToList: () => this.setState({ screen: 'list' }),
+      goInbox: () => this.setState({ screen: 'inbox', conv: 'w1' }),
+      open360: () => this.setState({ screen: 'c360' }),
+      cust: {
+        id: 'CUS-10422-AR', name: 'Ananya Rao', city: 'Bengaluru 560038', since: 'Feb 2025',
+        phone: '+91 98450 \u00B7\u00B7\u00B7\u00B7 21', email: 'ananya.rao@\u00B7\u00B7\u00B7', orders: 3,
+        ltv: admin ? '\u20B96,420' : '\u2014', ltvColor: admin ? '#1c1b19' : '#b5b1a9'
+      },
+      sqlOpen: s.sql, sqlText,
+      sqlCaret: s.sql ? '\u25BE' : '\u25B8',
+      sqlHint: s.sql ? 'READ-ONLY \u00B7 RAN IN 2.4s' : 'SHOW THE QUERY THAT PRODUCED THIS',
+      toggleSql: () => this.setState({ sql: !s.sql }),
+      conv: {
+        name: cv.name, handle: cv.handle, initials: cv.initials, avBg: cv.avBg, avFg: cv.avFg,
+        segment: cv.segment, segBg: cv.segBg, segFg: cv.segFg, risk: cv.risk, riskColor: cv.riskColor,
+        orders: cv.orders, ltv: admin ? this.inr(cv.ltvRaw) : '\u2014', ltvColor: admin ? '#1c1b19' : '#b5b1a9',
+        ticket: cv.ticket, orderId: cv.orderId, orderTotal: admin ? this.inr(cv.orderTotalRaw) : '\u2014',
+        orderItems: cv.orderItems, orderMeta: cv.orderMeta, summary: cv.summary, summarySource: cv.summarySource
+      },
+      session: cv.session,
+      templateMode,
+      draftText: cv.draft, draftWhy: cv.draftWhy,
+      useDraft: () => this.setState({ composer: cv.draft, draftKey: s.draftKey + 1 }),
+      draftKey: 'c' + s.conv + '-' + s.draftKey,
+      composerText: s.composer,
+      composerPlaceholder: templateMode ? 'Free-form sending is disabled \u2014 pick a template above to fill this.' : 'Write a reply\u2026',
+      consentChip: consentOK
+        ? { label: 'MARKETING CONSENT OK', border: '#cfe4d8', bg: '#eef6f1', color: '#2f8558' }
+        : { label: 'NO MARKETING CONSENT', border: '#eeddd8', bg: '#fbf1ee', color: '#8f3826' },
+      sendNote: templateMode ? 'Template send \u00B7 counts as a marketing message' : consentOK ? 'Sends as you, from the shared number' : 'Transactional reply only \u2014 campaigns will skip him',
+      sendBtn: sendBlocked
+        ? { label: 'Pick a template', border: '#d2cec6', bg: '#f2f0ec', fg: '#8a8680', cursor: 'not-allowed' }
+        : { label: templateMode ? 'Send template' : 'Send', border: '#1c1b19', bg: '#1c1b19', fg: '#fff', cursor: 'pointer' }
+    };
+  }
+}
+</script>
+</body>
+</html>
