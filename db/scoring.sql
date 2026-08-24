@@ -139,14 +139,31 @@ replenishment as (
   group by lo.customer_id
 ),
 
--- RFM quintiles (§F3.1). NTILE(5) over the full customer base.
+-- RFM quintiles (§F3.1). NTILE(5) over customers WHO HAVE ORDERS.
 --   R: ordered by last_at ascending, so the longest-silent bucket is 1 and
 --      the most recent is 5.
 --   F / M: ascending too, so 5 is always "best" for all three.
+--
 -- Every ORDER BY ends in customer_id. NTILE splits tie groups arbitrarily
 -- otherwise (order_count has only 10 distinct values across 800 customers),
 -- and an arbitrary split would move customers between quintiles on re-runs,
 -- breaking idempotency for no reason.
+--
+-- This is a separate CTE over per_customer, NOT a windowed CASE back in the
+-- join against `customers`. An order-less customer nulled out after the fact
+-- still consumes an NTILE bucket slot, and with a NULL sort key lands at the
+-- top — so the first customer whose only orders are cancelled would silently
+-- shift every quintile boundary and inflate R5/M5. Ranking only the rows
+-- that have something to rank makes that unrepresentable.
+quintiles as (
+  select
+    customer_id,
+    ntile(5) over (order by last_at asc, customer_id)                      as rfm_r,
+    ntile(5) over (order by order_count asc, last_at asc, customer_id)     as rfm_f,
+    ntile(5) over (order by lifetime_value asc, customer_id)               as rfm_m
+  from per_customer
+),
+
 rfm as (
   select
     c.id as customer_id,
@@ -159,15 +176,13 @@ rfm as (
     pc.median_gap,
     r.repl_days,
     r.repl_driver,
-    case when pc.customer_id is null then null else
-      ntile(5) over (order by pc.last_at asc, c.id) end                       as rfm_r,
-    case when pc.customer_id is null then null else
-      ntile(5) over (order by pc.order_count asc, pc.last_at asc, c.id) end   as rfm_f,
-    case when pc.customer_id is null then null else
-      ntile(5) over (order by pc.lifetime_value asc, c.id) end                as rfm_m
+    q.rfm_r,
+    q.rfm_f,
+    q.rfm_m
   from customers c
   left join per_customer  pc on pc.customer_id = c.id
   left join replenishment r  on r.customer_id  = c.id
+  left join quintiles     q  on q.customer_id  = c.id
 ),
 
 cadence as (
@@ -232,17 +247,31 @@ scored as (
 --
 --   (a) the canonical RFM grid on R x FM, where FM = ceil((F+M)/2) — the
 --       standard 5x5 map, every one of the 25 cells assigned.
---   (b) a CADENCE OVERRIDE, which is the part that makes this Cadence and
---       not a spreadsheet. The R quintile is a global ranking: it sorts
---       customers by calendar silence and knows nothing about whose silence
---       is normal. So:
---         · a customer well inside their own gap is NOT at_risk/hibernating,
---           however far down the recency ranking they sit (a 90-day-gap
---           customer 80 days quiet is early, not lapsing);
---         · a customer 2x+ past their own gap IS at_risk, however high their
---           recency quintile (a 15-day-gap customer 40 days quiet is a
---           five-alarm fire that lands in R4).
---       Both directions are exercised by the real data — see the report.
+--   (b) a CADENCE OVERRIDE, which is where the personal gap changes the
+--       verdict. The R quintile is a global ranking: it sorts customers by
+--       calendar silence and knows nothing about whose silence is normal.
+--       Two branches, and they are NOT equally busy — the script's OVERRIDE
+--       AUDIT counts every move on every run, so this comment can never
+--       again outrun the evidence:
+--
+--         · PROMOTE (the branch that earns its keep here): a customer 2x+
+--           past their own gap IS at_risk, however high their recency
+--           quintile. A 15-day-gap customer 40 days quiet is a five-alarm
+--           fire sitting in R4/R5. ~116 moves on this dataset, and these are
+--           substantially the customers a global day-threshold misses.
+--
+--         · RESCUE: a customer well inside their own gap is NOT
+--           at_risk/hibernating/lost, however far down the recency ranking
+--           they sit. On THIS dataset it moves 6 customers, all
+--           about_to_sleep -> need_attention, and rescues zero from
+--           at_risk/hibernating/lost. That is a property of the seed, not of
+--           the rule: the grid only reaches at_risk at R<=2, which here means
+--           >=116 days silent, and the longest personal gap in the data is
+--           93.1 days — so the lowest overdue any grid-at_risk customer can
+--           even reach is 1.25x, and the lowest actually present is 2.05x.
+--           A real store with a 6-month-cadence product line would exercise
+--           it constantly. It is kept because it is correct, not because it
+--           is busy, and the audit reports its true (small) count.
 segmented as (
   select
     scored.*,

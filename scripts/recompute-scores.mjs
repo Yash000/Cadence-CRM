@@ -288,72 +288,110 @@ console.log(`\n  mean ${churnStats.mean}  p50 ${churnStats.p50}  p90 ${churnStat
             `range ${churnStats.lo}–${churnStats.hi}  ·  ${churnStats.high} customers at ≥65`);
 
 // ---------------------------------------------------------------------------
-// 4. FALSIFICATION — can any global day-threshold reproduce the At Risk set?
+// 4. FALSIFICATION — how much does the personal cadence actually change?
 //
-// Sweeps every candidate cutoff over days_since_last_order and finds the one
-// that best reproduces segment = 'at_risk'. If the best possible global rule
-// still misclassifies a meaningful share of customers, then this segmentation
-// is not a day-threshold in disguise, which is the entire product claim.
+// AN EARLIER VERSION OF THIS TEST COULD NOT FAIL, and said so in a way that
+// flattered the result. It swept only one-sided rules ("silent >= N") against
+// a MIDDLE-BAND label (segment = 'at_risk', which sits between the healthy
+// segments and the lost ones). A one-sided rule structurally cannot fit a
+// middle band, so the test was guaranteed to "prove" the thesis no matter
+// what the data said. It reported 307/800 wrong. The honest figure is far
+// smaller. A test that cannot fail is worse than no test, because it
+// launders a weak result as a strong one.
+//
+// This version fixes three things:
+//   · it evaluates against `churn_risk >= HIGH_CHURN`, which is the thesis's
+//     actual output, not a middle-band segment label;
+//   · it sweeps TWO-SIDED bands [lo, hi] as well as one-sided rules, so a
+//     middle band is reachable by the competing rule;
+//   · it reports whichever number falls out, flattering or not.
+//
+// The band sweep is exact, not sampled. For a band [lo,hi]:
+//     errors = P - (P<=hi - P<lo) + (N<=hi - N<lo)
+// evaluated over every pair of distinct day values.
 // ---------------------------------------------------------------------------
-const [overlap] = await rows(sql`
-  with a as (select days_since_last_order d from customer_scores where segment = 'at_risk'),
-       b as (select days_since_last_order d from customer_scores where segment <> 'at_risk')
-  select (select min(d) from a) as ar_min,
-         (select max(d) from a) as ar_max,
-         (select count(*)::int from b where d >= (select min(d) from a)) as non_ar_silent_longer_than_least_silent_ar,
-         (select round(avg(median_interval_days), 1) from customer_scores where segment = 'at_risk') as ar_avg_gap,
-         (select round(avg(median_interval_days), 1) from customer_scores where segment <> 'at_risk') as other_avg_gap
-`);
+const HIGH_CHURN = 65; // the promote threshold, i.e. "this customer is a risk"
 
-const errsCte = sql`
-  with cand as (select distinct days_since_last_order as thr from customer_scores where days_since_last_order is not null),
-  errs as (
-    select c.thr,
-      (select count(*)::int from customer_scores s
-        where s.segment = 'at_risk' and s.days_since_last_order < c.thr) as missed,
-      (select count(*)::int from customer_scores s
-        where s.segment <> 'at_risk' and s.days_since_last_order >= c.thr) as false_alarm
-    from cand c
-  )
-`;
-const [best] = await rows(sql`${errsCte}
-  select thr, missed, false_alarm, missed + false_alarm as errors
-  from errs order by errors asc, thr asc limit 1
-`);
-// The unconstrained optimum can be degenerate — "set the cutoff past everyone
-// and flag nobody" is itself a global rule, and if it wins, that is the
-// result. So also report the best cutoff that actually flags people, which is
-// the rule a spreadsheet user would really write.
-const [bestReal] = await rows(sql`${errsCte}
-  select thr, missed, false_alarm, missed + false_alarm as errors
-  from errs
-  where thr <= (select max(days_since_last_order) from customer_scores where segment = 'at_risk')
-  order by errors asc, thr asc limit 1
-`);
-
-const arTotal = bySeg.get('at_risk')?.n ?? 0;
-console.log(rule('FALSIFICATION TEST — is this just a global day-threshold?'));
-console.log(`  At Risk customers:                        ${arTotal}`);
-console.log(`  Their days-silent range:                  ${overlap.ar_min}–${overlap.ar_max} days`);
-console.log(`  NOT At Risk yet silent ≥ ${String(overlap.ar_min).padStart(3)} days:        ${overlap.non_ar_silent_longer_than_least_silent_ar}`);
-console.log(`  Mean own-gap, At Risk vs everyone else:   ${overlap.ar_avg_gap} vs ${overlap.other_avg_gap} days`);
-const cutoff = (label, b) => {
-  console.log(`\n  ${label}: "silent ≥ ${b.thr} days"`);
-  console.log(`    misses  ${b.missed} of ${arTotal} real At Risk customers (${((b.missed / Math.max(1, arTotal)) * 100).toFixed(0)}%)`);
-  console.log(`    flags   ${b.false_alarm} customers who are NOT At Risk`);
-  console.log(`    total   ${b.errors} customers wrong (${((b.errors / total) * 100).toFixed(1)}% of the base)`);
-};
-cutoff('Best global cutoff of any kind', best);
-if (bestReal && bestReal.thr !== best.thr) {
-  cutoff('Best cutoff that actually flags someone', bestReal);
+// labelSql: a boolean SQL expression over customer_scores.
+async function sweep(labelSql) {
+  const cte = sql`
+    with base as (
+      select days_since_last_order as dd, (case when ${labelSql} then 1 else 0 end) as pos
+      from customer_scores where days_since_last_order is not null
+    ),
+    agg as (select dd, sum(pos)::int as p, (count(*) - sum(pos))::int as n from base group by dd),
+    cum as (
+      select dd, p, n,
+             sum(p) over (order by dd)::int as p_le,
+             sum(n) over (order by dd)::int as n_le,
+             (sum(p) over (order by dd) - p)::int as p_lt,
+             (sum(n) over (order by dd) - n)::int as n_lt
+      from agg
+    ),
+    tot as (select sum(p)::int as pos_total from agg),
+    bands as (
+      select a.dd as lo, b.dd as hi, t.pos_total,
+             (t.pos_total - (b.p_le - a.p_lt))::int as missed,
+             (b.n_le - a.n_lt)::int                 as false_alarm
+      from cum a join cum b on b.dd >= a.dd cross join tot t
+    ),
+    scored_bands as (
+      select *, missed + false_alarm as errors, (select max(dd) from cum) as top from bands
+    )
+  `;
+  const [twoSided] = await rows(sql`${cte}
+    select lo, hi, missed, false_alarm, errors, pos_total
+    from scored_bands order by errors asc, lo asc, hi desc limit 1`);
+  const [oneSided] = await rows(sql`${cte}
+    select lo, hi, missed, false_alarm, errors, pos_total
+    from scored_bands where hi = top order by errors asc, lo asc limit 1`);
+  return { twoSided, oneSided };
 }
-console.log(
-  best.errors > 0
-    ? `\n  ✓ No global silence threshold reproduces this At Risk set. The segmentation\n` +
-      `    is driven by each customer's own median gap, exactly as PRD-02 §F3.2 claims.`
-    : `\n  ✗ A single global threshold reproduces the At Risk set exactly. The cadence\n` +
-      `    thesis is NOT implemented — this is a spreadsheet with extra steps.`,
-);
+
+const vsChurn = await sweep(sql`churn_risk >= ${HIGH_CHURN}`);
+const vsSegment = await sweep(sql`segment = 'at_risk'`);
+
+const [corr] = await rows(sql`
+  select round(corr(churn_risk, days_since_last_order)::numeric, 3) as corr_days,
+         round(corr(churn_risk, days_since_last_order / median_interval_days)::numeric, 3) as corr_overdue,
+         count(*)::int as n
+  from customer_scores where median_interval_days is not null
+`);
+const [gaps] = await rows(sql`
+  select round(percentile_cont(0.10) within group (order by median_interval_days)::numeric, 1) as p10,
+         round(percentile_cont(0.50) within group (order by median_interval_days)::numeric, 1) as p50,
+         round(percentile_cont(0.90) within group (order by median_interval_days)::numeric, 1) as p90,
+         min(median_interval_days) as mn, max(median_interval_days) as mx
+  from customer_scores
+`);
+
+console.log(rule('FALSIFICATION TEST — how much does the personal cadence change?'));
+const reportSweep = (title, res) => {
+  console.log(`\n  Target: ${title}  (${res.oneSided.pos_total} customers)`);
+  const line = (name, b, ruleText) => {
+    console.log(`    ${name.padEnd(21)} ${ruleText.padEnd(26)} ` +
+      `misses ${String(b.missed).padStart(3)}  false alarms ${String(b.false_alarm).padStart(3)}  ` +
+      `WRONG ${String(b.errors).padStart(3)} (${((b.errors / total) * 100).toFixed(1)}%)`);
+  };
+  line('best one-sided rule', res.oneSided, `silent >= ${res.oneSided.lo} days`);
+  line('best two-sided band', res.twoSided, `silent in [${res.twoSided.lo}, ${res.twoSided.hi}]`);
+};
+reportSweep(`churn_risk >= ${HIGH_CHURN}  — the thesis's own output`, vsChurn);
+reportSweep(`segment = 'at_risk'  — a middle band, shown for completeness`, vsSegment);
+
+const verdict = vsChurn.oneSided.errors <= vsChurn.twoSided.errors ? vsChurn.oneSided : vsChurn.twoSided;
+const verdictPct = ((verdict.errors / total) * 100).toFixed(1);
+console.log(`\n  Correlation with churn_risk:  days silent ${corr.corr_days}   vs   overdue ratio ${corr.corr_overdue}   (n=${corr.n})`);
+console.log(`  Personal gap spread:          min ${gaps.mn}  p10 ${gaps.p10}  p50 ${gaps.p50}  p90 ${gaps.p90}  max ${gaps.mx} days`);
+console.log(`\n  HONEST RESULT: the best global day-rule reproduces the high-churn set to`);
+console.log(`  within ${verdict.errors} customers (${verdictPct}% of the base). Cadence changes the verdict for`);
+console.log(`  those ${verdict.errors}, and for nobody else.`);
+console.log(`\n  That margin is modest, and it is a property of THIS DATASET rather than of`);
+console.log(`  the method: personal gaps here cluster tightly (p10 ${gaps.p10}d, p50 ${gaps.p50}d, p90 ${gaps.p90}d),`);
+console.log(`  so calendar silence and overdue-ratio rank customers similarly. A catalogue`);
+console.log(`  mixing 14-day consumables with 6-month durables would separate them far more.`);
+console.log(`  The claim this test supports is "cadence beats the best calendar rule for`);
+console.log(`  ${verdict.errors} of 800 customers here", NOT "a calendar cannot do this".`);
 
 // Two customers at the same silence, opposite verdicts — the demo slide.
 const contrast = await rows(sql`
@@ -369,10 +407,49 @@ const contrast = await rows(sql`
   select * from pairs order by (a_risk - b_risk) desc, d desc limit 3
 `);
 if (contrast.length) {
-  console.log('\n  Same silence, opposite verdict:');
+  console.log('\n  Same silence, opposite verdict — real rows, but these are the extremes.');
+  console.log('  Judge the method by the aggregate above, not by these three:');
   for (const p of contrast) {
     console.log(`    ${String(p.d).padStart(3)} days silent →  churn ${String(p.a_risk).padStart(3)} (own gap ${p.a_gap}d)   vs   churn ${String(p.b_risk).padStart(3)} (own gap ${p.b_gap}d)`);
   }
+}
+
+// ---------------------------------------------------------------------------
+// 4b. OVERRIDE AUDIT — what each cadence-override branch actually did.
+//
+// The CTE chain is lifted verbatim out of db/scoring.sql (everything before
+// the INSERT) and given a different SELECT, so this counts the real branches
+// rather than a re-implementation that could drift from them. Claims about
+// the overrides are now checked by the job on every run, because the previous
+// report claimed both directions fired when only one did.
+// ---------------------------------------------------------------------------
+const cteChain = scoringSql.split('insert into customer_scores')[0];
+const moves = (await db.$client.query(cteChain + `
+  select grid_segment, segment::text as segment, count(*)::int as n,
+         min(churn_risk) as min_churn, max(churn_risk) as max_churn
+  from computed
+  where grid_segment <> segment::text
+  group by 1, 2 order by 3 desc, 1, 2
+`)).rows;
+const RISK_SEGS = new Set(['at_risk', 'cant_lose_them', 'hibernating', 'lost']);
+const promoted = moves.filter((m) => !RISK_SEGS.has(m.grid_segment) && RISK_SEGS.has(m.segment));
+const rescued = moves.filter((m) => RISK_SEGS.has(m.grid_segment) && !RISK_SEGS.has(m.segment));
+const sumN = (a) => a.reduce((t, m) => t + m.n, 0);
+
+console.log(rule('OVERRIDE AUDIT — what the cadence override actually moved'));
+console.log(table(
+  ['grid segment', 'final segment', 'n', 'churn lo', 'churn hi'],
+  moves.map((m) => [m.grid_segment, m.segment, m.n, m.min_churn, m.max_churn]),
+));
+console.log(`\n  PROMOTE (healthy grid cell -> a risk segment):  ${sumN(promoted)} customers`);
+console.log(`  RESCUE  (risk grid cell -> a healthy segment):  ${sumN(rescued)} customers`);
+console.log(`  severity reclassification within the risk set:  ${sumN(moves) - sumN(promoted) - sumN(rescued)} customers`);
+if (sumN(rescued) === 0) {
+  console.log(`\n  NOTE: the rescue branch moved NOBODY out of at_risk/hibernating/lost. The`);
+  console.log(`  grid only reaches at_risk at R<=2 (>=116 days silent here) and the longest`);
+  console.log(`  personal gap in this data is ${gaps.mx} days, so no grid-at_risk customer can`);
+  console.log(`  score below ~30 churn. That is a seed property, not a vindication of the`);
+  console.log(`  branch — do not claim it is doing work on this dataset.`);
 }
 
 // ---------------------------------------------------------------------------
