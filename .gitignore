@@ -22,6 +22,9 @@ scripts/gql/.probe-tmp.json
 # Generated product imagery — regenerable from data/catalogue.json image_url
 data/images/
 
+# drizzle-kit introspect/studio scratch output — never used for migrations
+db/.introspect-scratch/
+
 *.log
 .DS_Store
 Thumbs.db
