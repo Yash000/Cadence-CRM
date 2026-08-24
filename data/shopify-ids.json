@@ -1,0 +1,188 @@
+{
+  "_note": "Live Shopify IDs for the 12-product Rasaya catalogue, captured from rasaya-dev.myshopify.com. scripts/seed-supabase.mjs uses these so the CRM products/order_items mirror the real store rather than inventing IDs. Regenerate after a store rebuild with the query in _query below, run through scripts/lib/shopify.mjs.",
+  "_query": "query { products(first: 50) { edges { node { id handle title variants(first:10){edges{node{id sku title price}}} } } } }",
+  "_capturedAt": "2026-08-24T08:57:11.068Z",
+  "store": "rasaya-dev.myshopify.com",
+  "products": [
+    {
+      "handle": "bhringraj-anti-hairfall-hair-oil",
+      "shopify_product_id": 10410304078120,
+      "variants": [
+        {
+          "sku": "RSY-HO-100",
+          "title": "100ml",
+          "price": "349.00",
+          "shopify_variant_id": 52277359116584
+        },
+        {
+          "sku": "RSY-HO-200",
+          "title": "200ml",
+          "price": "599.00",
+          "shopify_variant_id": 52277359149352
+        }
+      ]
+    },
+    {
+      "handle": "rice-water-strengthening-shampoo",
+      "shopify_product_id": 10410304405800,
+      "variants": [
+        {
+          "sku": "RSY-SH-200",
+          "title": "200ml",
+          "price": "549.00",
+          "shopify_variant_id": 52277359575336
+        },
+        {
+          "sku": "RSY-SH-300",
+          "title": "300ml",
+          "price": "749.00",
+          "shopify_variant_id": 52277359608104
+        }
+      ]
+    },
+    {
+      "handle": "rosemary-scalp-serum",
+      "shopify_product_id": 10410304700712,
+      "variants": [
+        {
+          "sku": "RSY-SS-050",
+          "title": "50ml",
+          "price": "899.00",
+          "shopify_variant_id": 52277359903016
+        }
+      ]
+    },
+    {
+      "handle": "amla-hibiscus-hair-mask",
+      "shopify_product_id": 10410304930088,
+      "variants": [
+        {
+          "sku": "RSY-HM-200",
+          "title": "200g",
+          "price": "649.00",
+          "shopify_variant_id": 52277360132392
+        }
+      ]
+    },
+    {
+      "handle": "gentle-foaming-cleanser",
+      "shopify_product_id": 10410305257768,
+      "variants": [
+        {
+          "sku": "RSY-CL-100",
+          "title": "100ml",
+          "price": "399.00",
+          "shopify_variant_id": 52277360460072
+        },
+        {
+          "sku": "RSY-CL-200",
+          "title": "200ml",
+          "price": "649.00",
+          "shopify_variant_id": 52277360492840
+        }
+      ]
+    },
+    {
+      "handle": "niacinamide-clarity-serum",
+      "shopify_product_id": 10410305585448,
+      "variants": [
+        {
+          "sku": "RSY-NS-030",
+          "title": "30ml",
+          "price": "899.00",
+          "shopify_variant_id": 52277360820520
+        },
+        {
+          "sku": "RSY-NS-050",
+          "title": "50ml",
+          "price": "1299.00",
+          "shopify_variant_id": 52277360853288
+        }
+      ]
+    },
+    {
+      "handle": "vitamin-c-glow-serum",
+      "shopify_product_id": 10410305880360,
+      "variants": [
+        {
+          "sku": "RSY-VC-030",
+          "title": "30ml",
+          "price": "1099.00",
+          "shopify_variant_id": 52277361180968
+        }
+      ]
+    },
+    {
+      "handle": "ceramide-repair-serum",
+      "shopify_product_id": 10410306240808,
+      "variants": [
+        {
+          "sku": "RSY-CS-030",
+          "title": "30ml",
+          "price": "1199.00",
+          "shopify_variant_id": 52277361541416
+        },
+        {
+          "sku": "RSY-CS-050",
+          "title": "50ml",
+          "price": "1499.00",
+          "shopify_variant_id": 52277361574184
+        }
+      ]
+    },
+    {
+      "handle": "tinted-mineral-spf-50",
+      "shopify_product_id": 10410306666792,
+      "variants": [
+        {
+          "sku": "RSY-SPF-050",
+          "title": "50ml",
+          "price": "1449.00",
+          "shopify_variant_id": 52277362098472
+        }
+      ]
+    },
+    {
+      "handle": "biotin-hair-nail-gummies",
+      "shopify_product_id": 10410307027240,
+      "variants": [
+        {
+          "sku": "RSY-BG-060",
+          "title": "60 count",
+          "price": "699.00",
+          "shopify_variant_id": 52277362458920
+        },
+        {
+          "sku": "RSY-BG-120",
+          "title": "120 count",
+          "price": "1199.00",
+          "shopify_variant_id": 52277362491688
+        }
+      ]
+    },
+    {
+      "handle": "ashwagandha-calm-capsules",
+      "shopify_product_id": 10410307289384,
+      "variants": [
+        {
+          "sku": "RSY-AW-060",
+          "title": "60 count",
+          "price": "599.00",
+          "shopify_variant_id": 52277362753832
+        }
+      ]
+    },
+    {
+      "handle": "triphala-gut-glow-powder",
+      "shopify_product_id": 10410307715368,
+      "variants": [
+        {
+          "sku": "RSY-TP-200",
+          "title": "200g",
+          "price": "899.00",
+          "shopify_variant_id": 52277363179816
+        }
+      ]
+    }
+  ]
+}

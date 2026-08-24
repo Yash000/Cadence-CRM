@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "seed": "node --import tsx scripts/seed-supabase.mjs"
+  },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
     "pg": "^8.23.0"
@@ -7,6 +10,7 @@
     "@types/node": "^26.2.0",
     "@types/pg": "^8.23.1",
     "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
 }
