@@ -144,12 +144,6 @@ function normal(mean, sd) {
   return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-/** Log-normal-ish draw clamped to [lo, hi] — cadences are right-skewed. */
-function skewedDays(median, sigma, lo, hi) {
-  const d = Math.round(Math.exp(normal(Math.log(median), sigma)));
-  return Math.min(hi, Math.max(lo, d));
-}
-
 // UUIDv5 over a namespace derived from the seed, so ids are stable across runs
 // and disjoint across seeds.
 const NAMESPACE = createHash('sha1').update(`cadence-seed:${SEED}`).digest().subarray(0, 16);
@@ -259,29 +253,80 @@ const COHORT_COUNTS = apportion(CUSTOMER_COUNT, COHORTS);
  * cleared by at least ~3 days so that the hour-level timestamp jitter added
  * later can never flip a customer into a neighbouring cohort.
  */
-function drawBehaviour(cohortKey) {
+function drawBehaviour(cohortKey, replenishmentBasis, unitsPerPurchase) {
   const u = rnd();
   const between = (lo, hi) => lo + Math.floor(u * (Math.max(lo, hi) - lo + 1));
+
+  // ---- where the cadence actually comes from -------------------------------
+  // The customer's rhythm starts from the replenishment cycle of the variant
+  // they habitually buy (30–75 days across this catalogue: 30 for Triphala or
+  // 60-count gummies, 75 for a 200ml hair oil), multiplied by how many units
+  // they take at a time, then by a personal factor for how heavily that
+  // individual uses it.
+  //
+  // The units term is the one that legitimately produces the long tail: someone
+  // who buys two bottles of a 60-day product per order is on a ~120-day rhythm
+  // for an entirely mechanical reason, and the same propensity drives their
+  // basket quantities below, so the data and the explanation agree. Widening
+  // the random `personal` term instead would have hit the same percentile
+  // targets while making the spread LESS attributable to the catalogue, which
+  // is the opposite of what this change is for.
+  //
+  // Two people buying the same 45-day hair oil still genuinely differ — one is
+  // oiling twice a week, one is not — but a Triphala buyer and a 200ml
+  // hair-oil buyer differ structurally, and that reason is in the catalogue
+  // rather than in a random number.
+  //
+  // This replaced a per-cohort random draw whose clamps (18–40, 38–72, 20–58…)
+  // were what actually squeezed the population into a 2.6× spread. Cohort
+  // clamps still exist below, but now only where the cohort DEFINITION forces
+  // them — e.g. At Risk cannot exceed ~85 days because 2× its own median must
+  // still land under the 180-day Hibernating line. Those are consequences of
+  // PRD-01 §5.3, not tuning knobs.
+  // Centred at 0.82, not 1.0: a catalogue's `replenishment_days` is a
+  // conservative "lasts up to N days" claim, and real users finish a bottle
+  // somewhat sooner than the label promises.
+  const personal = Math.min(3.4, Math.max(0.40, 0.82 * Math.exp(normal(0, 0.62))));
+  const base = replenishmentBasis * unitsPerPurchase * personal;
+  const clamp = (lo, hi) => Math.max(lo, Math.min(hi, Math.round(base)));
+
+  // How many orders of cadence `m` fit in the window once `silence` is spent.
+  const fits = (m, silence, cap) =>
+    Math.max(2, Math.min(cap, 1 + Math.floor((MAX_SPAN_DAYS - silence) / (m * 1.3))));
+
   switch (cohortKey) {
     case 'champions': {
-      const n = randInt(5, 10);
+      // Upper clamp is arithmetic, not taste: five orders inside 18 months is
+      // impossible above ~95 days, and Champions need 5+.
+      const cadence = clamp(14, 95);
+      const n = randInt(5, Math.max(5, fits(cadence, 30, 10)));
       // recent (<30d) and comfortably inside 2× their own gap
-      return { n, cadence: skewedDays(26, 0.28, 18, 40), silenceFor: (m) => between(4, Math.min(26, Math.floor(2 * m) - 4)) };
+      return { n, cadence, silenceFor: (m) => between(4, Math.min(26, Math.floor(2 * m) - 4)) };
     }
     case 'loyal': {
-      const n = randInt(3, 5);
+      // Floor of 30: silence must clear 33 days (never a Champion) while
+      // staying under 2× their own median, which needs a median above ~21 —
+      // and jitter can pull a 21-day cadence down to 16.
+      const cadence = clamp(30, 180);
+      const n = randInt(3, Math.max(3, fits(cadence, 40, 5)));
       // ≥30d silent (so never a Champion) but well below 2× their own gap
-      return { n, cadence: skewedDays(52, 0.24, 38, 72), silenceFor: (m) => between(33, Math.min(84, Math.floor(2 * m) - 8)) };
+      return { n, cadence, silenceFor: (m) => between(33, Math.min(84, Math.floor(2 * m) - 8)) };
     }
     case 'promising': {
-      return { n: 2, cadence: skewedDays(45, 0.4, 20, 80), silenceFor: () => between(6, 84) };
+      // A single gap, so this cohort carries the long tail of the catalogue —
+      // the twice-a-year SPF buyer lives here.
+      return { n: 2, cadence: clamp(12, 340), silenceFor: () => between(6, 84) };
     }
     case 'at_risk': {
-      const n = randInt(3, 7);
-      // Bound the cadence so that silence (up to ~2.85×) plus the whole order
-      // chain still fits inside the 18-month window.
-      const maxCadence = Math.floor(MAX_SPAN_DAYS / (2.95 + (n - 1) * 1.3));
-      const cadence = Math.max(20, Math.min(58, maxCadence, skewedDays(38, 0.35, 20, 58)));
+      // Definition-bound, and the bound is tight: silence must reach 2× their
+      // own median AND stay under the 180-day Hibernating line. With jitter
+      // able to lift the realized median to 1.28× the cadence, 2×1.28×c + 3
+      // must stay under 175, so c cannot exceed ~66. An At Risk customer with
+      // a 90-day rhythm is not a data choice this seed can make — by PRD-01
+      // §5.3's own definitions such a person is Hibernating before they are
+      // ever 2× overdue.
+      const cadence = clamp(15, 66);
+      const n = randInt(3, Math.max(3, fits(cadence, Math.min(175, cadence * 2.6), 7)));
       return {
         n,
         cadence,
@@ -290,8 +335,12 @@ function drawBehaviour(cohortKey) {
       };
     }
     case 'hibernating': {
-      const n = randInt(2, 5);
-      return { n, cadence: skewedDays(45, 0.35, 25, 75), silenceFor: () => between(182, 400) };
+      // Needs 182+ days of silence AND at least one gap inside the window, so
+      // the cadence ceiling falls out of (540 − 182) rather than being chosen.
+      const cadence = clamp(15, 265);
+      const silence = between(182, Math.min(400, Math.floor(MAX_SPAN_DAYS - 1.3 * cadence)));
+      const n = randInt(2, fits(cadence, silence, 5));
+      return { n, cadence, silenceFor: () => silence };
     }
     case 'one_and_done': {
       return { n: 1, cadence: null, silenceFor: () => between(92, 520) };
@@ -378,10 +427,20 @@ function buildBasket(customer, { festive, champion }) {
   while (chosen.size < wantedLines) chosen.add(weighted(candidates));
 
   for (const product of chosen) {
-    const variant = product.variants.length === 1
-      ? product.variants[0]
-      : weighted(product.variants.map((v, i) => [v, i === 0 ? 6 : 4]));
-    let qty = weighted([[1, 80], [2, 16], [3, 4]]);
+    // On their staple product they mostly re-buy the same size. That matters:
+    // the customer's cadence was derived from that variant's replenishment
+    // cycle, so if they kept switching between the 100ml and the 200ml the
+    // rhythm in the data would not match the rhythm in the catalogue.
+    const variant = product === customer.favourite && chance(0.8)
+      ? customer.favouriteVariant
+      : product.variants.length === 1
+        ? product.variants[0]
+        : weighted(product.variants.map((v, i) => [v, i === 0 ? 6 : 4]));
+    // Their staple comes in their usual stock-up size — the same propensity
+    // the cadence was built from. Everything else is an ordinary single unit.
+    let qty = product === customer.favourite
+      ? customer.unitsPerPurchase
+      : weighted([[1, 84], [2, 13], [3, 3]]);
     if (festive && chance(0.5)) qty += 1;
     lines.push({ product, variant, qty });
   }
@@ -402,6 +461,10 @@ function generate() {
   let customerIdx = 0;
   let orderSeq = 0;
   let eventSeq = 0;
+  // How many customers needed more than one draw to land in their cohort. A
+  // high number would mean the retry loop is filtering the cadence
+  // distribution toward "easy" draws, so it is reported rather than hidden.
+  let redraws = 0;
 
   for (let c = 0; c < COHORTS.length; c++) {
     const cohort = COHORTS[c];
@@ -419,6 +482,14 @@ function generate() {
       const hasPhone = !chance(0.15);
       const collection = weighted([['hair-care', 40], ['skin-care', 40], ['wellness', 20]]);
       const favourite = pick(BY_COLLECTION[collection]);
+      // The staple SKU, down to the size. Its replenishment_days is what the
+      // customer's purchase rhythm is built from below — a 30-day Triphala
+      // buyer and a 75-day 200ml-hair-oil buyer should not share a cadence.
+      const favouriteVariant = pick(favourite.variants);
+      // How many units of their staple they take per order. Feeds BOTH the
+      // cadence basis and the basket quantities below, so a customer who
+      // stocks up two at a time genuinely reappears half as often.
+      const unitsPerPurchase = weighted([[1, 70], [2, 21], [3, 9]]);
 
       const customer = {
         id,
@@ -441,44 +512,17 @@ function generate() {
         country: 'IN',
         collection,
         favourite,
+        favouriteVariant,
+        unitsPerPurchase,
       };
 
       // ---- cadence + order chain -----------------------------------------
-      const { n, cadence, silenceFor } = drawBehaviour(cohort.key);
-      let gaps = [];
-      for (let g = 0; g < n - 1; g++) {
-        gaps.push(Math.max(8, Math.round(cadence * uniform(0.78, 1.28))));
-      }
-      let silence = silenceFor(median(gaps) ?? 0);
-      // Keep the whole chain inside the 18-month window; compress uniformly
-      // rather than dropping orders, which would change the cohort. Silence is
-      // re-derived after compression because it is a function of the median.
-      for (let attempt = 0; attempt < 4; attempt++) {
-        const total = silence + gaps.reduce((a, b) => a + b, 0);
-        if (total <= MAX_SPAN_DAYS || !gaps.length) break;
-        const scale = Math.max(0.05, (MAX_SPAN_DAYS - silence) / (total - silence));
-        gaps = gaps.map((g) => Math.max(8, Math.floor(g * scale)));
-        silence = silenceFor(median(gaps));
-      }
-
-      // Walk backwards from the most recent order.
-      const daysAgo = [silence];
-      for (const g of gaps) daysAgo.push(daysAgo[daysAgo.length - 1] + g);
-      daysAgo.reverse(); // oldest first
-
-      // Two candidate chains: one with the festive date-warp applied to the
-      // interior orders, one without. The warp shifts real gaps by up to three
-      // weeks, which can move a customer's realized median enough to break
-      // their cohort — so warp, re-classify, and fall back to the unwarped
-      // chain if it did. Cohort integrity outranks seasonality.
-      const plain = [];
-      const warped = [];
-      for (let o = 0; o < n; o++) {
-        const ms = ANCHOR_MS - daysAgo[o] * DAY + randInt(-5, 5) * HOUR + randInt(0, 59) * MINUTE;
-        plain.push({ ms, seq: o });
-        // The most recent order is never warped: that would move `silence`.
-        warped.push({ ms: o < n - 1 ? warpToFestive(ms) : ms, seq: o });
-      }
+      // The cohort a chain lands in is decided by the REALIZED timestamps, and
+      // gap jitter plus the festive warp can push a draw across a boundary.
+      // Rather than hand-proving that every bound in drawBehaviour is immune to
+      // that — which is what broke the first time — redraw and re-check. The
+      // draws come off the same seeded stream, so this stays deterministic, and
+      // it degrades loudly (throw) instead of silently misclassifying.
       const chainCohort = (chain) => {
         const times = [...chain].map((x) => x.ms).sort((a, b) => a - b);
         const g = times.slice(1).map((t, i) => (t - times[i]) / DAY);
@@ -491,9 +535,55 @@ function generate() {
           aovPaise: Infinity,
         });
       };
-      let customerOrders = chainCohort(warped) === cohort.key ? warped : plain;
-      if (chainCohort(customerOrders) !== cohort.key) {
-        throw new Error(`customer ${idx} (${cohort.key}) generated as ${chainCohort(customerOrders)} — n=${n}, cadence=${cadence}, silence=${silence}`);
+
+      let customerOrders = null;
+      let n = 0, cadence = 0, silence = 0;
+      for (let attempt = 0; attempt < 24 && !customerOrders; attempt++) {
+        const drawn = drawBehaviour(cohort.key, favouriteVariant.replenishmentDays, unitsPerPurchase);
+        n = drawn.n;
+        cadence = drawn.cadence;
+        const silenceFor = drawn.silenceFor;
+
+        let gaps = [];
+        for (let g = 0; g < n - 1; g++) {
+          gaps.push(Math.max(8, Math.round(cadence * uniform(0.78, 1.28))));
+        }
+        silence = silenceFor(median(gaps) ?? 0);
+        // Keep the whole chain inside the 18-month window; compress uniformly
+        // rather than dropping orders, which would change the cohort. Silence is
+        // re-derived after compression because it is a function of the median.
+        for (let fit = 0; fit < 4; fit++) {
+          const total = silence + gaps.reduce((a, b) => a + b, 0);
+          if (total <= MAX_SPAN_DAYS || !gaps.length) break;
+          const scale = Math.max(0.05, (MAX_SPAN_DAYS - silence) / (total - silence));
+          gaps = gaps.map((g) => Math.max(8, Math.floor(g * scale)));
+          silence = silenceFor(median(gaps));
+        }
+
+        // Walk backwards from the most recent order.
+        const daysAgo = [silence];
+        for (const g of gaps) daysAgo.push(daysAgo[daysAgo.length - 1] + g);
+        daysAgo.reverse(); // oldest first
+
+        // Two candidate chains: one with the festive date-warp applied to the
+        // interior orders, one without. The warp shifts real gaps by up to three
+        // weeks, which can move a customer's realized median enough to break
+        // their cohort — so warp, re-classify, and fall back to the unwarped
+        // chain if it did. Cohort integrity outranks seasonality.
+        const plain = [];
+        const warped = [];
+        for (let o = 0; o < n; o++) {
+          const ms = ANCHOR_MS - daysAgo[o] * DAY + randInt(-5, 5) * HOUR + randInt(0, 59) * MINUTE;
+          plain.push({ ms, seq: o });
+          // The most recent order is never warped: that would move `silence`.
+          warped.push({ ms: o < n - 1 ? warpToFestive(ms) : ms, seq: o });
+        }
+        if (chainCohort(warped) === cohort.key) customerOrders = warped;
+        else if (chainCohort(plain) === cohort.key) customerOrders = plain;
+        else if (attempt === 0) redraws++;
+      }
+      if (!customerOrders) {
+        throw new Error(`customer ${idx} (${cohort.key}): no chain landed in the cohort after 24 draws — last try n=${n}, cadence=${cadence}, silence=${silence}`);
       }
       customerOrders = [...customerOrders].sort((a, b) => a.ms - b.ms);
 
@@ -679,7 +769,7 @@ function generate() {
     }
   }
 
-  return { customers, orders, orderItems, consents, events };
+  return { customers, orders, orderItems, consents, events, redraws };
 }
 
 // ---------------------------------------------------------------------------
@@ -770,6 +860,7 @@ console.log(
   `\nGenerated: ${data.customers.length} customers · ${data.orders.length} orders · ` +
   `${data.orderItems.length} order items · ${data.consents.length} consents · ${data.events.length} events`,
 );
+console.log(`  ${data.redraws} customers (${((data.redraws / data.customers.length) * 100).toFixed(1)}%) needed a redraw to land in their cohort`);
 
 // Assert the cohort split in memory before touching the database — a
 // generator that misses its targets is a bug to fix, not a rounding note.
@@ -803,6 +894,24 @@ if (DRY_RUN) {
   }
   console.log('\nOrders per month:');
   console.log(table(['Month', 'Orders'], [...byMonth.keys()].sort().map((k) => [k, byMonth.get(k)])));
+
+  const medians = [];
+  const byCust = new Map();
+  for (const o of data.orders) {
+    if (!byCust.has(o.customerId)) byCust.set(o.customerId, []);
+    byCust.get(o.customerId).push(o.processedAt.getTime());
+  }
+  for (const ts of byCust.values()) {
+    if (ts.length < 2) continue;
+    ts.sort((a, b) => a - b);
+    medians.push(median(ts.slice(1).map((t, i) => (t - ts[i]) / DAY)));
+  }
+  medians.sort((a, b) => a - b);
+  const pct = (p) => medians[Math.min(medians.length - 1, Math.floor(p * medians.length))];
+  console.log(`\nPer-customer median gap (days): min ${Math.round(medians[0])}  p10 ${Math.round(pct(0.1))}  ` +
+    `p25 ${Math.round(pct(0.25))}  p50 ${Math.round(pct(0.5))}  p75 ${Math.round(pct(0.75))}  ` +
+    `p90 ${Math.round(pct(0.9))}  max ${Math.round(medians[medians.length - 1])}   ` +
+    `spread p90/p10 = ${(pct(0.9) / pct(0.1)).toFixed(1)}×`);
 
   const noPhone = data.customers.filter((c) => c.phoneE164 === null).length;
   console.log(`\nCustomers with no phone: ${noPhone} (${((noPhone / data.customers.length) * 100).toFixed(1)}%)`);
@@ -1088,18 +1197,114 @@ const cadence = (await rows(sql`
   )
   select count(*)::int as customers,
          round(min(m))::int as min_gap,
+         round(percentile_cont(0.10) within group (order by m))::int as p10,
          round(percentile_cont(0.25) within group (order by m))::int as p25,
          round(percentile_cont(0.5) within group (order by m))::int as p50,
          round(percentile_cont(0.75) within group (order by m))::int as p75,
+         round(percentile_cont(0.90) within group (order by m))::int as p90,
          round(max(m))::int as max_gap,
          count(distinct round(m))::int as distinct_medians
   from med
 `))[0];
 console.log('\nPer-customer median inter-purchase gap (days) — the spread churn detection needs:');
 console.log(table(
-  ['Customers', 'min', 'p25', 'p50', 'p75', 'max', 'distinct values'],
-  [[cadence.customers, cadence.min_gap, cadence.p25, cadence.p50, cadence.p75, cadence.max_gap, cadence.distinct_medians]],
+  ['Customers', 'min', 'p10', 'p25', 'p50', 'p75', 'p90', 'max', 'distinct values'],
+  [[cadence.customers, cadence.min_gap, cadence.p10, cadence.p25, cadence.p50, cadence.p75, cadence.p90, cadence.max_gap, cadence.distinct_medians]],
 ));
+console.log(`  spread p90/p10 = ${(cadence.p90 / cadence.p10).toFixed(1)}×  (a rules engine can only beat per-customer cadence when this is near 1×)`);
+
+// Does the spread actually come from the catalogue, or from the random draw?
+// Each customer's cadence is built from the replenishment cycle of the variant
+// they habitually buy, so their realized gaps should track the replenishment
+// days of what is actually in their orders. products.replenishment_days is
+// product-level (30–60); the seed keys off the variant value (30–75), so this
+// correlation is attenuated and still worth reporting honestly.
+const replenLink = await rows(sql`
+  with med as (
+    select customer_id, percentile_cont(0.5) within group (order by gap) as m from (
+      select customer_id,
+             extract(epoch from (processed_at - lag(processed_at)
+               over (partition by customer_id order by processed_at))) / 86400 as gap
+      from orders where customer_id is not null
+    ) g where gap is not null group by 1
+  ),
+  basket as (
+    select o.customer_id,
+           percentile_cont(0.5) within group (order by p.replenishment_days) as replen
+    from orders o
+      join order_items oi on oi.order_id = o.id
+      join products p on p.id = oi.product_id
+    where o.customer_id is not null
+    group by 1
+  )
+  select b.replen::int as replen_days, count(*)::int as customers,
+         round(percentile_cont(0.5) within group (order by m))::int as median_gap,
+         round(min(m))::int as gap_lo, round(max(m))::int as gap_hi
+  from med join basket b using (customer_id)
+  group by 1 order by 1
+`);
+const replenCorr = (await rows(sql`
+  with med as (
+    select customer_id, percentile_cont(0.5) within group (order by gap) as m from (
+      select customer_id,
+             extract(epoch from (processed_at - lag(processed_at)
+               over (partition by customer_id order by processed_at))) / 86400 as gap
+      from orders where customer_id is not null
+    ) g where gap is not null group by 1
+  ),
+  basket as (
+    select o.customer_id,
+           percentile_cont(0.5) within group (order by p.replenishment_days) as replen
+    from orders o join order_items oi on oi.order_id = o.id join products p on p.id = oi.product_id
+    where o.customer_id is not null group by 1
+  )
+  select round(corr(b.replen, m.m)::numeric, 3) as r, count(*)::int as n
+  from med m join basket b using (customer_id)
+`))[0];
+console.log('\nCadence vs what they buy (median product replenishment_days in their orders):');
+console.log(table(
+  ['Median replen (d)', 'Customers', 'Median gap (d)', 'gap min', 'gap max'],
+  replenLink.map((r) => [r.replen_days, r.customers, r.median_gap, r.gap_lo, r.gap_hi]),
+));
+console.log(`  corr(basket replenishment_days, own median gap) = ${replenCorr.r} over ${replenCorr.n} customers`);
+
+// The product-level number above understates the link, and it is worth being
+// precise about why rather than quoting the flattering figure alone. The seed
+// builds a cadence from the VARIANT's cycle times the units bought per order —
+// a 200ml hair oil is 75 days where the product row says 45, and two bottles
+// is twice that. order_items carries variant_id and qty, so the effective
+// consumption window is recoverable from the database; only the variant→cycle
+// lookup lives in the catalogue rather than in a table.
+const variantReplenValues = PRODUCTS
+  .flatMap((p) => p.variants.map((v) => `(${v.shopifyVariantId}::bigint, ${v.replenishmentDays}::int)`))
+  .join(', ');
+const effective = (await rows(sql`
+  with vr(variant_id, replen) as (values ${sql.raw(variantReplenValues)}),
+  med as (
+    select customer_id, percentile_cont(0.5) within group (order by gap) as m from (
+      select customer_id,
+             extract(epoch from (processed_at - lag(processed_at)
+               over (partition by customer_id order by processed_at))) / 86400 as gap
+      from orders where customer_id is not null
+    ) g where gap is not null group by 1
+  ),
+  consumption as (
+    select o.customer_id,
+           percentile_cont(0.5) within group (order by vr.replen * oi.qty) as days_of_supply
+    from orders o
+      join order_items oi on oi.order_id = o.id
+      join vr on vr.variant_id = oi.variant_id
+    where o.customer_id is not null
+    group by 1
+  )
+  select round(corr(c.days_of_supply, m.m)::numeric, 3) as r, count(*)::int as n,
+         round(percentile_cont(0.10) within group (order by c.days_of_supply)::numeric)::int as p10,
+         round(percentile_cont(0.50) within group (order by c.days_of_supply)::numeric)::int as p50,
+         round(percentile_cont(0.90) within group (order by c.days_of_supply)::numeric)::int as p90
+  from med m join consumption c using (customer_id)
+`))[0];
+console.log(`  corr(variant cycle × units bought, own median gap) = ${effective.r} over ${effective.n} customers`);
+console.log(`  their median days-of-supply per line: p10 ${effective.p10}  p50 ${effective.p50}  p90 ${effective.p90}`);
 
 const productLink = (await rows(sql`
   select count(*)::int as items,
