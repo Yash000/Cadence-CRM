@@ -1,0 +1,2835 @@
+{
+  "_meta": {
+    "generatedAt": "2026-08-24T09:59:21.900Z",
+    "rngSeed": 20260824,
+    "anchorNow": "2026-08-24T09:00:00.000Z",
+    "windowDays": 540,
+    "totalCustomers": 30,
+    "totalOrders": 117
+  },
+  "customers": [
+    {
+      "key": "C01",
+      "firstName": "Reyansh",
+      "lastName": "Menon",
+      "email": "reyansh.menon1@cadence-seed.test",
+      "phone": "+917000000001",
+      "city": "Chennai",
+      "segment": "champions",
+      "segmentLabel": "Champions",
+      "segmentTag": "segment-champions",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": 26,
+      "lastOrderDaysAgo": 3,
+      "orders": [
+        {
+          "seedId": "C01-O01",
+          "processedAt": "2026-04-06T09:00:00.000Z",
+          "daysAgo": 140,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C01-O02",
+          "processedAt": "2026-05-02T09:00:00.000Z",
+          "daysAgo": 114,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C01-O03",
+          "processedAt": "2026-06-09T09:00:00.000Z",
+          "daysAgo": 76,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C01-O04",
+          "processedAt": "2026-06-26T09:00:00.000Z",
+          "daysAgo": 59,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C01-O05",
+          "processedAt": "2026-07-30T09:00:00.000Z",
+          "daysAgo": 25,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C01-O06",
+          "processedAt": "2026-08-21T09:00:00.000Z",
+          "daysAgo": 3,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864388735272"
+    },
+    {
+      "key": "C02",
+      "firstName": "Shreya",
+      "lastName": "Krishnan",
+      "email": "shreya.krishnan2@cadence-seed.test",
+      "phone": "+917000000139",
+      "city": "Delhi",
+      "segment": "champions",
+      "segmentLabel": "Champions",
+      "segmentTag": "segment-champions",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 27,
+      "lastOrderDaysAgo": 15,
+      "orders": [
+        {
+          "seedId": "C02-O01",
+          "processedAt": "2026-02-14T09:00:00.000Z",
+          "daysAgo": 191,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C02-O02",
+          "processedAt": "2026-04-01T09:00:00.000Z",
+          "daysAgo": 145,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C02-O03",
+          "processedAt": "2026-04-28T09:00:00.000Z",
+          "daysAgo": 118,
+          "lineItems": [
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C02-O04",
+          "processedAt": "2026-05-28T09:00:00.000Z",
+          "daysAgo": 88,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C02-O05",
+          "processedAt": "2026-06-27T09:00:00.000Z",
+          "daysAgo": 58,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C02-O06",
+          "processedAt": "2026-07-18T09:00:00.000Z",
+          "daysAgo": 37,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C02-O07",
+          "processedAt": "2026-08-09T09:00:00.000Z",
+          "daysAgo": 15,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864389751080"
+    },
+    {
+      "key": "C03",
+      "firstName": "Myra",
+      "lastName": "Reddy",
+      "email": "myra.reddy3@cadence-seed.test",
+      "phone": null,
+      "city": "Pune",
+      "segment": "champions",
+      "segmentLabel": "Champions",
+      "segmentTag": "segment-champions",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": null,
+      "medianGapDays": 30,
+      "lastOrderDaysAgo": 13,
+      "orders": [
+        {
+          "seedId": "C03-O01",
+          "processedAt": "2026-03-28T09:00:00.000Z",
+          "daysAgo": 149,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C03-O02",
+          "processedAt": "2026-04-14T09:00:00.000Z",
+          "daysAgo": 132,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C03-O03",
+          "processedAt": "2026-05-15T09:00:00.000Z",
+          "daysAgo": 101,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C03-O04",
+          "processedAt": "2026-06-07T09:00:00.000Z",
+          "daysAgo": 78,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C03-O05",
+          "processedAt": "2026-07-12T09:00:00.000Z",
+          "daysAgo": 43,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C03-O06",
+          "processedAt": "2026-08-11T09:00:00.000Z",
+          "daysAgo": 13,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864390242600"
+    },
+    {
+      "key": "C04",
+      "firstName": "Aarav",
+      "lastName": "Shah",
+      "email": "aarav.shah4@cadence-seed.test",
+      "phone": "+917000000415",
+      "city": "Jaipur",
+      "segment": "champions",
+      "segmentLabel": "Champions",
+      "segmentTag": "segment-champions",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 22,
+      "lastOrderDaysAgo": 20,
+      "orders": [
+        {
+          "seedId": "C04-O01",
+          "processedAt": "2026-02-04T09:00:00.000Z",
+          "daysAgo": 201,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O02",
+          "processedAt": "2026-02-25T09:00:00.000Z",
+          "daysAgo": 180,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O03",
+          "processedAt": "2026-03-28T09:00:00.000Z",
+          "daysAgo": 149,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O04",
+          "processedAt": "2026-04-19T09:00:00.000Z",
+          "daysAgo": 127,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O05",
+          "processedAt": "2026-05-09T09:00:00.000Z",
+          "daysAgo": 107,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O06",
+          "processedAt": "2026-06-15T09:00:00.000Z",
+          "daysAgo": 70,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O07",
+          "processedAt": "2026-07-03T09:00:00.000Z",
+          "daysAgo": 52,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C04-O08",
+          "processedAt": "2026-08-04T09:00:00.000Z",
+          "daysAgo": 20,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864390734120"
+    },
+    {
+      "key": "C05",
+      "firstName": "Nikhil",
+      "lastName": "Shah",
+      "email": "nikhil.shah5@cadence-seed.test",
+      "phone": "+917000000553",
+      "city": "Delhi",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": 29,
+      "lastOrderDaysAgo": 34,
+      "orders": [
+        {
+          "seedId": "C05-O01",
+          "processedAt": "2026-02-28T09:00:00.000Z",
+          "daysAgo": 177,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C05-O02",
+          "processedAt": "2026-04-08T09:00:00.000Z",
+          "daysAgo": 138,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C05-O03",
+          "processedAt": "2026-05-27T09:00:00.000Z",
+          "daysAgo": 89,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C05-O04",
+          "processedAt": "2026-06-25T09:00:00.000Z",
+          "daysAgo": 60,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C05-O05",
+          "processedAt": "2026-07-21T09:00:00.000Z",
+          "daysAgo": 34,
+          "lineItems": [
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864391029032"
+    },
+    {
+      "key": "C06",
+      "firstName": "Arjun",
+      "lastName": "Kulkarni",
+      "email": "arjun.kulkarni6@cadence-seed.test",
+      "phone": "+917000000691",
+      "city": "Delhi",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 61,
+      "lastOrderDaysAgo": 43,
+      "orders": [
+        {
+          "seedId": "C06-O01",
+          "processedAt": "2025-11-17T09:00:00.000Z",
+          "daysAgo": 280,
+          "lineItems": [
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C06-O02",
+          "processedAt": "2026-01-17T09:00:00.000Z",
+          "daysAgo": 219,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C06-O03",
+          "processedAt": "2026-03-21T09:00:00.000Z",
+          "daysAgo": 156,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C06-O04",
+          "processedAt": "2026-05-21T09:00:00.000Z",
+          "daysAgo": 95,
+          "lineItems": [
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C06-O05",
+          "processedAt": "2026-07-12T09:00:00.000Z",
+          "daysAgo": 43,
+          "lineItems": [
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864447357224"
+    },
+    {
+      "key": "C07",
+      "firstName": "Sneha",
+      "lastName": "Gupta",
+      "email": "sneha.gupta7@cadence-seed.test",
+      "phone": "+917000000829",
+      "city": "Mumbai",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": "SUBSCRIBED",
+      "medianGapDays": 40,
+      "lastOrderDaysAgo": 45,
+      "orders": [
+        {
+          "seedId": "C07-O01",
+          "processedAt": "2026-03-17T09:00:00.000Z",
+          "daysAgo": 160,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C07-O02",
+          "processedAt": "2026-04-19T09:00:00.000Z",
+          "daysAgo": 127,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C07-O03",
+          "processedAt": "2026-05-29T09:00:00.000Z",
+          "daysAgo": 87,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C07-O04",
+          "processedAt": "2026-07-10T09:00:00.000Z",
+          "daysAgo": 45,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864447750440"
+    },
+    {
+      "key": "C08",
+      "firstName": "Aryan",
+      "lastName": "Sharma",
+      "email": "aryan.sharma8@cadence-seed.test",
+      "phone": "+917000000967",
+      "city": "Bengaluru",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 34,
+      "lastOrderDaysAgo": 25,
+      "orders": [
+        {
+          "seedId": "C08-O01",
+          "processedAt": "2026-03-21T09:00:00.000Z",
+          "daysAgo": 156,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C08-O02",
+          "processedAt": "2026-04-24T09:00:00.000Z",
+          "daysAgo": 122,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C08-O03",
+          "processedAt": "2026-06-03T09:00:00.000Z",
+          "daysAgo": 82,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C08-O04",
+          "processedAt": "2026-06-23T09:00:00.000Z",
+          "daysAgo": 62,
+          "lineItems": [
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C08-O05",
+          "processedAt": "2026-07-30T09:00:00.000Z",
+          "daysAgo": 25,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864448143656"
+    },
+    {
+      "key": "C09",
+      "firstName": "Priya",
+      "lastName": "Mehta",
+      "email": "priya.mehta9@cadence-seed.test",
+      "phone": "+917000001105",
+      "city": "Lucknow",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": 30,
+      "lastOrderDaysAgo": 41,
+      "orders": [
+        {
+          "seedId": "C09-O01",
+          "processedAt": "2026-03-20T09:00:00.000Z",
+          "daysAgo": 157,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C09-O02",
+          "processedAt": "2026-04-16T09:00:00.000Z",
+          "daysAgo": 130,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C09-O03",
+          "processedAt": "2026-06-14T09:00:00.000Z",
+          "daysAgo": 71,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C09-O04",
+          "processedAt": "2026-07-14T09:00:00.000Z",
+          "daysAgo": 41,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864448569640"
+    },
+    {
+      "key": "C10",
+      "firstName": "Myra",
+      "lastName": "Bansal",
+      "email": "myra.bansal10@cadence-seed.test",
+      "phone": null,
+      "city": "Bengaluru",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 46,
+      "lastOrderDaysAgo": 18,
+      "orders": [
+        {
+          "seedId": "C10-O01",
+          "processedAt": "2026-03-27T09:00:00.000Z",
+          "daysAgo": 150,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C10-O02",
+          "processedAt": "2026-05-12T09:00:00.000Z",
+          "daysAgo": 104,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C10-O03",
+          "processedAt": "2026-06-08T09:00:00.000Z",
+          "daysAgo": 77,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C10-O04",
+          "processedAt": "2026-08-06T09:00:00.000Z",
+          "daysAgo": 18,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864448766248"
+    },
+    {
+      "key": "C11",
+      "firstName": "Aryan",
+      "lastName": "Malhotra",
+      "email": "aryan.malhotra11@cadence-seed.test",
+      "phone": "+917000001381",
+      "city": "Pune",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": "SUBSCRIBED",
+      "medianGapDays": 28,
+      "lastOrderDaysAgo": 27,
+      "orders": [
+        {
+          "seedId": "C11-O01",
+          "processedAt": "2026-03-17T09:00:00.000Z",
+          "daysAgo": 160,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C11-O02",
+          "processedAt": "2026-05-04T09:00:00.000Z",
+          "daysAgo": 112,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C11-O03",
+          "processedAt": "2026-06-01T09:00:00.000Z",
+          "daysAgo": 84,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C11-O04",
+          "processedAt": "2026-06-26T09:00:00.000Z",
+          "daysAgo": 59,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C11-O05",
+          "processedAt": "2026-07-28T09:00:00.000Z",
+          "daysAgo": 27,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864449093928"
+    },
+    {
+      "key": "C12",
+      "firstName": "Karan",
+      "lastName": "Agarwal",
+      "email": "karan.agarwal12@cadence-seed.test",
+      "phone": "+917000001519",
+      "city": "Delhi",
+      "segment": "loyal",
+      "segmentLabel": "Loyal",
+      "segmentTag": "segment-loyal",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 31,
+      "lastOrderDaysAgo": 15,
+      "orders": [
+        {
+          "seedId": "C12-O01",
+          "processedAt": "2026-04-16T09:00:00.000Z",
+          "daysAgo": 130,
+          "lineItems": [
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C12-O02",
+          "processedAt": "2026-05-17T09:00:00.000Z",
+          "daysAgo": 99,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C12-O03",
+          "processedAt": "2026-06-11T09:00:00.000Z",
+          "daysAgo": 74,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C12-O04",
+          "processedAt": "2026-08-09T09:00:00.000Z",
+          "daysAgo": 15,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864449421608"
+    },
+    {
+      "key": "C13",
+      "firstName": "Neha",
+      "lastName": "Banerjee",
+      "email": "neha.banerjee13@cadence-seed.test",
+      "phone": "+917000001657",
+      "city": "Delhi",
+      "segment": "promising",
+      "segmentLabel": "Promising",
+      "segmentTag": "segment-promising",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": 18,
+      "lastOrderDaysAgo": 24,
+      "orders": [
+        {
+          "seedId": "C13-O01",
+          "processedAt": "2026-07-13T09:00:00.000Z",
+          "daysAgo": 42,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C13-O02",
+          "processedAt": "2026-07-31T09:00:00.000Z",
+          "daysAgo": 24,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864449814824"
+    },
+    {
+      "key": "C14",
+      "firstName": "Rohan",
+      "lastName": "Chatterjee",
+      "email": "rohan.chatterjee14@cadence-seed.test",
+      "phone": "+917000001795",
+      "city": "Chennai",
+      "segment": "promising",
+      "segmentLabel": "Promising",
+      "segmentTag": "segment-promising",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 29,
+      "lastOrderDaysAgo": 12,
+      "orders": [
+        {
+          "seedId": "C14-O01",
+          "processedAt": "2026-07-14T09:00:00.000Z",
+          "daysAgo": 41,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C14-O02",
+          "processedAt": "2026-08-12T09:00:00.000Z",
+          "daysAgo": 12,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864450142504"
+    },
+    {
+      "key": "C15",
+      "firstName": "Sneha",
+      "lastName": "Sharma",
+      "email": "sneha.sharma15@cadence-seed.test",
+      "phone": "+917000001933",
+      "city": "Jaipur",
+      "segment": "promising",
+      "segmentLabel": "Promising",
+      "segmentTag": "segment-promising",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": "SUBSCRIBED",
+      "medianGapDays": 24,
+      "lastOrderDaysAgo": 14,
+      "orders": [
+        {
+          "seedId": "C15-O01",
+          "processedAt": "2026-07-17T09:00:00.000Z",
+          "daysAgo": 38,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C15-O02",
+          "processedAt": "2026-08-10T09:00:00.000Z",
+          "daysAgo": 14,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864450371880"
+    },
+    {
+      "key": "C16",
+      "firstName": "Neha",
+      "lastName": "Verma",
+      "email": "neha.verma16@cadence-seed.test",
+      "phone": "+917000002071",
+      "city": "Bengaluru",
+      "segment": "promising",
+      "segmentLabel": "Promising",
+      "segmentTag": "segment-promising",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 25,
+      "lastOrderDaysAgo": 24,
+      "orders": [
+        {
+          "seedId": "C16-O01",
+          "processedAt": "2026-07-06T09:00:00.000Z",
+          "daysAgo": 49,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C16-O02",
+          "processedAt": "2026-07-31T09:00:00.000Z",
+          "daysAgo": 24,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864450863400"
+    },
+    {
+      "key": "C17",
+      "firstName": "Kavya",
+      "lastName": "Sharma",
+      "email": "kavya.sharma17@cadence-seed.test",
+      "phone": "+917000002209",
+      "city": "Chennai",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": true,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": 40,
+      "lastOrderDaysAgo": 140,
+      "orders": [
+        {
+          "seedId": "C17-O01",
+          "processedAt": "2025-12-29T09:00:00.000Z",
+          "daysAgo": 238,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C17-O02",
+          "processedAt": "2026-02-25T09:00:00.000Z",
+          "daysAgo": 180,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C17-O03",
+          "processedAt": "2026-04-06T09:00:00.000Z",
+          "daysAgo": 140,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864451060008"
+    },
+    {
+      "key": "C18",
+      "firstName": "Kiara",
+      "lastName": "Banerjee",
+      "email": "kiara.banerjee18@cadence-seed.test",
+      "phone": null,
+      "city": "Mumbai",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 30,
+      "lastOrderDaysAgo": 126,
+      "orders": [
+        {
+          "seedId": "C18-O01",
+          "processedAt": "2025-10-22T09:00:00.000Z",
+          "daysAgo": 306,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C18-O02",
+          "processedAt": "2025-11-21T09:00:00.000Z",
+          "daysAgo": 276,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C18-O03",
+          "processedAt": "2026-01-20T09:00:00.000Z",
+          "daysAgo": 216,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C18-O04",
+          "processedAt": "2026-03-21T09:00:00.000Z",
+          "daysAgo": 156,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C18-O05",
+          "processedAt": "2026-04-20T09:00:00.000Z",
+          "daysAgo": 126,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864451322152"
+    },
+    {
+      "key": "C19",
+      "firstName": "Arjun",
+      "lastName": "Pillai",
+      "email": "arjun.pillai19@cadence-seed.test",
+      "phone": "+917000002485",
+      "city": "Bengaluru",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": "SUBSCRIBED",
+      "medianGapDays": 58,
+      "lastOrderDaysAgo": 148,
+      "orders": [
+        {
+          "seedId": "C19-O01",
+          "processedAt": "2025-10-05T09:00:00.000Z",
+          "daysAgo": 323,
+          "lineItems": [
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C19-O02",
+          "processedAt": "2025-12-08T09:00:00.000Z",
+          "daysAgo": 259,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C19-O03",
+          "processedAt": "2026-02-04T09:00:00.000Z",
+          "daysAgo": 201,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C19-O04",
+          "processedAt": "2026-03-29T09:00:00.000Z",
+          "daysAgo": 148,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864451846440"
+    },
+    {
+      "key": "C20",
+      "firstName": "Myra",
+      "lastName": "Krishnan",
+      "email": "myra.krishnan20@cadence-seed.test",
+      "phone": "+917000002623",
+      "city": "Delhi",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 52,
+      "lastOrderDaysAgo": 129,
+      "orders": [
+        {
+          "seedId": "C20-O01",
+          "processedAt": "2025-09-24T09:00:00.000Z",
+          "daysAgo": 334,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C20-O02",
+          "processedAt": "2025-11-29T09:00:00.000Z",
+          "daysAgo": 268,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C20-O03",
+          "processedAt": "2026-01-24T09:00:00.000Z",
+          "daysAgo": 212,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C20-O04",
+          "processedAt": "2026-03-17T09:00:00.000Z",
+          "daysAgo": 160,
+          "lineItems": [
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C20-O05",
+          "processedAt": "2026-04-17T09:00:00.000Z",
+          "daysAgo": 129,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864452272424"
+    },
+    {
+      "key": "C21",
+      "firstName": "Kabir",
+      "lastName": "Verma",
+      "email": "kabir.verma21@cadence-seed.test",
+      "phone": "+917000002761",
+      "city": "Lucknow",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": 41,
+      "lastOrderDaysAgo": 126,
+      "orders": [
+        {
+          "seedId": "C21-O01",
+          "processedAt": "2025-12-18T09:00:00.000Z",
+          "daysAgo": 249,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C21-O02",
+          "processedAt": "2026-02-05T09:00:00.000Z",
+          "daysAgo": 200,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C21-O03",
+          "processedAt": "2026-03-10T09:00:00.000Z",
+          "daysAgo": 167,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C21-O04",
+          "processedAt": "2026-04-20T09:00:00.000Z",
+          "daysAgo": 126,
+          "lineItems": [
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864452567336"
+    },
+    {
+      "key": "C22",
+      "firstName": "Anika",
+      "lastName": "Rao",
+      "email": "anika.rao22@cadence-seed.test",
+      "phone": "+917000002899",
+      "city": "Delhi",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 32,
+      "lastOrderDaysAgo": 145,
+      "orders": [
+        {
+          "seedId": "C22-O01",
+          "processedAt": "2025-12-27T09:00:00.000Z",
+          "daysAgo": 240,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C22-O02",
+          "processedAt": "2026-02-03T09:00:00.000Z",
+          "daysAgo": 202,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C22-O03",
+          "processedAt": "2026-03-07T09:00:00.000Z",
+          "daysAgo": 170,
+          "lineItems": [
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C22-O04",
+          "processedAt": "2026-04-01T09:00:00.000Z",
+          "daysAgo": 145,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864452862248"
+    },
+    {
+      "key": "C23",
+      "firstName": "Saanvi",
+      "lastName": "Bhat",
+      "email": "saanvi.bhat23@cadence-seed.test",
+      "phone": "+917000003037",
+      "city": "Jaipur",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": "SUBSCRIBED",
+      "medianGapDays": 42,
+      "lastOrderDaysAgo": 115,
+      "orders": [
+        {
+          "seedId": "C23-O01",
+          "processedAt": "2025-11-08T09:00:00.000Z",
+          "daysAgo": 289,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C23-O02",
+          "processedAt": "2025-12-22T09:00:00.000Z",
+          "daysAgo": 245,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-050",
+              "title": "Niacinamide Clarity Serum — 50ml",
+              "price": "1299.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C23-O03",
+          "processedAt": "2026-01-30T09:00:00.000Z",
+          "daysAgo": 206,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C23-O04",
+          "processedAt": "2026-03-13T09:00:00.000Z",
+          "daysAgo": 164,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C23-O05",
+          "processedAt": "2026-05-01T09:00:00.000Z",
+          "daysAgo": 115,
+          "lineItems": [
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864453091624"
+    },
+    {
+      "key": "C24",
+      "firstName": "Vihaan",
+      "lastName": "Gupta",
+      "email": "vihaan.gupta24@cadence-seed.test",
+      "phone": "+917000003175",
+      "city": "Hyderabad",
+      "segment": "at_risk",
+      "segmentLabel": "At Risk",
+      "segmentTag": "segment-at-risk",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 32,
+      "lastOrderDaysAgo": 134,
+      "orders": [
+        {
+          "seedId": "C24-O01",
+          "processedAt": "2025-12-27T09:00:00.000Z",
+          "daysAgo": 240,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HO-200",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C24-O02",
+          "processedAt": "2026-01-28T09:00:00.000Z",
+          "daysAgo": 208,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C24-O03",
+          "processedAt": "2026-03-15T09:00:00.000Z",
+          "daysAgo": 162,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C24-O04",
+          "processedAt": "2026-04-12T09:00:00.000Z",
+          "daysAgo": 134,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864453189928"
+    },
+    {
+      "key": "C25",
+      "firstName": "Sneha",
+      "lastName": "Patel",
+      "email": "sneha.patel25@cadence-seed.test",
+      "phone": null,
+      "city": "Ahmedabad",
+      "segment": "hibernating",
+      "segmentLabel": "Hibernating",
+      "segmentTag": "segment-hibernating",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": null,
+      "medianGapDays": 46,
+      "lastOrderDaysAgo": 219,
+      "orders": [
+        {
+          "seedId": "C25-O01",
+          "processedAt": "2025-12-02T09:00:00.000Z",
+          "daysAgo": 265,
+          "lineItems": [
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C25-O02",
+          "processedAt": "2026-01-17T09:00:00.000Z",
+          "daysAgo": 219,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SPF-050",
+              "title": "Tinted Mineral SPF 50 — 50ml",
+              "price": "1449.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864453386536"
+    },
+    {
+      "key": "C26",
+      "firstName": "Kavya",
+      "lastName": "Malhotra",
+      "email": "kavya.malhotra26@cadence-seed.test",
+      "phone": "+917000003451",
+      "city": "Chennai",
+      "segment": "hibernating",
+      "segmentLabel": "Hibernating",
+      "segmentTag": "segment-hibernating",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": 53,
+      "lastOrderDaysAgo": 414,
+      "orders": [
+        {
+          "seedId": "C26-O01",
+          "processedAt": "2025-03-15T09:00:00.000Z",
+          "daysAgo": 527,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 2
+            }
+          ]
+        },
+        {
+          "seedId": "C26-O02",
+          "processedAt": "2025-05-14T09:00:00.000Z",
+          "daysAgo": 467,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C26-O03",
+          "processedAt": "2025-07-06T09:00:00.000Z",
+          "daysAgo": 414,
+          "lineItems": [
+            {
+              "sku": "RSY-HM-200",
+              "title": "Amla & Hibiscus Hair Mask — 200g",
+              "price": "649.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-AW-060",
+              "title": "Ashwagandha Calm Capsules — 60 count",
+              "price": "599.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864453550376"
+    },
+    {
+      "key": "C27",
+      "firstName": "Reyansh",
+      "lastName": "Bansal",
+      "email": "reyansh.bansal27@cadence-seed.test",
+      "phone": "+917000003589",
+      "city": "Ahmedabad",
+      "segment": "hibernating",
+      "segmentLabel": "Hibernating",
+      "segmentTag": "segment-hibernating",
+      "isProtagonist": false,
+      "emailConsent": "UNSUBSCRIBED",
+      "smsConsent": "SUBSCRIBED",
+      "medianGapDays": 85,
+      "lastOrderDaysAgo": 439,
+      "orders": [
+        {
+          "seedId": "C27-O01",
+          "processedAt": "2025-03-18T09:00:00.000Z",
+          "daysAgo": 524,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-300",
+              "title": "Rice Water Strengthening Shampoo — 300ml",
+              "price": "749.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C27-O02",
+          "processedAt": "2025-06-11T09:00:00.000Z",
+          "daysAgo": 439,
+          "lineItems": [
+            {
+              "sku": "RSY-VC-030",
+              "title": "Vitamin C Glow Serum — 30ml",
+              "price": "1099.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-NS-030",
+              "title": "Niacinamide Clarity Serum — 30ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864453714216"
+    },
+    {
+      "key": "C28",
+      "firstName": "Krishna",
+      "lastName": "Iyer",
+      "email": "krishna.iyer28@cadence-seed.test",
+      "phone": "+917000003727",
+      "city": "Indore",
+      "segment": "hibernating",
+      "segmentLabel": "Hibernating",
+      "segmentTag": "segment-hibernating",
+      "isProtagonist": false,
+      "emailConsent": null,
+      "smsConsent": "PENDING",
+      "medianGapDays": 28,
+      "lastOrderDaysAgo": 197,
+      "orders": [
+        {
+          "seedId": "C28-O01",
+          "processedAt": "2025-11-18T09:00:00.000Z",
+          "daysAgo": 279,
+          "lineItems": [
+            {
+              "sku": "RSY-BG-120",
+              "title": "Biotin Hair & Nail Gummies — 120 count",
+              "price": "1199.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-030",
+              "title": "Ceramide Repair Serum — 30ml",
+              "price": "1199.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C28-O02",
+          "processedAt": "2026-01-11T09:00:00.000Z",
+          "daysAgo": 225,
+          "lineItems": [
+            {
+              "sku": "RSY-SH-200",
+              "title": "Rice Water Strengthening Shampoo — 200ml",
+              "price": "549.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-TP-200",
+              "title": "Triphala Gut & Glow Powder — 200g",
+              "price": "899.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-SS-050",
+              "title": "Rosemary Scalp Serum — 50ml",
+              "price": "899.00",
+              "quantity": 1
+            }
+          ]
+        },
+        {
+          "seedId": "C28-O03",
+          "processedAt": "2026-02-08T09:00:00.000Z",
+          "daysAgo": 197,
+          "lineItems": [
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-200",
+              "title": "Gentle Foaming Cleanser — 200ml",
+              "price": "649.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864454009128"
+    },
+    {
+      "key": "C29",
+      "firstName": "Diya",
+      "lastName": "Iyer",
+      "email": "diya.iyer29@cadence-seed.test",
+      "phone": "+917000003865",
+      "city": "Pune",
+      "segment": "one_and_done",
+      "segmentLabel": "One-and-done",
+      "segmentTag": "segment-one-and-done",
+      "isProtagonist": false,
+      "emailConsent": "SUBSCRIBED",
+      "smsConsent": "UNSUBSCRIBED",
+      "medianGapDays": null,
+      "lastOrderDaysAgo": 273,
+      "orders": [
+        {
+          "seedId": "C29-O01",
+          "processedAt": "2025-11-24T09:00:00.000Z",
+          "daysAgo": 273,
+          "lineItems": [
+            {
+              "sku": "RSY-HO-100",
+              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
+              "price": "349.00",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864454369576"
+    },
+    {
+      "key": "C30",
+      "firstName": "Dev",
+      "lastName": "Reddy",
+      "email": "dev.reddy30@cadence-seed.test",
+      "phone": "+917000004003",
+      "city": "Delhi",
+      "segment": "one_and_done",
+      "segmentLabel": "One-and-done",
+      "segmentTag": "segment-one-and-done",
+      "isProtagonist": false,
+      "emailConsent": "PENDING",
+      "smsConsent": null,
+      "medianGapDays": null,
+      "lastOrderDaysAgo": 478,
+      "orders": [
+        {
+          "seedId": "C30-O01",
+          "processedAt": "2025-05-03T09:00:00.000Z",
+          "daysAgo": 478,
+          "lineItems": [
+            {
+              "sku": "RSY-CL-100",
+              "title": "Gentle Foaming Cleanser — 100ml",
+              "price": "399.00",
+              "quantity": 2
+            },
+            {
+              "sku": "RSY-CS-050",
+              "title": "Ceramide Repair Serum — 50ml",
+              "price": "1499.00",
+              "quantity": 1
+            },
+            {
+              "sku": "RSY-BG-060",
+              "title": "Biotin Hair & Nail Gummies — 60 count",
+              "price": "699.00",
+              "quantity": 2
+            }
+          ]
+        }
+      ],
+      "_shopifyId": "gid://shopify/Customer/10864454828328"
+    }
+  ]
+}

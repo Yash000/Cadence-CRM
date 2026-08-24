@@ -61,15 +61,33 @@ export function gql(query, variables = {}) {
     throw new Error(`unparseable response: ${raw.slice(start, start + 300)}`);
   }
 
+  const THROTTLE_RE = /THROTTLED|exceeded|rate limit|too many|too many attempts|try again later/i;
+
   if (data.errors?.length) {
-    throw new Error(data.errors.map(e => e.message).join('; '));
+    const msg = data.errors.map(e => e.message).join('; ');
+    if (THROTTLE_RE.test(msg)) {
+      const err = new Error('THROTTLED');
+      err.throttled = true;
+      throw err;
+    }
+    throw new Error(msg);
   }
 
   // Surface userErrors from any mutation payload rather than silently succeeding.
+  // NOTE: Shopify reports the per-minute order-create cap as a normal 200 response
+  // with a userErrors entry ("Too many attempts. Please try again later."), not as
+  // a transport-level failure — so this path must also be checked for throttling,
+  // or gqlWithBackoff never sees `.throttled` and the run dies at the first cap hit.
   for (const [field, payload] of Object.entries(data)) {
     const ue = payload?.userErrors;
     if (Array.isArray(ue) && ue.length) {
-      throw new Error(`${field}: ${ue.map(u => `${(u.field || []).join('.')} ${u.message}`).join('; ')}`);
+      const msg = `${field}: ${ue.map(u => `${(u.field || []).join('.')} ${u.message}`).join('; ')}`;
+      if (THROTTLE_RE.test(msg)) {
+        const err = new Error('THROTTLED');
+        err.throttled = true;
+        throw err;
+      }
+      throw new Error(msg);
     }
   }
 
@@ -77,7 +95,7 @@ export function gql(query, variables = {}) {
 }
 
 /** Retry wrapper for the 5 orders/min cap measured on dev stores (PRD-01 §5.1). */
-export async function gqlWithBackoff(query, variables = {}, { tries = 6, waitMs = 15000 } = {}) {
+export async function gqlWithBackoff(query, variables = {}, { tries = 8, waitMs = 20000 } = {}) {
   for (let attempt = 1; ; attempt++) {
     try {
       return gql(query, variables);
