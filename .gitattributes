@@ -1,0 +1,5 @@
+# Shopify webhook fixtures are byte-exact HMAC inputs. Git's autocrlf would
+# rewrite their line endings on checkout, which changes the bytes and would
+# invalidate the signatures computed over them in tests/shopify-webhook.test.ts
+# (including the hard-coded golden digest). Never newline-convert them.
+tests/fixtures/** -text

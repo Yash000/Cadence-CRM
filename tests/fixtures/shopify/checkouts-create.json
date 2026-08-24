@@ -1,0 +1,67 @@
+{
+  "id": 9900000000901,
+  "token": "8a7c6b5d4e3f2a1b0c9d8e7f6a5b4c3d",
+  "cart_token": "c1-9f2b7a41d5e64c0e8f3b2a1c7d904e55",
+  "abandoned_checkout_url": "https://rasaya-dev.myshopify.com/checkouts/c1-9f2b7a41d5e64c0e8f3b2a1c7d904e55/recover",
+  "buyer_accepts_marketing": true,
+  "completed_at": null,
+  "created_at": "2026-08-24T14:08:31+05:30",
+  "currency": "INR",
+  "customer_locale": "en-IN",
+  "email": "ananya.iyer@cadence-webhook-test.invalid",
+  "gateway": null,
+  "landing_site": "/products/niacinamide-clarity-serum",
+  "phone": "+919900000201",
+  "presentment_currency": "INR",
+  "referring_site": "https://www.google.com/",
+  "source_name": "web",
+  "subtotal_price": "1898.00",
+  "total_discounts": "0.00",
+  "total_line_items_price": "1898.00",
+  "total_price": "1898.00",
+  "total_tax": "0.00",
+  "updated_at": "2026-08-24T14:08:31+05:30",
+  "customer": {
+    "id": 9900000000201,
+    "email": "ananya.iyer@cadence-webhook-test.invalid",
+    "first_name": "Ananya",
+    "last_name": "Iyer",
+    "phone": "+919900000201"
+  },
+  "line_items": [
+    {
+      "key": "52277360853288:9b1c",
+      "price": "1299.00",
+      "product_id": 10410305585448,
+      "quantity": 1,
+      "sku": "RSY-NS-050",
+      "title": "Niacinamide Clarity Serum — 50ml",
+      "variant_id": 52277360853288,
+      "variant_title": "50ml",
+      "vendor": "Rasaya"
+    },
+    {
+      "key": "52277360460072:4d2a",
+      "price": "399.00",
+      "product_id": 10410305257768,
+      "quantity": 1,
+      "sku": "RSY-CL-100",
+      "title": "Gentle Foaming Cleanser — 100ml",
+      "variant_id": 52277360460072,
+      "variant_title": "100ml",
+      "vendor": "Rasaya"
+    }
+  ],
+  "shipping_address": {
+    "address1": "14, Kasturi Rangan Road",
+    "city": "Chennai",
+    "country": "India",
+    "country_code": "IN",
+    "first_name": "Ananya",
+    "last_name": "Iyer",
+    "phone": "+919900000201",
+    "province": "Tamil Nadu",
+    "province_code": "TN",
+    "zip": "600018"
+  }
+}

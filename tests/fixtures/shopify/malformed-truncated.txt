@@ -1,0 +1,1 @@
+{"id": 9900000000104, "email": "truncated@cadence-webhook-test.invalid", "financial_status": "paid", "total_price": "1299.00", "line_items": [{"product_id": 10410305585448, "quantity": 1, "price": "1299.00"

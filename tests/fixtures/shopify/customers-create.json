@@ -1,0 +1,41 @@
+{
+  "id": 9900000000202,
+  "admin_graphql_api_id": "gid://shopify/Customer/9900000000202",
+  "accepts_marketing": true,
+  "created_at": "2026-08-24T16:55:01+05:30",
+  "currency": "INR",
+  "email": "rohan.desai@cadence-webhook-test.invalid",
+  "first_name": "Rohan",
+  "last_name": "Desai",
+  "note": null,
+  "orders_count": 0,
+  "phone": "099000 00202",
+  "state": "enabled",
+  "tags": "",
+  "total_spent": "0.00",
+  "updated_at": "2026-08-24T16:55:01+05:30",
+  "verified_email": true,
+  "email_marketing_consent": {
+    "state": "subscribed",
+    "opt_in_level": "single_opt_in",
+    "consent_updated_at": "2026-08-24T16:55:01+05:30"
+  },
+  "sms_marketing_consent": {
+    "state": "subscribed",
+    "opt_in_level": "single_opt_in",
+    "consent_updated_at": "2026-08-24T16:55:01+05:30",
+    "consent_collected_from": "SHOPIFY"
+  },
+  "default_address": {
+    "id": 9900000000302,
+    "address1": "22, Lokhandwala Complex",
+    "city": "Mumbai",
+    "province": "Maharashtra",
+    "province_code": "MH",
+    "country": "India",
+    "country_code": "IN",
+    "zip": "400053",
+    "phone": "099000 00202",
+    "default": true
+  }
+}

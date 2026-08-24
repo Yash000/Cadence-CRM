@@ -1,0 +1,57 @@
+{
+  "id": 9900000000101,
+  "admin_graphql_api_id": "gid://shopify/Order/9900000000101",
+  "cancel_reason": null,
+  "cancelled_at": null,
+  "cart_token": "c1-9f2b7a41d5e64c0e8f3b2a1c7d904e55",
+  "contact_email": "ananya.iyer@cadence-webhook-test.invalid",
+  "created_at": "2026-08-24T14:12:07+05:30",
+  "currency": "INR",
+  "discount_codes": [
+    {
+      "code": "RASAYA10",
+      "amount": "130.00",
+      "type": "percentage"
+    }
+  ],
+  "email": "ananya.iyer@cadence-webhook-test.invalid",
+  "financial_status": "partially_refunded",
+  "fulfillment_status": "fulfilled",
+  "name": "#1147",
+  "order_number": 1147,
+  "phone": "+919900000201",
+  "processed_at": "2026-08-24T14:12:07+05:30",
+  "subtotal_price": "1299.00",
+  "token": "b3f1c9d20a7e4f6b8c5d3e1a9f7b0c24",
+  "total_discounts": "130.00",
+  "total_price": "1169.00",
+  "updated_at": "2026-08-24T18:41:52+05:30",
+  "customer": {
+    "id": 9900000000201,
+    "email": "ananya.iyer@cadence-webhook-test.invalid",
+    "first_name": "Ananya",
+    "last_name": "Iyer",
+    "phone": "+919900000201",
+    "state": "enabled",
+    "default_address": {
+      "city": "Chennai",
+      "province": "Tamil Nadu",
+      "country_code": "IN",
+      "zip": "600018"
+    }
+  },
+  "line_items": [
+    {
+      "id": 14200000000101,
+      "name": "Niacinamide Clarity Serum — 50ml",
+      "price": "1299.00",
+      "product_id": 10410305585448,
+      "quantity": 1,
+      "sku": "RSY-NS-050",
+      "title": "Niacinamide Clarity Serum — 50ml",
+      "variant_id": 52277360853288,
+      "variant_title": "50ml",
+      "vendor": "Rasaya"
+    }
+  ]
+}

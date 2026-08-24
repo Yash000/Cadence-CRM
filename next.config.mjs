@@ -1,24 +1,14 @@
-// Plain JS, not next.config.ts: Next's TS config loader crashes
-// (`Cannot read properties of undefined (reading 'fileExists')`) against
-// this repo's typescript@^7.0.2 (Task 1's pin — the native/preview
-// compiler). App code still typechecks fine under TS7 (see global.d.ts and
-// `npx tsc --noEmit`); it's specifically Next's config-loading shim that
-// doesn't yet support TS7's Program/LanguageService shape. A .mjs config
-// sidesteps that loader entirely.
+// Plain JS rather than next.config.ts: kept as-is from Task 5. The original
+// reason (Next's TS config loader crashing against typescript@^7.0.2) went
+// away when Task 6 pinned TypeScript to 5.9, but a .mjs config is valid and
+// there is no reason to churn it back.
+//
+// The `experimental.extensionAlias` shim Task 5 needed (webpack resolving
+// db/index.ts's './schema.js' specifier) is gone: db/index.ts now imports
+// './schema' extensionless, which Turbopack, tsc and tsx all resolve.
+// `agentRules: false` is likewise gone — it is a Next 16 key and Next 15
+// rejects it as unrecognized.
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Don't let `next dev`/`next build` write CLAUDE.md/AGENTS.md into the
-  // repo root — unrelated to this task and not something we want committed.
-  agentRules: false,
-  // db/index.ts (Task 1, not owned by this task) imports './schema.js' —
-  // the TS "moduleResolution: bundler" convention of writing the .js
-  // specifier for a .ts file. webpack doesn't resolve that by default;
-  // this tells it to also try .ts/.tsx when a .js specifier 404s.
-  experimental: {
-    extensionAlias: {
-      '.js': ['.ts', '.tsx', '.js'],
-    },
-  },
-};
+const nextConfig = {};
 
 export default nextConfig;
