@@ -1,0 +1,20 @@
+{
+  "order": {
+    "currency": "INR",
+    "processedAt": "2026-03-14T10:15:00Z",
+    "financialStatus": "PAID",
+    "tags": ["cadence-probe"],
+    "email": "probe1@cadence-test.invalid",
+    "phone": "+919000000001",
+    "lineItems": [
+      {
+        "title": "Probe Item A",
+        "quantity": 1,
+        "requiresShipping": true,
+        "priceSet": {
+          "shopMoney": { "amount": "499.00", "currencyCode": "INR" }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+# Secrets — .env.local holds the Supabase agent DSN, OpenRouter and Resend keys
+.env
+.env.*
+!.env.example
+
+# Shopify CLI state: .shopify/ contains localhost-key.pem and project auth
+.shopify/
+**/.shopify/
+
+node_modules/
+.next/
+dist/
+build/
+
+# SDD scratch (ledger, briefs, review packages)
+.superpowers/
+
+# Transient GraphQL payloads written by scripts/lib/shopify.mjs
+scripts/gql/.tmp-*
+scripts/gql/.probe-tmp.json
+
+# Generated product imagery — regenerable from data/catalogue.json image_url
+data/images/
+
+*.log
+.DS_Store
+Thumbs.db

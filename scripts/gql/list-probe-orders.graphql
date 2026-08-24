@@ -1,0 +1,6 @@
+query ListProbeOrders {
+  ordersCount { count }
+  orders(first: 50, query: "tag:cadence-probe") {
+    edges { node { id name processedAt } }
+  }
+}

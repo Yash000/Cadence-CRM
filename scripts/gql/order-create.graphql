@@ -1,0 +1,11 @@
+mutation CreateOrder($order: OrderCreateOrderInput!) {
+  orderCreate(order: $order) {
+    order {
+      id
+      name
+      processedAt
+      totalPriceSet { shopMoney { amount currencyCode } }
+    }
+    userErrors { field message }
+  }
+}

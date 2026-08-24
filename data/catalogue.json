@@ -1,0 +1,198 @@
+{
+  "brand": "Rasaya",
+  "currency": "INR",
+  "_note": "Source of truth for the Shopify catalogue (PRD-01 §3). The seed script reads this and upserts by handle, so it is idempotent and re-runnable against any store (PRD-01 §10). replenishment_days appears at product level per §3.2 AND per variant, because a 100ml and a 200ml of the same oil genuinely deplete at different rates and §F3.4 predicts next-order-date from this number.",
+  "collections": [
+    { "handle": "hair-care", "title": "Hair Care", "cycle_days": 45 },
+    { "handle": "skin-care", "title": "Skin Care", "cycle_days": 35 },
+    { "handle": "wellness", "title": "Wellness", "cycle_days": 30 }
+  ],
+  "products": [
+    {
+      "handle": "bhringraj-anti-hairfall-hair-oil",
+      "title": "Bhringraj Anti-Hairfall Hair Oil",
+      "collection": "hair-care",
+      "product_type": "Hair Oil",
+      "role": "entry-point",
+      "tags": ["anti-hairfall", "scalp-health"],
+      "replenishment_days": 45,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/1a497095-2a58-46a4-ac11-8827738f5fee.png",
+      "description": "A slow-infused bhringraj and sesame oil for thinning hair and a restless scalp. Massage into the scalp twice weekly, leave for at least an hour, then wash out. Most people notice less fall between weeks six and eight.",
+      "ingredients": "Sesamum indicum oil, Eclipta alba (bhringraj) extract, Cocos nucifera oil, Emblica officinalis, Rosmarinus officinalis oil, tocopherol.",
+      "variants": [
+        { "title": "100ml", "sku": "RSY-HO-100", "price": "349.00", "replenishment_days": 45 },
+        { "title": "200ml", "sku": "RSY-HO-200", "price": "599.00", "replenishment_days": 75 }
+      ]
+    },
+    {
+      "handle": "rice-water-strengthening-shampoo",
+      "title": "Rice Water Strengthening Shampoo",
+      "collection": "hair-care",
+      "product_type": "Shampoo",
+      "role": "standard",
+      "tags": ["anti-hairfall", "damage-repair"],
+      "replenishment_days": 45,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/6dd89e79-e850-49a0-a3f0-a83989e96a97.png",
+      "description": "A sulphate-free wash built on fermented rice water, which coats the shaft with inositol and reduces breakage over time. Gentle enough for daily use, and it will not strip colour.",
+      "ingredients": "Aqua, fermented Oryza sativa extract, cocamidopropyl betaine, coco-glucoside, panthenol, Aloe barbadensis, citric acid.",
+      "variants": [
+        { "title": "200ml", "sku": "RSY-SH-200", "price": "549.00", "replenishment_days": 45 },
+        { "title": "300ml", "sku": "RSY-SH-300", "price": "749.00", "replenishment_days": 65 }
+      ]
+    },
+    {
+      "handle": "rosemary-scalp-serum",
+      "title": "Rosemary Scalp Serum",
+      "collection": "hair-care",
+      "product_type": "Scalp Serum",
+      "role": "standard",
+      "tags": ["anti-hairfall", "scalp-health"],
+      "replenishment_days": 40,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/14eef025-0aa3-4a88-986b-a47ef8310e68.png",
+      "description": "A lightweight leave-in serum with rosemary and peptides, applied directly to the parting each night. Non-greasy, so it works on days you are not washing.",
+      "ingredients": "Aqua, Rosmarinus officinalis leaf extract, niacinamide, acetyl tetrapeptide-3, Trifolium pratense extract, panthenol, caffeine.",
+      "variants": [
+        { "title": "50ml", "sku": "RSY-SS-050", "price": "899.00", "replenishment_days": 40 }
+      ]
+    },
+    {
+      "handle": "amla-hibiscus-hair-mask",
+      "title": "Amla & Hibiscus Hair Mask",
+      "collection": "hair-care",
+      "product_type": "Hair Mask",
+      "role": "standard",
+      "tags": ["damage-repair"],
+      "replenishment_days": 60,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/a61cb0e7-ca91-49ce-9afd-716428a661c4.png",
+      "description": "A weekly deep-conditioning mask of amla and hibiscus for hair that has gone brittle from heat or hard water. Twenty minutes on damp mid-lengths, then rinse.",
+      "ingredients": "Aqua, Emblica officinalis fruit extract, Hibiscus rosa-sinensis flower extract, Butyrospermum parkii, cetearyl alcohol, hydrolysed keratin, Argania spinosa oil.",
+      "variants": [
+        { "title": "200g", "sku": "RSY-HM-200", "price": "649.00", "replenishment_days": 60 }
+      ]
+    },
+    {
+      "handle": "gentle-foaming-cleanser",
+      "title": "Gentle Foaming Cleanser",
+      "collection": "skin-care",
+      "product_type": "Cleanser",
+      "role": "entry-point",
+      "tags": ["acne", "daily-care"],
+      "replenishment_days": 30,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/eb9a1850-b17f-426a-a52d-f2f59fc4e5b5.png",
+      "description": "A pH-balanced morning and evening cleanser that removes sunscreen and city grime without the tight, squeaky feeling. Safe alongside actives.",
+      "ingredients": "Aqua, coco-glucoside, glycerin, Centella asiatica extract, allantoin, sodium PCA, panthenol.",
+      "variants": [
+        { "title": "100ml", "sku": "RSY-CL-100", "price": "399.00", "replenishment_days": 30 },
+        { "title": "200ml", "sku": "RSY-CL-200", "price": "649.00", "replenishment_days": 55 }
+      ]
+    },
+    {
+      "handle": "niacinamide-clarity-serum",
+      "title": "Niacinamide Clarity Serum",
+      "collection": "skin-care",
+      "product_type": "Serum",
+      "role": "standard",
+      "tags": ["acne", "brightening"],
+      "replenishment_days": 35,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/59b60c34-ce11-48d7-848e-fbe0d50bc88d.png",
+      "description": "Ten percent niacinamide with zinc, for congested skin and the marks left behind after a breakout. Use in the morning under sunscreen.",
+      "ingredients": "Aqua, niacinamide 10%, zinc PCA, Centella asiatica, hyaluronic acid, panthenol, allantoin.",
+      "variants": [
+        { "title": "30ml", "sku": "RSY-NS-030", "price": "899.00", "replenishment_days": 35 },
+        { "title": "50ml", "sku": "RSY-NS-050", "price": "1299.00", "replenishment_days": 55 }
+      ]
+    },
+    {
+      "handle": "vitamin-c-glow-serum",
+      "title": "Vitamin C Glow Serum",
+      "collection": "skin-care",
+      "product_type": "Serum",
+      "role": "standard",
+      "tags": ["anti-ageing", "brightening"],
+      "replenishment_days": 35,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/4ff1b7dc-82d0-4ec1-9219-ea600442afa6.png",
+      "description": "A stabilised 15% vitamin C with ferulic acid, for uneven tone and early pigmentation. Morning use, always followed by sunscreen.",
+      "ingredients": "Aqua, ethyl ascorbic acid 15%, ferulic acid, tocopherol, Citrus limon extract, glycerin, sodium hyaluronate.",
+      "variants": [
+        { "title": "30ml", "sku": "RSY-VC-030", "price": "1099.00", "replenishment_days": 35 }
+      ]
+    },
+    {
+      "handle": "ceramide-repair-serum",
+      "title": "Ceramide Repair Serum",
+      "collection": "skin-care",
+      "product_type": "Serum",
+      "role": "anchor",
+      "tags": ["anti-ageing", "barrier-repair"],
+      "replenishment_days": 35,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/db3e544d-cceb-4795-91c5-da3727316e7b.png",
+      "description": "A barrier-repair serum with a 3:1:1 ceramide complex, for skin left sensitised by retinol or over-exfoliation. Apply at night; alternate evenings if you are also using retinol.",
+      "ingredients": "Aqua, ceramide NP, ceramide AP, ceramide EOP, phytosphingosine, cholesterol, squalane, sodium hyaluronate, Centella asiatica.",
+      "variants": [
+        { "title": "30ml", "sku": "RSY-CS-030", "price": "1199.00", "replenishment_days": 35 },
+        { "title": "50ml", "sku": "RSY-CS-050", "price": "1499.00", "replenishment_days": 55 }
+      ]
+    },
+    {
+      "handle": "tinted-mineral-spf-50",
+      "title": "Tinted Mineral SPF 50",
+      "collection": "skin-care",
+      "product_type": "Sunscreen",
+      "role": "anchor",
+      "tags": ["anti-ageing", "daily-care"],
+      "replenishment_days": 40,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/2c2601b1-1e43-4e83-a689-7d8ef845d782.png",
+      "description": "A zinc-based SPF 50 with a universal warm tint that suits light to medium-deep skin. No white cast, and it sits well under makeup.",
+      "ingredients": "Aqua, zinc oxide 22%, iron oxides, niacinamide, Butyrospermum parkii, tocopherol, silica.",
+      "variants": [
+        { "title": "50ml", "sku": "RSY-SPF-050", "price": "1449.00", "replenishment_days": 40 }
+      ]
+    },
+    {
+      "handle": "biotin-hair-nail-gummies",
+      "title": "Biotin Hair & Nail Gummies",
+      "collection": "wellness",
+      "product_type": "Supplement",
+      "role": "standard",
+      "tags": ["anti-hairfall", "immunity"],
+      "replenishment_days": 30,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/65712278-a1a5-466f-8199-b3bb1e329f32.png",
+      "description": "Two gummies a day for biotin, zinc and folate. Aimed at hair that has thinned after illness, stress or a hard year.",
+      "ingredients": "Biotin 5000mcg, zinc gluconate, folic acid, vitamin E, vitamin B12, pectin, natural orange flavour, cane sugar.",
+      "variants": [
+        { "title": "60 count", "sku": "RSY-BG-060", "price": "699.00", "replenishment_days": 30 },
+        { "title": "120 count", "sku": "RSY-BG-120", "price": "1199.00", "replenishment_days": 60 }
+      ]
+    },
+    {
+      "handle": "ashwagandha-calm-capsules",
+      "title": "Ashwagandha Calm Capsules",
+      "collection": "wellness",
+      "product_type": "Supplement",
+      "role": "standard",
+      "tags": ["immunity", "stress"],
+      "replenishment_days": 30,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/ebf62b69-535c-4a4d-8eda-fbe1f7e89d6d.png",
+      "description": "KSM-66 ashwagandha root extract, standardised to 5% withanolides. One capsule after dinner for sleep quality and everyday stress load.",
+      "ingredients": "Withania somnifera root extract (KSM-66) 600mg, black pepper extract, vegetarian HPMC capsule.",
+      "variants": [
+        { "title": "60 count", "sku": "RSY-AW-060", "price": "599.00", "replenishment_days": 30 }
+      ]
+    },
+    {
+      "handle": "triphala-gut-glow-powder",
+      "title": "Triphala Gut & Glow Powder",
+      "collection": "wellness",
+      "product_type": "Supplement",
+      "role": "standard",
+      "tags": ["immunity", "digestion"],
+      "replenishment_days": 30,
+      "image_url": "https://rqkumunldqvmynqxibca.supabase.co/storage/v1/object/public/generated-images/a126b765-c3ca-417b-8d26-5af2f5b995cd.png",
+      "description": "The classical three-fruit blend, stone-ground. One teaspoon in warm water before bed, for digestion and the skin clarity that follows from it.",
+      "ingredients": "Emblica officinalis, Terminalia bellirica, Terminalia chebula, in equal parts. Nothing else.",
+      "variants": [
+        { "title": "200g", "sku": "RSY-TP-200", "price": "899.00", "replenishment_days": 30 }
+      ]
+    }
+  ]
+}
