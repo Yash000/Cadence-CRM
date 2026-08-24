@@ -1,0 +1,150 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Cadence design language — dense, monospace-accented, information-rich.
+   Palette lifted verbatim from Pulse CRM Interface Design/Pulse CRM.dc.html
+   (the interactive mockup), renamed PULSE -> Cadence / Sattva Co. -> Rasaya. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --font-heading: var(--font-plex-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-paper: var(--paper);
+  --color-hairline: var(--hairline);
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-bad-soft-bg: var(--bad-soft-bg);
+  --color-accent-blue: var(--accent-blue);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Cadence brand tokens (from the mockup) */
+  --ink: #1c1b19;
+  --ink-soft: #56534d;
+  --paper: #f4f3f0;
+  --hairline: #e4e1db;
+  --good: #2f8558;
+  --warn: #b5771a;
+  --bad: #c0452f;
+  --bad-soft: #8f3826;
+  --bad-soft-bg: #fbf1ee;
+  --accent-blue: #3d5ccc;
+
+  --background: #f4f3f0;
+  --foreground: #1c1b19;
+  --card: #ffffff;
+  --card-foreground: #1c1b19;
+  --popover: #ffffff;
+  --popover-foreground: #1c1b19;
+  --primary: #1c1b19;
+  --primary-foreground: #f4f3f0;
+  --secondary: #eeece7;
+  --secondary-foreground: #1c1b19;
+  --muted: #eeece7;
+  --muted-foreground: #8a8680;
+  --accent: #eeece7;
+  --accent-foreground: #1c1b19;
+  --destructive: #8f3826;
+  --border: #e4e1db;
+  --input: #e4e1db;
+  --ring: #3d5ccc;
+  --chart-1: #3d5ccc;
+  --chart-2: #2f8558;
+  --chart-3: #b5771a;
+  --chart-4: #c0452f;
+  --chart-5: #8a8680;
+  --radius: 0.375rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1c1b19;
+  --sidebar-primary: #1c1b19;
+  --sidebar-primary-foreground: #f4f3f0;
+  --sidebar-accent: #f4f3f0;
+  --sidebar-accent-foreground: #1c1b19;
+  --sidebar-border: #e4e1db;
+  --sidebar-ring: #3d5ccc;
+}
+
+.dark {
+  --background: #171614;
+  --foreground: #f4f3f0;
+  --card: #221f1c;
+  --card-foreground: #f4f3f0;
+  --popover: #221f1c;
+  --popover-foreground: #f4f3f0;
+  --primary: #f4f3f0;
+  --primary-foreground: #1c1b19;
+  --secondary: #2a2823;
+  --secondary-foreground: #f4f3f0;
+  --muted: #2a2823;
+  --muted-foreground: #a8a39a;
+  --accent: #2a2823;
+  --accent-foreground: #f4f3f0;
+  --destructive: #d9694e;
+  --border: #3a3833;
+  --input: #3a3833;
+  --ring: #6f89e0;
+  --sidebar: #1c1b19;
+  --sidebar-foreground: #f4f3f0;
+  --sidebar-primary: #f4f3f0;
+  --sidebar-primary-foreground: #1c1b19;
+  --sidebar-accent: #2a2823;
+  --sidebar-accent-foreground: #f4f3f0;
+  --sidebar-border: #3a3833;
+  --sidebar-ring: #6f89e0;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
