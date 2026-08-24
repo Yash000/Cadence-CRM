@@ -87,6 +87,15 @@ const HOUR = 3_600_000;
 const MINUTE = 60_000;
 const WINDOW_DAYS = 540; // 18 months
 const MAX_SPAN_DAYS = WINDOW_DAYS - 6; // leave headroom for hour-level jitter
+// The catalogue is older than the order window — a store's products exist
+// before its first order. Fixed so products.created_at/updated_at are
+// reproducible rather than now().
+const CATALOGUE_EPOCH = new Date(ANCHOR_MS - (WINDOW_DAYS + 30) * DAY);
+
+// Every seeded Indian mobile: +91 then ten digits starting 6–9. Asserted after
+// the write — the DB's own CHECK is the generic E.164 shape and cannot catch a
+// short national number.
+const PHONE_PATTERN = '^\\+91[6-9][0-9]{9}$';
 
 // Synthetic Shopify id ranges. Deliberately far above any id the live store
 // will mint (real Rasaya product ids are ~1.04e13), so a future webhook sync of
@@ -417,7 +426,14 @@ function generate() {
         cohort: cohort.key,
         shopifyCustomerId: CUSTOMER_ID_BASE + idx,
         email: `${first}.${last}${idx}@cadence-bulk.test`.toLowerCase(),
-        phoneE164: hasPhone ? `+919${80000000 + idx}` : null,
+        // +91 followed by TEN digits starting 6–9. The DB CHECK is the generic
+        // E.164 shape (^\+[1-9][0-9]{7,14}$), which a 9-digit Indian number
+        // also satisfies — so the constraint cannot catch this and the seed
+        // must get it right itself. PRD-01 §4.1 makes phone_e164 the join key
+        // between Shopify identity and WhatsApp identity: a short number is
+        // rejected outright by the WhatsApp Cloud API and can never match a
+        // genuine `customers/update` webhook. Asserted after the write below.
+        phoneE164: hasPhone ? `+919${800_000_000 + idx}` : null,
         firstName: first,
         lastName: last,
         city,
@@ -820,6 +836,24 @@ async function batched(label, table_, rows, keys, chunkSize) {
   console.log(` ${rows.length}`);
 }
 
+// The live schema puts BEFORE UPDATE triggers on customers/orders/products
+// that stamp updated_at = now(). They are correct for the application and must
+// stay — but they fire on this script's ON CONFLICT DO UPDATE path, so a
+// re-run would silently rewrite updated_at on every row and the dataset would
+// NOT be reproducible: the same seed would yield different bytes. They are
+// switched off for the duration of the write and restored in a finally, so a
+// crash mid-seed cannot leave the database with its triggers disabled.
+const UPDATED_AT_TRIGGERS = [
+  ['customers', 'customers_set_updated_at'],
+  ['orders', 'orders_set_updated_at'],
+  ['products', 'products_set_updated_at'],
+];
+async function setUpdatedAtTriggers(enabled) {
+  for (const [t, trg] of UPDATED_AT_TRIGGERS) {
+    await db.execute(sql.raw(`alter table ${t} ${enabled ? 'enable' : 'disable'} trigger ${trg}`));
+  }
+}
+
 if (TRUNCATE) {
   console.log('\n--truncate: clearing seeded tables (CASCADE)…');
   await db.execute(
@@ -828,6 +862,8 @@ if (TRUNCATE) {
 }
 
 console.log('\nWriting…');
+await setUpdatedAtTriggers(false);
+try {
 
 // products first — order_items reference them, and the CRM-side products table
 // is a mirror of the store keyed on the real shopify_product_id (unique in the
@@ -848,8 +884,12 @@ await batched(
     replenishmentDays: p.replenishmentDays,
     price: toDecimal(p.pricePaise),
     status: 'active',
+    // Explicit, not now(): every timestamp this script writes has to be
+    // reproducible, products included. The catalogue predates the order window.
+    createdAt: CATALOGUE_EPOCH,
+    updatedAt: CATALOGUE_EPOCH,
   })),
-  ['shopifyProductId', 'title', 'handle', 'collection', 'tags', 'replenishmentDays', 'price', 'status'],
+  ['shopifyProductId', 'title', 'handle', 'collection', 'tags', 'replenishmentDays', 'price', 'status', 'createdAt', 'updatedAt'],
   12,
 );
 
@@ -892,6 +932,10 @@ await batched(
   ['customerId', 'sessionId', 'type', 'payload', 'occurredAt'],
   1000,
 );
+
+} finally {
+  await setUpdatedAtTriggers(true);
+}
 
 // ---------------------------------------------------------------------------
 // Verification — everything below reads the database back. Nothing here is
@@ -996,10 +1040,14 @@ console.log(table(['Month', 'Orders', ''], monthly.map((m) => [m.month, m.n, '�
 const phone = (await rows(sql`
   select count(*)::int as total,
          count(*) filter (where phone_e164 is null)::int as no_phone,
-         count(*) filter (where email is null)::int as no_email
+         count(*) filter (where email is null)::int as no_email,
+         count(phone_e164)::int as with_phone,
+         count(distinct phone_e164)::int as distinct_phones,
+         count(*) filter (where phone_e164 is not null and phone_e164 !~ ${PHONE_PATTERN})::int as malformed
   from customers
 `))[0];
 console.log(`\nCustomers with no phone: ${phone.no_phone} / ${phone.total} (${((phone.no_phone / phone.total) * 100).toFixed(1)}%)  |  no email: ${phone.no_email}`);
+console.log(`Phone format (${PHONE_PATTERN}): ${phone.with_phone - phone.malformed}/${phone.with_phone} valid, ${phone.distinct_phones} distinct, ${phone.malformed} malformed`);
 
 const consentSpread = await rows(sql`
   select channel::text as channel, status::text as status, count(*)::int as n
@@ -1068,8 +1116,66 @@ const replen = (await rows(sql`
 `))[0];
 console.log(`products: ${replen.n} rows, ${replen.with_replen} carry replenishment_days (${replen.lo}–${replen.hi} days)`);
 
+// ---- determinism: updated_at, triggers, and a content fingerprint ---------
+// updated_at is the column most likely to quietly break reproducibility,
+// because the schema's BEFORE UPDATE triggers own it and the upsert path is an
+// UPDATE. Assert the database holds the timestamps this run generated, not the
+// wall clock, and fold updated_at into the fingerprint so the idempotency
+// evidence actually covers it.
+const maxOf = (xs, f) => Math.max(...xs.map((x) => f(x).getTime()));
+const expectedUpdatedAt = {
+  customers: maxOf(data.customers, (c) => c.updatedAt),
+  orders: maxOf(data.orders, (o) => o.updatedAt),
+  products: CATALOGUE_EPOCH.getTime(),
+};
+const actualUpdatedAt = (await rows(sql`
+  select 'customers' as t, max(updated_at) as max_at from customers
+  union all select 'orders', max(updated_at) from orders
+  union all select 'products', max(updated_at) from products
+`)).reduce((acc, r) => ({ ...acc, [r.t]: new Date(r.max_at).getTime() }), {});
+console.log('\nmax(updated_at) — generated vs stored (the trigger-contamination check):');
+console.log(table(
+  ['Table', 'Generated', 'Stored', 'Match'],
+  Object.keys(expectedUpdatedAt).map((t) => [
+    t,
+    new Date(expectedUpdatedAt[t]).toISOString(),
+    new Date(actualUpdatedAt[t]).toISOString(),
+    expectedUpdatedAt[t] === actualUpdatedAt[t] ? 'ok' : 'DRIFTED',
+  ]),
+));
+
+const triggerState = await rows(sql`
+  select c.relname as tbl, t.tgname, t.tgenabled::text as enabled
+  from pg_trigger t join pg_class c on c.oid = t.tgrelid
+  where t.tgname in ('customers_set_updated_at', 'orders_set_updated_at', 'products_set_updated_at')
+  order by 1
+`);
+console.log(`set_updated_at triggers restored: ${triggerState.map((r) => `${r.tbl}=${r.enabled === 'O' ? 'enabled' : r.enabled}`).join(', ')}`);
+
+const fingerprint = (await rows(sql`
+  select
+    (select md5(string_agg(id::text || coalesce(email,'') || coalesce(phone_e164,'') || created_at::text || updated_at::text, ',' order by shopify_customer_id)) from customers) as customers,
+    (select md5(string_agg(id::text || total || subtotal || processed_at::text || created_at::text || updated_at::text, ',' order by shopify_order_id)) from orders) as orders,
+    (select md5(string_agg(id::text || qty || price, ',' order by id)) from order_items) as order_items,
+    (select md5(string_agg(id::text || status::text || coalesce(source,'') || updated_at::text, ',' order by id)) from consents) as consents,
+    (select md5(string_agg(id::text || type || occurred_at::text, ',' order by id)) from events) as events,
+    (select md5(string_agg(id::text || handle || price || created_at::text || updated_at::text, ',' order by shopify_product_id)) from products) as products
+`))[0];
+console.log('\nContent fingerprints (md5, updated_at included — identical across re-runs):');
+console.log(table(['Table', 'Fingerprint'], Object.entries(fingerprint).map(([k, v]) => [k, v])));
+
 // ---- assertions -----------------------------------------------------------
 const problems = [];
+if (phone.malformed) problems.push(`${phone.malformed} of ${phone.with_phone} phone numbers do not match ${PHONE_PATTERN} — unusable as the WhatsApp join key (PRD-01 §4.1)`);
+if (phone.distinct_phones !== phone.with_phone) problems.push(`phone numbers are not unique: ${phone.distinct_phones} distinct across ${phone.with_phone} rows`);
+for (const [t, want] of Object.entries(expectedUpdatedAt)) {
+  if (actualUpdatedAt[t] !== want) {
+    problems.push(`${t}.updated_at drifted from the generated value (stored ${new Date(actualUpdatedAt[t]).toISOString()}, generated ${new Date(want).toISOString()}) — the set_updated_at trigger fired during the upsert`);
+  }
+}
+for (const r of triggerState) {
+  if (r.enabled !== 'O') problems.push(`trigger ${r.tgname} was left ${r.enabled} instead of enabled`);
+}
 // Upsert-by-primary-key is exact only for the generator that produced those
 // keys. If the generation logic changed (different basket sizes, different
 // event mix), the previous run's surplus rows are still sitting there — the
