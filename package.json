@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "seed": "node --import tsx scripts/seed-supabase.mjs"
+    "seed": "node --import tsx scripts/seed-supabase.mjs",
+    "score": "node --import tsx scripts/recompute-scores.mjs"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
