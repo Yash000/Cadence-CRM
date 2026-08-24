@@ -142,7 +142,7 @@
       "isProtagonist": false,
       "emailConsent": "PENDING",
       "smsConsent": null,
-      "medianGapDays": 27,
+      "medianGapDays": 28.5,
       "lastOrderDaysAgo": 15,
       "orders": [
         {
@@ -610,7 +610,7 @@
       "isProtagonist": false,
       "emailConsent": "SUBSCRIBED",
       "smsConsent": "UNSUBSCRIBED",
-      "medianGapDays": 29,
+      "medianGapDays": 34,
       "lastOrderDaysAgo": 34,
       "orders": [
         {
@@ -945,7 +945,7 @@
       "isProtagonist": false,
       "emailConsent": null,
       "smsConsent": "PENDING",
-      "medianGapDays": 34,
+      "medianGapDays": 35.5,
       "lastOrderDaysAgo": 25,
       "orders": [
         {
@@ -1231,7 +1231,7 @@
       "isProtagonist": false,
       "emailConsent": "UNSUBSCRIBED",
       "smsConsent": "SUBSCRIBED",
-      "medianGapDays": 28,
+      "medianGapDays": 30,
       "lastOrderDaysAgo": 27,
       "orders": [
         {
@@ -1674,7 +1674,7 @@
       "isProtagonist": true,
       "emailConsent": "SUBSCRIBED",
       "smsConsent": "UNSUBSCRIBED",
-      "medianGapDays": 40,
+      "medianGapDays": 49,
       "lastOrderDaysAgo": 140,
       "orders": [
         {
@@ -1750,7 +1750,7 @@
       "isProtagonist": false,
       "emailConsent": "PENDING",
       "smsConsent": null,
-      "medianGapDays": 30,
+      "medianGapDays": 45,
       "lastOrderDaysAgo": 126,
       "orders": [
         {
@@ -1995,7 +1995,7 @@
       "isProtagonist": false,
       "emailConsent": null,
       "smsConsent": "PENDING",
-      "medianGapDays": 52,
+      "medianGapDays": 54,
       "lastOrderDaysAgo": 129,
       "orders": [
         {
@@ -2305,7 +2305,7 @@
       "isProtagonist": false,
       "emailConsent": "UNSUBSCRIBED",
       "smsConsent": "SUBSCRIBED",
-      "medianGapDays": 42,
+      "medianGapDays": 43,
       "lastOrderDaysAgo": 115,
       "orders": [
         {
@@ -2541,7 +2541,7 @@
       "isProtagonist": false,
       "emailConsent": "PENDING",
       "smsConsent": null,
-      "medianGapDays": 53,
+      "medianGapDays": 56.5,
       "lastOrderDaysAgo": 414,
       "orders": [
         {
@@ -2680,7 +2680,7 @@
       "isProtagonist": false,
       "emailConsent": null,
       "smsConsent": "PENDING",
-      "medianGapDays": 28,
+      "medianGapDays": 41,
       "lastOrderDaysAgo": 197,
       "orders": [
         {

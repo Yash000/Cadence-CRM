@@ -145,10 +145,21 @@ function buildOrdersForCustomer(seg, orderCount, segIndex) {
   }
   offsetsFromNow.reverse(); // oldest first (daysAgo descending as time moves forward)
   const gaps = offsetsFromNow.slice(1).map((v, i) => offsetsFromNow[i] - v); // positive day counts between orders
-  const medianGap = gaps.length
-    ? [...gaps].sort((a, b) => a - b)[Math.floor((gaps.length - 1) / 2)]
-    : null;
+  const medianGap = median(gaps);
   return { offsetsFromNow, medianGap };
+}
+
+// Proper median: average the two middle values for an even-length array.
+// (Review finding: the previous `sort()[Math.floor((n-1)/2)]` always picks
+// the LOWER of the two middle values for even n — e.g. gaps [58,40] sorted
+// to [40,58], index floor(1/2)=0 -> 40, when the true median is (40+58)/2
+// = 49. Churn scoring compares a customer's current gap against their own
+// median, so a systematically-low stored median matters.)
+function median(arr) {
+  if (!arr.length) return null;
+  const s = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
 function pickLineItems(rngBiasSerum) {

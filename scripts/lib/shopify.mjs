@@ -43,8 +43,10 @@ export function gql(query, variables = {}) {
     );
   } catch (e) {
     const blob = `${e.stdout || ''}${e.stderr || ''}`;
-    if (/THROTTLED|exceeded|rate limit|too many/i.test(blob)) {
-      const err = new Error('THROTTLED');
+    // Same narrow-match discipline as below: a transport-level 429/THROTTLED
+    // code is the only thing that should trigger a backoff retry here.
+    if (/"code"\s*:\s*"THROTTLED"|HTTP 429|too many attempts\.?\s*please try again later/i.test(blob)) {
+      const err = new Error(blob.replace(/\s+/g, ' ').slice(-400) || 'throttled');
       err.throttled = true;
       throw err;
     }
@@ -61,37 +63,60 @@ export function gql(query, variables = {}) {
     throw new Error(`unparseable response: ${raw.slice(start, start + 300)}`);
   }
 
-  const THROTTLE_RE = /THROTTLED|exceeded|rate limit|too many|too many attempts|try again later/i;
+  const err = classifyGqlResponse(data);
+  if (err) throw err;
 
+  return data;
+}
+
+// Literal phrase Shopify actually returns for orderCreate's per-minute
+// business-logic cap — confirmed live: 22 real throttle events during the
+// seed run, message verbatim "Too many attempts. Please try again later."
+// every time. NOT one of OrderCreateUserErrorCode's declared enum values
+// (INVALID, FULFILLMENT_SERVICE_INVALID, INVENTORY_CLAIM_FAILED,
+// PROCESSED_AT_INVALID, TAX_LINE_RATE_MISSING, REDUNDANT_CUSTOMER_FIELDS,
+// SHOP_DORMANT — checked via __type introspection against this store), so
+// there is no structured code to key off for this specific userError.
+// Match the literal observed phrase only — not loose single words
+// ("exceeded", "too many") that also appear in ordinary validation errors
+// ("maximum quantity exceeded", "too many line items") and would falsely
+// retry-then-discard those for ~2.7 minutes before overwriting the real
+// message with the generic string "THROTTLED".
+export const THROTTLE_PHRASE_RE = /too many attempts\.?\s*please try again later/i;
+
+/**
+ * Inspect a parsed GraphQL response for a real error (top-level `errors[]`
+ * or any mutation's `userErrors[]`) and classify it. Returns an Error with
+ * `.throttled = true` (and the ORIGINAL message preserved, never replaced
+ * with a generic "THROTTLED" string) if the store is genuinely rate
+ * limiting; returns an ordinary Error for any other failure; returns null
+ * if there is no error at all. Exported standalone (no network/CLI
+ * dependency) so the classification logic is directly unit-testable.
+ */
+export function classifyGqlResponse(data) {
   if (data.errors?.length) {
     const msg = data.errors.map(e => e.message).join('; ');
-    if (THROTTLE_RE.test(msg)) {
-      const err = new Error('THROTTLED');
-      err.throttled = true;
-      throw err;
-    }
-    throw new Error(msg);
+    // Top-level GraphQL cost throttling has a documented structured shape:
+    // errors: [{ message, extensions: { code: "THROTTLED" } }]. Prefer this
+    // over text matching wherever it's present.
+    const structuredThrottle = data.errors.some(e => e.extensions?.code === 'THROTTLED');
+    const err = new Error(msg); // never discard the real text
+    if (structuredThrottle || THROTTLE_PHRASE_RE.test(msg)) err.throttled = true;
+    return err;
   }
 
   // Surface userErrors from any mutation payload rather than silently succeeding.
-  // NOTE: Shopify reports the per-minute order-create cap as a normal 200 response
-  // with a userErrors entry ("Too many attempts. Please try again later."), not as
-  // a transport-level failure — so this path must also be checked for throttling,
-  // or gqlWithBackoff never sees `.throttled` and the run dies at the first cap hit.
   for (const [field, payload] of Object.entries(data)) {
     const ue = payload?.userErrors;
     if (Array.isArray(ue) && ue.length) {
       const msg = `${field}: ${ue.map(u => `${(u.field || []).join('.')} ${u.message}`).join('; ')}`;
-      if (THROTTLE_RE.test(msg)) {
-        const err = new Error('THROTTLED');
-        err.throttled = true;
-        throw err;
-      }
-      throw new Error(msg);
+      const err = new Error(msg); // never discard the real text
+      if (THROTTLE_PHRASE_RE.test(msg)) err.throttled = true;
+      return err;
     }
   }
 
-  return data;
+  return null;
 }
 
 /** Retry wrapper for the 5 orders/min cap measured on dev stores (PRD-01 §5.1). */
