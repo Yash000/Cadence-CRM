@@ -418,9 +418,11 @@ export const aiLogs = pgTable(
     outcome: text('outcome').notNull().default('success'),
     generatedSql: text('generated_sql'),
     error: text('error'),
-    // No FK in the live DB (ai_logs.customer_id has no REFERENCES constraint) —
-    // deliberately loose so logging never fails on a stale/deleted customer.
-    customerId: uuid('customer_id'),
+    // FK confirmed live via pg_constraint (ai_logs_customer_id_fkey): ON DELETE
+    // SET NULL, same pattern as every other customer_id FK in this schema —
+    // a deleted customer nulls out past logs rather than blocking the delete
+    // or orphaning the log row.
+    customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'set null' }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().default(sql`now()`),
   },
   (t) => [
