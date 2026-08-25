@@ -74,7 +74,14 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   // §F1.2: reject unverified requests with 401.
+  //
+  // processed_at is stamped even though nothing was processed: this delivery is
+  // finished with, not queued. §F1.7's sync health page reads unprocessed rows
+  // as backlog, and leaving every rejected delivery at processed_at = NULL
+  // would show a permanently growing pending count that never drains. The
+  // rejection itself is not lost — it is in `error`, with hmac_valid = false.
   if (!hmacValid) {
+    await markWebhookProcessed(logId, rejection);
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 

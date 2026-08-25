@@ -31,7 +31,7 @@ import { after as afterAll, before, describe, it } from 'node:test';
 // MUST come before ../db/index, which reads DATABASE_URL at import time.
 import { HAS_DATABASE_URL, HAS_SHOPIFY_SECRET } from './env';
 
-import { eq, inArray, like, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNull, like, or, sql } from 'drizzle-orm';
 import { db, schema } from '../db/index';
 import { signShopifyBody } from '../lib/shopify-webhook';
 
@@ -189,6 +189,23 @@ describe('POST /api/webhooks/shopify', { skip: skipReason }, () => {
   });
 
   afterAll(async () => {
+    // Background processing happens in `after()`, i.e. AFTER the response has
+    // gone out. Tearing down without waiting lets a still-running upsert
+    // re-create a customer that cleanup() has already deleted — which is
+    // exactly what left one row behind the first time this suite ran.
+    if (createdLogIds.size > 0) {
+      await waitFor(
+        async () => {
+          const pending = await db
+            .select({ id: webhookLog.id })
+            .from(webhookLog)
+            .where(and(inArray(webhookLog.id, [...createdLogIds]), isNull(webhookLog.processedAt)));
+          return pending.length === 0 ? true : null;
+        },
+        20_000,
+        'all background webhook processing to finish before teardown',
+      );
+    }
     stopServer();
     await cleanup();
   });
@@ -225,6 +242,14 @@ describe('POST /api/webhooks/shopify', { skip: skipReason }, () => {
     );
 
     assert.equal(await countOrders(), 0, 'a rejected delivery must not be processed');
+
+    // The rejection is FINISHED, not queued. §F1.7's sync health page reads
+    // unprocessed rows as backlog, so a rejected delivery left at
+    // processed_at = NULL would sit in a pending count that never drains.
+    assert.ok(
+      logged.processedAt instanceof Date,
+      'a 401 must still stamp processed_at — it is done with, not waiting',
+    );
   });
 
   it('rejects a tampered body carrying an otherwise-valid signature', async () => {

@@ -31,8 +31,13 @@ import { HAS_DATABASE_URL } from './env';
 
 import { and, eq, inArray, like, or, sql } from 'drizzle-orm';
 import { db, schema } from '../db/index';
-import { parsePayload, webhookLogPayload } from '../lib/shopify-webhook';
-import { logWebhook, markWebhookProcessed, processWebhook } from '../lib/shopify-sync';
+import { buildCustomerInput, parsePayload, webhookLogPayload } from '../lib/shopify-webhook';
+import {
+  logWebhook,
+  markWebhookProcessed,
+  processWebhook,
+  upsertCustomer,
+} from '../lib/shopify-sync';
 
 const { consents, customers, events, orderItems, orders, webhookLog } = schema;
 
@@ -47,6 +52,97 @@ function fixturePayload(name: string): Record<string, unknown> {
   const parsed = parsePayload(raw);
   assert.equal(parsed.ok, true, `${name} should parse`);
   return (parsed as { ok: true; value: Record<string, unknown> }).value;
+}
+
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+/**
+ * Run `body` in a transaction and then HOLD that transaction open, uncommitted,
+ * until `commit()` is called.
+ *
+ * This is what turns the concurrency tests below from a scheduling coin-flip
+ * into a deterministic race: the second writer is guaranteed to meet a
+ * conflicting row that exists but has not committed, which is exactly the
+ * state the loser of a real retry storm sees.
+ *
+ *   const a = heldTransaction((tx) => upsertCustomer(tx, input));
+ *   await a.reached;   // A has written, and is now holding
+ *   ... start B, which will block on the unique index ...
+ *   a.commit();        // let A commit; B unblocks
+ *   await Promise.all([a.done, b]);
+ */
+function heldTransaction<T>(body: (tx: Tx) => Promise<T>): {
+  reached: Promise<T>;
+  commit: () => void;
+  done: Promise<T>;
+} {
+  let signalReached!: (value: T) => void;
+  let signalFailed!: (err: unknown) => void;
+  const reached = new Promise<T>((resolve, reject) => {
+    signalReached = resolve;
+    signalFailed = reject;
+  });
+
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+
+  const done = db.transaction(async (tx) => {
+    let value: T;
+    try {
+      value = await body(tx);
+    } catch (err) {
+      signalFailed(err);
+      throw err;
+    }
+    signalReached(value);
+    await gate;
+    return value;
+  });
+  // The caller awaits `done`; this only stops Node warning about an
+  // unhandled rejection in the window before it does.
+  done.catch(() => {});
+
+  return { reached, commit: release, done };
+}
+
+/**
+ * Force the pool to open `n` real connections.
+ *
+ * Without this the race tests pass vacuously: opening a Postgres connection
+ * through the Supabase pooler over WARP takes ~500ms, so the second writer
+ * would not even reach its `BEGIN` until after the first had committed and
+ * freed a connection — no overlap, no race, and a green test proving nothing.
+ * `pg_sleep` keeps them all busy at once so the pool cannot satisfy them with
+ * a single connection.
+ */
+async function warmPool(n = 4): Promise<void> {
+  await Promise.all(Array.from({ length: n }, () => db.execute(sql`select pg_sleep(0.25)`)));
+}
+
+/**
+ * Block until some backend is actually waiting on a lock.
+ *
+ * This is what makes the race deterministic rather than a timing guess: the
+ * held transaction is committed only once Postgres itself confirms a second
+ * backend is blocked behind it. Returns false on timeout, and the callers
+ * assert on that — a race that never happened must fail the test, not pass it.
+ */
+async function waitUntilBlockedOnLock(timeoutMs = 20_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const res = await db.execute(sql`
+      select count(*)::int as n
+        from pg_stat_activity
+       where wait_event_type = 'Lock'
+         and state = 'active'
+         and pid <> pg_backend_pid()
+    `);
+    if (Number((res.rows[0] as { n: number }).n) > 0) return true;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  return false;
 }
 
 async function cleanup(): Promise<void> {
@@ -299,6 +395,136 @@ describe('webhook sync against Postgres', { skip: HAS_DATABASE_URL ? false : 'DA
     const [after] = await db.select().from(customers).where(eq(customers.id, row.id));
     assert.equal(after.city, 'Pune');
     assert.equal(after.acceptsMarketing, false);
+  });
+
+  // -------------------------------------------------------------------------
+  // Concurrent retries (§F1.4) — the races ON CONFLICT exists for
+  // -------------------------------------------------------------------------
+
+  it('survives two concurrent deliveries carrying the same phone with no Shopify id', async () => {
+    await cleanup();
+
+    // A guest checkout: Shopify sends no `customer` node, so there is no
+    // shopify_customer_id — only a phone and an email. NULL never conflicts,
+    // so shopify_customer_id cannot arbitrate this insert. phone_e164 must,
+    // or the second writer aborts its transaction on customers_phone_e164_key.
+    const input = buildCustomerInput(null, {
+      phone: '+91 99000 00204',
+      email: 'guest.checkout@cadence-webhook-test.invalid',
+    });
+    assert.equal(input.shopifyCustomerId, null, 'this is the NULL-id shape');
+    assert.equal(input.phoneE164, '+919900000204');
+
+    await warmPool();
+
+    // Writer A inserts, then HOLDS its transaction open, uncommitted. That is
+    // what makes this deterministic rather than a scheduling coin-flip: B is
+    // guaranteed to meet an uncommitted conflicting row.
+    const a = heldTransaction((tx) => upsertCustomer(tx, input));
+    const idA = await a.reached;
+    assert.ok(idA);
+
+    // Writer B starts while A is still uncommitted. Its resolve finds nothing
+    // (READ COMMITTED cannot see A's row), so it inserts — and blocks on the
+    // unique index, waiting for A.
+    const b = db.transaction(async (tx) => {
+      const id = await upsertCustomer(tx, input);
+      // Proof the transaction is NOT aborted. A 23505 that escaped would have
+      // poisoned it, and this next statement would fail with "current
+      // transaction is aborted, commands ignored until end of transaction
+      // block" rather than returning a count.
+      const [live] = await tx
+        .select({ n: sql<number>`count(*)::int` })
+        .from(customers)
+        .where(eq(customers.phoneE164, '+919900000204'));
+      assert.equal(live.n, 1, 'transaction still usable after the conflicting insert');
+      return id;
+    });
+
+    // Commit A only once Postgres confirms B is genuinely blocked behind it.
+    // Asserting this is the difference between testing the race and testing
+    // nothing: if B never overlapped, the rest of this test would pass on a
+    // plain sequential insert and prove nothing about concurrency.
+    assert.equal(
+      await waitUntilBlockedOnLock(),
+      true,
+      'writer B never blocked on the unique index — the race did not happen',
+    );
+    a.commit();
+
+    const [resolvedA, resolvedB] = await Promise.all([a.done, b]);
+    assert.equal(resolvedB, resolvedA, 'the loser of the race lands on the winner’s row');
+
+    const rows = await db
+      .select({ id: customers.id })
+      .from(customers)
+      .where(eq(customers.phoneE164, '+919900000204'));
+    assert.equal(rows.length, 1, 'one customer, not two');
+  });
+
+  it('recovers via the savepoint when another writer takes the phone mid-insert', async () => {
+    await cleanup();
+
+    await warmPool();
+
+    // The one race the arbiter cannot cover: a payload carrying BOTH a Shopify
+    // id and a phone. The arbiter is the Shopify id, so a phone stolen between
+    // resolve and insert raises 23505 instead of taking the DO UPDATE path.
+    const a = heldTransaction(async (tx) => {
+      const [row] = await tx
+        .insert(customers)
+        .values({
+          shopifyCustomerId: 9900000000205,
+          phoneE164: '+919900000205',
+          email: 'racer.a@cadence-webhook-test.invalid',
+        })
+        .returning({ id: customers.id });
+      return row.id;
+    });
+    const idA = await a.reached;
+
+    // Writer B is a webhook for a DIFFERENT Shopify customer reporting the
+    // same phone number.
+    const input = buildCustomerInput({
+      id: 9900000000206,
+      phone: '+919900000205',
+      email: 'racer.b@cadence-webhook-test.invalid',
+      first_name: 'Racer',
+    });
+    assert.equal(input.shopifyCustomerId, 9900000000206);
+
+    const b = db.transaction(async (tx) => {
+      const id = await upsertCustomer(tx, input);
+      const [live] = await tx
+        .select({ n: sql<number>`count(*)::int` })
+        .from(customers)
+        .where(eq(customers.phoneE164, '+919900000205'));
+      assert.equal(live.n, 1, 'outer transaction survived the 23505 via the savepoint');
+      return id;
+    });
+
+    assert.equal(
+      await waitUntilBlockedOnLock(),
+      true,
+      'writer B never blocked on the phone index — the race did not happen',
+    );
+    a.commit();
+
+    const [resolvedA, resolvedB] = await Promise.all([a.done, b]);
+    assert.equal(resolvedA, idA);
+    assert.equal(resolvedB, resolvedA, 're-resolved onto the row that won the phone');
+
+    const rows = await db
+      .select()
+      .from(customers)
+      .where(eq(customers.phoneE164, '+919900000205'));
+    assert.equal(rows.length, 1, 'one customer, not two');
+    assert.equal(
+      rows[0].shopifyCustomerId,
+      9900000000205,
+      'the winner keeps its own Shopify id — coalesce never overwrites a set one',
+    );
+    assert.equal(rows[0].firstName, 'Racer', 'but the loser’s payload still updated the row');
   });
 
   // -------------------------------------------------------------------------

@@ -131,6 +131,144 @@ export async function resolveCustomerId(
 // ---------------------------------------------------------------------------
 
 /**
+ * Is this a Postgres unique-violation (SQLSTATE 23505)?
+ *
+ * Drizzle wraps driver errors, so the pg error with the `code` is somewhere
+ * down the `cause` chain rather than on the error itself.
+ */
+export function isUniqueViolation(err: unknown): boolean {
+  let cursor: unknown = err;
+  for (let depth = 0; cursor !== null && cursor !== undefined && depth < 8; depth += 1) {
+    if (typeof cursor === 'object' && (cursor as { code?: unknown }).code === '23505') return true;
+    cursor = (cursor as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
+/**
+ * Update an already-identified customer.
+ *
+ * Only values the payload actually carries are written: a webhook that omits a
+ * field must not blank out data another source already filled in.
+ * `shopify_customer_id` is written only when it is currently null, because
+ * overwriting a different id would collide with its UNIQUE index.
+ */
+async function updateCustomer(
+  tx: Transaction,
+  customerId: string,
+  input: CustomerInput,
+): Promise<void> {
+  const patch: Record<string, unknown> = { updatedAt: new Date() };
+  if (input.email) patch.email = input.email;
+  if (input.phoneE164) patch.phoneE164 = input.phoneE164;
+  if (input.firstName) patch.firstName = input.firstName;
+  if (input.lastName) patch.lastName = input.lastName;
+  if (input.city) patch.city = input.city;
+  if (input.state) patch.state = input.state;
+  if (input.country) patch.country = input.country;
+  patch.acceptsMarketing = input.acceptsMarketing;
+
+  if (input.shopifyCustomerId !== null) {
+    patch.shopifyCustomerId = sql`coalesce(${customers.shopifyCustomerId}, ${input.shopifyCustomerId})`;
+  }
+
+  await tx.update(customers).set(patch).where(eq(customers.id, customerId));
+}
+
+const CUSTOMER_CONFLICT_SET = {
+  email: sql`coalesce(excluded.email, ${customers.email})`,
+  phoneE164: sql`coalesce(excluded.phone_e164, ${customers.phoneE164})`,
+  firstName: sql`coalesce(excluded.first_name, ${customers.firstName})`,
+  lastName: sql`coalesce(excluded.last_name, ${customers.lastName})`,
+  city: sql`coalesce(excluded.city, ${customers.city})`,
+  state: sql`coalesce(excluded.state, ${customers.state})`,
+  country: sql`coalesce(excluded.country, ${customers.country})`,
+  acceptsMarketing: sql`excluded.accepts_marketing`,
+};
+
+/**
+ * Insert a new customer, arbitrating on a UNIQUE index that can actually catch
+ * a concurrent duplicate.
+ *
+ * `customers` has TWO unique indexes that matter here — `shopify_customer_id`
+ * and `phone_e164` — and Postgres accepts only one arbiter per statement, so
+ * the arbiter has to be chosen to match the payload:
+ *
+ * - Shopify id present: arbitrate on it. If the same delivery races itself,
+ *   the loser's DO UPDATE rewrites the winner's row with identical values, so
+ *   the phone index is never violated either.
+ * - Shopify id NULL (an email/phone-only payload) but a phone present:
+ *   arbitrate on `phone_e164`. NULL never conflicts, so arbitrating on the
+ *   Shopify id here would catch nothing and the second concurrent insert would
+ *   abort the transaction on `customers_phone_e164_key`.
+ * - Neither: email only. `email` is deliberately NOT unique (one household can
+ *   share an address), so there is no index to arbitrate on and none is
+ *   wanted — a plain insert is correct.
+ */
+async function insertCustomer(tx: Transaction, input: CustomerInput): Promise<string> {
+  const values = {
+    shopifyCustomerId: input.shopifyCustomerId,
+    email: input.email,
+    phoneE164: input.phoneE164,
+    firstName: input.firstName,
+    lastName: input.lastName,
+    city: input.city,
+    state: input.state,
+    country: input.country ?? 'IN',
+    acceptsMarketing: input.acceptsMarketing,
+  };
+  const set = { ...CUSTOMER_CONFLICT_SET, updatedAt: new Date() };
+
+  if (input.shopifyCustomerId !== null) {
+    const [row] = await tx
+      .insert(customers)
+      .values(values)
+      .onConflictDoUpdate({ target: customers.shopifyCustomerId, set })
+      .returning({ id: customers.id });
+    return row.id;
+  }
+
+  if (input.phoneE164) {
+    const [row] = await tx
+      .insert(customers)
+      .values(values)
+      .onConflictDoUpdate({ target: customers.phoneE164, set })
+      .returning({ id: customers.id });
+    return row.id;
+  }
+
+  const [row] = await tx.insert(customers).values(values).returning({ id: customers.id });
+  return row.id;
+}
+
+/**
+ * Insert, with a backstop for the one race the arbiter cannot cover: a payload
+ * carrying BOTH a Shopify id and a phone, where some other writer takes that
+ * phone between our resolve and our insert. The arbiter is the Shopify id, so
+ * the phone index raises 23505 instead.
+ *
+ * The insert runs inside a SAVEPOINT (drizzle's nested transaction) precisely
+ * so that failure does not poison the outer transaction — a 23505 marks a
+ * Postgres transaction as aborted, and every later statement in it would fail
+ * with "current transaction is aborted". Rolling back to the savepoint leaves
+ * the outer transaction usable, and the customer is then re-resolved: whoever
+ * won the race has committed a row we can find and update.
+ */
+async function insertCustomerRaceSafe(tx: Transaction, input: CustomerInput): Promise<string> {
+  try {
+    return await tx.transaction((sp) => insertCustomer(sp, input));
+  } catch (err) {
+    if (!isUniqueViolation(err)) throw err;
+
+    const raced = await resolveCustomerId(tx, input);
+    if (!raced) throw err;
+
+    await updateCustomer(tx, raced, input);
+    return raced;
+  }
+}
+
+/**
  * Resolve-then-write a customer. Returns null when the payload carries no
  * identifying information at all (no Shopify id, no phone, no email) — there
  * is nothing to key a row on and inventing one would break idempotency.
@@ -143,69 +281,17 @@ export async function upsertCustomer(
     return null;
   }
 
+  // Resolve first (phone -> email -> Shopify id), which is what makes
+  // SEQUENTIAL retries converge. The ON CONFLICT arbiter below is what makes
+  // CONCURRENT retries converge — a retry storm is exactly when both matter.
   const existingId = await resolveCustomerId(tx, input);
   let customerId: string;
 
   if (existingId) {
-    // Only overwrite with values the payload actually carries: a webhook that
-    // omits a field must not blank out data another source already filled in.
-    // shopify_customer_id is written only when it is currently null, because
-    // overwriting a different id would collide with its UNIQUE index.
-    const patch: Record<string, unknown> = { updatedAt: new Date() };
-    if (input.email) patch.email = input.email;
-    if (input.phoneE164) patch.phoneE164 = input.phoneE164;
-    if (input.firstName) patch.firstName = input.firstName;
-    if (input.lastName) patch.lastName = input.lastName;
-    if (input.city) patch.city = input.city;
-    if (input.state) patch.state = input.state;
-    if (input.country) patch.country = input.country;
-    patch.acceptsMarketing = input.acceptsMarketing;
-
-    if (input.shopifyCustomerId !== null) {
-      await tx
-        .update(customers)
-        .set({
-          ...patch,
-          shopifyCustomerId: sql`coalesce(${customers.shopifyCustomerId}, ${input.shopifyCustomerId})`,
-        })
-        .where(eq(customers.id, existingId));
-    } else {
-      await tx.update(customers).set(patch).where(eq(customers.id, existingId));
-    }
+    await updateCustomer(tx, existingId, input);
     customerId = existingId;
   } else {
-    // ON CONFLICT on the Shopify id rather than a prior existence check: two
-    // concurrent retries of the same delivery both reach here, and the unique
-    // index is the only thing that can arbitrate between them correctly.
-    const [row] = await tx
-      .insert(customers)
-      .values({
-        shopifyCustomerId: input.shopifyCustomerId,
-        email: input.email,
-        phoneE164: input.phoneE164,
-        firstName: input.firstName,
-        lastName: input.lastName,
-        city: input.city,
-        state: input.state,
-        country: input.country ?? 'IN',
-        acceptsMarketing: input.acceptsMarketing,
-      })
-      .onConflictDoUpdate({
-        target: customers.shopifyCustomerId,
-        set: {
-          email: sql`coalesce(excluded.email, ${customers.email})`,
-          phoneE164: sql`coalesce(excluded.phone_e164, ${customers.phoneE164})`,
-          firstName: sql`coalesce(excluded.first_name, ${customers.firstName})`,
-          lastName: sql`coalesce(excluded.last_name, ${customers.lastName})`,
-          city: sql`coalesce(excluded.city, ${customers.city})`,
-          state: sql`coalesce(excluded.state, ${customers.state})`,
-          country: sql`coalesce(excluded.country, ${customers.country})`,
-          acceptsMarketing: sql`excluded.accepts_marketing`,
-          updatedAt: new Date(),
-        },
-      })
-      .returning({ id: customers.id });
-    customerId = row.id;
+    customerId = await insertCustomerRaceSafe(tx, input);
   }
 
   for (const consent of input.consents) {
