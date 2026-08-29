@@ -171,9 +171,8 @@ export function AskConsole() {
                 ANSWER
               </div>
               <div
-                className={`text-[13px] leading-relaxed ${
-                  result.outcome === 'success' ? '' : 'text-warn'
-                }`}
+                className={`text-[13px] leading-relaxed ${result.outcome === 'success' ? '' : 'text-warn'
+                  }`}
               >
                 {result.answer}
               </div>
@@ -221,9 +220,8 @@ export function AskConsole() {
                       {result.columns.map((c) => (
                         <th
                           key={c}
-                          className={`border-b border-hairline px-3 py-1.75 font-mono text-[9.5px] font-normal tracking-[0.09em] text-muted-foreground ${
-                            isNumericColumn(c, result.rows) ? 'text-right' : 'text-left'
-                          }`}
+                          className={`border-b border-hairline px-3 py-1.75 font-mono text-[9.5px] font-normal tracking-[0.09em] text-muted-foreground ${isNumericColumn(c, result.rows) ? 'text-right' : 'text-left'
+                            }`}
                         >
                           {c.toUpperCase()}
                         </th>
@@ -236,9 +234,8 @@ export function AskConsole() {
                         {result.columns.map((c) => (
                           <td
                             key={c}
-                            className={`px-3 py-1.5 align-top ${
-                              isNumericColumn(c, result.rows) ? 'text-right font-mono text-[11.5px]' : ''
-                            }`}
+                            className={`px-3 py-1.5 align-top ${isNumericColumn(c, result.rows) ? 'text-right font-mono text-[11.5px]' : ''
+                              }`}
                           >
                             {renderCell(c, row[c])}
                           </td>

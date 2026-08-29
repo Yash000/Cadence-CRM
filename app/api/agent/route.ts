@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ask, MAX_QUESTION_LENGTH } from '../../../lib/agent/ask';
+import { checkRateLimit, clientKey, RATE_LIMIT } from '../../../lib/agent/rate-limit';
 
 // Node runtime: the agent uses the `pg` driver. Never cached — every question
 // is a live query, and the underlying data changes with every webhook.
@@ -19,6 +20,17 @@ const RequestSchema = z.object({
 });
 
 export async function POST(request: Request): Promise<NextResponse> {
+  // Rate limit before anything else: the point is to spend neither an
+  // OpenRouter call nor an agent pool connection on a caller who is over the
+  // line. See lib/agent/rate-limit.ts for what this does and does not cover.
+  const limit = checkRateLimit(clientKey(request));
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: `Rate limit reached (${RATE_LIMIT} questions per minute). Try again shortly.` },
+      { status: 429, headers: { 'retry-after': String(limit.retryAfterSeconds) } },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

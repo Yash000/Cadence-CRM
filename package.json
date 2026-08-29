@@ -9,6 +9,7 @@
     "test": "node --import tsx --test --test-concurrency=1 tests/*.test.ts"
   },
   "dependencies": {
+    "@ai-sdk/react": "^4.0.87",
     "@base-ui/react": "^1.7.0",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "ai": "^7.0.84",

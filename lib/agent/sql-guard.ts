@@ -15,11 +15,18 @@
 // role. If you find yourself relaxing a rule below to make a query work, the
 // answer is that the agent cannot answer that question.
 //
+// The relation check used to be a regex that only looked at the identifier
+// immediately after FROM/JOIN. That silently ignored relations 2..n of a
+// comma-separated FROM list, so `select * from v_customer_360, customers`
+// passed the guard (review of Task 8). Postgres refused it — the layering did
+// its job — but the guard's own claim was false, so the check is now a real
+// tokeniser that walks every item in every FROM list. See checkFromList below.
+//
 // Deliberately no dependency on `server-only`, `pg` or any environment
 // variable: this module is pure so tests/sql-guard.test.ts can hammer it with
 // injection attempts without a database.
 
-import { AGENT_VIEWS, KNOWN_COLUMNS } from './views';
+import { AGENT_VIEWS } from './views';
 
 export { AGENT_VIEWS };
 
@@ -58,11 +65,38 @@ const FORBIDDEN_KEYWORD_RE = new RegExp('\\b(' + FORBIDDEN_KEYWORDS.join('|') + 
 // legitimate query this costs us.
 const CATALOGUE_RE = /\bpg_|information_schema|\blo_(import|export)\b/i;
 
-// Table references: the identifier immediately after FROM or JOIN. A
-// subquery (`from (select ...)`) does not match here because the capture must
-// start with a letter or underscore — the subquery's own FROM is matched on
-// its own, which is exactly what we want.
-const TABLE_REF_RE = /\b(?:from|join)\s+("?[A-Za-z_][\w$]*"?(?:\s*\.\s*"?[\w$]+"?)*)/gi;
+// Functions that reach outside the four views wherever they appear — in the
+// select list, in a WHERE clause, anywhere. query_to_xml() takes a query as a
+// STRING, so no amount of relation checking sees the table it names; xmltable
+// and generate_series are unbounded row sources. All three reached Postgres
+// under the old regex (review of Task 8); generate_series(1,100000000) was
+// stopped only by the role's 5s statement_timeout, which is a backstop, not a
+// plan.
+const DANGEROUS_FUNCTION_RE =
+  /\b(generate_series|generate_subscripts|xmltable|query_to_xml\w*|table_to_xml\w*|schema_to_xml\w*|database_to_xml\w*|cursor_to_xml|dblink\w*|to_regclass|current_setting|set_config|txid_\w*|has_\w+_privilege)\s*\(/i;
+
+/**
+ * The only set-returning function allowed in a FROM list. The views expose
+ * array columns (collections, product_titles, discount_codes) and unnest is
+ * the only way to aggregate over them, so several few-shot examples need it.
+ */
+const FROM_FUNCTION_ALLOWLIST = new Set(['unnest']);
+
+/**
+ * Functions whose SQL syntax puts a keyword FROM inside the parentheses —
+ * `extract(month from processed_at)`, `substring(x from 1 for 3)`. That FROM
+ * introduces no relation, so it is skipped. This replaces the old heuristic of
+ * "the token after FROM is a known column name", which would have let a future
+ * table sharing a column's name through (`join segment on true`).
+ */
+const FROM_INSIDE_FUNCTION = new Set(['extract', 'substring', 'trim', 'overlay', 'position']);
+
+/** Words that end a FROM item; anything after one is a different clause. */
+const ITEM_END_WORDS = new Set([
+  'where', 'group', 'having', 'order', 'limit', 'offset', 'window', 'union',
+  'intersect', 'except', 'on', 'using', 'fetch', 'for', 'join', 'inner',
+  'left', 'right', 'full', 'cross', 'natural', 'as',
+]);
 
 // A trailing LIMIT n [OFFSET m] on the OUTER query. Anchored to the end so a
 // LIMIT inside a subquery is not mistaken for the outer one.
@@ -71,6 +105,203 @@ const TRAILING_LIMIT_RE = /\blimit\s+(\d+)(\s+offset\s+\d+)?\s*$/i;
 export type GuardResult =
   | { ok: true; sql: string }
   | { ok: false; reason: string };
+
+// ---------------------------------------------------------------------------
+// Tokeniser
+// ---------------------------------------------------------------------------
+
+type TokenKind = 'word' | 'ident' | 'num' | 'string' | 'punct';
+
+interface Token {
+  kind: TokenKind;
+  /** Lowercased text. String literals carry no text — their contents are data. */
+  text: string;
+  /** Parenthesis nesting depth. `(` and `)` both carry the OUTER depth. */
+  depth: number;
+  /** The word immediately before the nearest enclosing `(`, or null at depth 0. */
+  ctx: string | null;
+}
+
+/**
+ * Good enough for this job, and only this job: comments, semicolons and bind
+ * parameters are already rejected before it runs, so the input is one
+ * statement with no comment syntax in it. String literals are consumed whole
+ * (including '' escaping) so their contents can never be mistaken for SQL.
+ */
+function lex(sql: string): Token[] {
+  const tokens: Token[] = [];
+  const ctxStack: (string | null)[] = [];
+  const ctx = () => (ctxStack.length > 0 ? ctxStack[ctxStack.length - 1] : null);
+  let i = 0;
+  let depth = 0;
+
+  while (i < sql.length) {
+    const c = sql[i];
+
+    if (/\s/.test(c)) {
+      i++;
+      continue;
+    }
+
+    if (c === "'") {
+      i++;
+      while (i < sql.length) {
+        if (sql[i] === "'") {
+          if (sql[i + 1] === "'") {
+            i += 2;
+            continue;
+          }
+          i++;
+          break;
+        }
+        i++;
+      }
+      tokens.push({ kind: 'string', text: '', depth, ctx: ctx() });
+      continue;
+    }
+
+    if (c === '"') {
+      let j = i + 1;
+      let out = '';
+      while (j < sql.length && sql[j] !== '"') {
+        out += sql[j];
+        j++;
+      }
+      i = j + 1;
+      tokens.push({ kind: 'ident', text: out.toLowerCase(), depth, ctx: ctx() });
+      continue;
+    }
+
+    if (/[A-Za-z_]/.test(c)) {
+      let j = i;
+      while (j < sql.length && /[\w$]/.test(sql[j])) j++;
+      tokens.push({ kind: 'word', text: sql.slice(i, j).toLowerCase(), depth, ctx: ctx() });
+      i = j;
+      continue;
+    }
+
+    if (/[0-9]/.test(c)) {
+      let j = i;
+      while (j < sql.length && /[\w.]/.test(sql[j])) j++;
+      tokens.push({ kind: 'num', text: sql.slice(i, j).toLowerCase(), depth, ctx: ctx() });
+      i = j;
+      continue;
+    }
+
+    if (c === '(') {
+      const previous = tokens[tokens.length - 1];
+      tokens.push({ kind: 'punct', text: '(', depth, ctx: ctx() });
+      ctxStack.push(previous && previous.kind === 'word' ? previous.text : null);
+      depth++;
+      i++;
+      continue;
+    }
+
+    if (c === ')') {
+      depth = Math.max(0, depth - 1);
+      ctxStack.pop();
+      tokens.push({ kind: 'punct', text: ')', depth, ctx: ctx() });
+      i++;
+      continue;
+    }
+
+    tokens.push({ kind: 'punct', text: c, depth, ctx: ctx() });
+    i++;
+  }
+
+  return tokens;
+}
+
+/** Index just past the `)` matching the `(` at `open`. */
+function skipParens(tokens: Token[], open: number): number {
+  const outerDepth = tokens[open].depth;
+  for (let j = open + 1; j < tokens.length; j++) {
+    const t = tokens[j];
+    if (t.kind === 'punct' && t.text === ')' && t.depth === outerDepth) return j + 1;
+  }
+  return tokens.length;
+}
+
+/**
+ * Walk one FROM/JOIN item list from `start`, validating EVERY relation in it —
+ * including the second and later entries of a comma-separated list, which is
+ * exactly what the old regex missed.
+ *
+ * Returns a refusal reason, or null when every item is acceptable. Views that
+ * were genuinely read are added to `referenced`.
+ */
+function checkFromList(tokens: Token[], start: number, referenced: Set<string>): string | null {
+  const baseDepth = tokens[start - 1].depth;
+  let i = start;
+
+  for (;;) {
+    while (
+      i < tokens.length &&
+      tokens[i].kind === 'word' &&
+      (tokens[i].text === 'lateral' || tokens[i].text === 'only')
+    ) {
+      i++;
+    }
+
+    const token = tokens[i];
+    if (!token || token.depth < baseDepth) return null;
+
+    if (token.kind === 'punct' && token.text === '(') {
+      // A subquery or a parenthesised join. Its own FROM is a separate FROM
+      // token and is validated by the main loop on its own terms.
+      i = skipParens(tokens, i);
+    } else if (token.kind === 'word' || token.kind === 'ident') {
+      let name = token.text;
+      let j = i + 1;
+      while (
+        tokens[j]?.kind === 'punct' &&
+        tokens[j].text === '.' &&
+        (tokens[j + 1]?.kind === 'word' || tokens[j + 1]?.kind === 'ident')
+      ) {
+        name += '.' + tokens[j + 1].text;
+        j += 2;
+      }
+
+      if (tokens[j]?.kind === 'punct' && tokens[j].text === '(') {
+        // A set-returning function standing in for a relation.
+        if (!FROM_FUNCTION_ALLOWLIST.has(name)) {
+          return `"${name}(...)" is not an allowed row source; only unnest() may stand in for a relation.`;
+        }
+        i = skipParens(tokens, j);
+      } else {
+        if (!(AGENT_VIEWS as readonly string[]).includes(name)) {
+          return (
+            `"${name}" is outside the four views this agent may read ` +
+            `(${AGENT_VIEWS.join(', ')}).`
+          );
+        }
+        referenced.add(name);
+        i = j;
+      }
+    } else {
+      return 'Unexpected token in the FROM list.';
+    }
+
+    // Alias: optional AS, optional name, optional column alias list.
+    if (tokens[i]?.kind === 'word' && tokens[i].text === 'as') i++;
+    if (
+      (tokens[i]?.kind === 'word' || tokens[i]?.kind === 'ident') &&
+      !ITEM_END_WORDS.has(tokens[i].text)
+    ) {
+      i++;
+    }
+    if (tokens[i]?.kind === 'punct' && tokens[i].text === '(') i = skipParens(tokens, i);
+
+    // A comma continues the list; anything else ends it.
+    if (tokens[i]?.kind === 'punct' && tokens[i].text === ',' && tokens[i].depth >= baseDepth) {
+      i++;
+      continue;
+    }
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 /**
  * Validate model-generated SQL and return the exact string that may be
@@ -121,29 +352,42 @@ export function guardSql(raw: unknown): GuardResult {
     return { ok: false, reason: 'System catalogues and server-side file access are not available.' };
   }
 
+  const dangerous = DANGEROUS_FUNCTION_RE.exec(sql);
+  if (dangerous) {
+    return {
+      ok: false,
+      reason: `Function "${dangerous[1].toLowerCase()}()" is not available to this agent.`,
+    };
+  }
+
   if (/\blimit\s+all\b/i.test(sql)) {
     return { ok: false, reason: `LIMIT ALL is not allowed; the row limit is ${ROW_LIMIT}.` };
   }
 
-  const referenced = new Set<string>();
-  for (const match of sql.matchAll(TABLE_REF_RE)) {
-    const name = match[1].replace(/["\s]/g, '').toLowerCase();
-    if ((AGENT_VIEWS as readonly string[]).includes(name)) {
-      referenced.add(name);
-      continue;
-    }
-    // `extract(month from processed_at)` and `substring(x from y)` put a
-    // COLUMN after FROM, not a relation. A name that is a real column of one
-    // of the four views is that case — it is not a table reference and it does
-    // not count as one. Anything else is reaching outside the views.
-    if (KNOWN_COLUMNS.has(name)) continue;
+  const tokens = lex(sql);
 
-    return {
-      ok: false,
-      reason:
-        `"${name}" is outside the four views this agent may read ` +
-        `(${AGENT_VIEWS.join(', ')}).`,
-    };
+  // Every LIMIT must take a plain integer. `limit (100000)` and `limit 5e5`
+  // used to pass here and then collect a second appended LIMIT, reaching
+  // Postgres as a syntax error that was logged as `error` rather than
+  // `refused` — safe, but misclassified.
+  for (let i = 0; i < tokens.length; i++) {
+    if (tokens[i].kind !== 'word' || tokens[i].text !== 'limit') continue;
+    const argument = tokens[i + 1];
+    if (!argument || argument.kind !== 'num' || !/^\d+$/.test(argument.text)) {
+      return { ok: false, reason: 'LIMIT must be a plain integer.' };
+    }
+  }
+
+  const referenced = new Set<string>();
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token.kind !== 'word') continue;
+    if (token.text !== 'from' && token.text !== 'join') continue;
+    // `extract(month from processed_at)` — that FROM introduces no relation.
+    if (token.text === 'from' && token.ctx && FROM_INSIDE_FUNCTION.has(token.ctx)) continue;
+
+    const reason = checkFromList(tokens, i + 1, referenced);
+    if (reason) return { ok: false, reason };
   }
 
   if (referenced.size === 0) {

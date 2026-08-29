@@ -15,6 +15,13 @@ import { describe, it } from 'node:test';
 import { AGENT_VIEWS, guardSql, ROW_LIMIT } from '../lib/agent/sql-guard';
 import { KNOWN_COLUMNS, VIEW_CATALOGUE } from '../lib/agent/views';
 import { FEW_SHOT } from '../lib/agent/prompt';
+import {
+  checkRateLimit,
+  clientKey,
+  RATE_LIMIT,
+  RATE_WINDOW_MS,
+  resetRateLimits,
+} from '../lib/agent/rate-limit';
 
 function reject(sql: string): string {
   const result = guardSql(sql);
@@ -186,6 +193,75 @@ describe('guardSql — injection attempts', () => {
     assert.match(reject('begin; select 1 from v_order_facts'), /single statement/i);
   });
 
+  // Review of Task 8: the old TABLE_REF_RE only looked at the identifier
+  // immediately after FROM/JOIN, so relations 2..n of a comma list were never
+  // checked. Both payloads below passed the guard verbatim and were stopped
+  // only by Postgres ("permission denied for table customers" / "for schema
+  // auth"). They must now die at the guard as well.
+  it('refuses a blocked table hidden later in a comma-separated FROM list', () => {
+    assert.match(
+      reject('select * from v_customer_360, customers limit 5'),
+      /"customers" is outside the four views/i,
+    );
+    assert.match(
+      reject('select * from v_customer_360, auth.users'),
+      /"auth.users" is outside the four views/i,
+    );
+  });
+
+  it('checks every item of a long comma list, not just the first two', () => {
+    assert.match(
+      reject('select 1 from v_customer_360 a, v_order_facts b, v_customer_scores c, orders d'),
+      /"orders" is outside the four views/i,
+    );
+  });
+
+  it('accepts a comma list in which every relation is permitted', () => {
+    accept('select c.customer_name, o.total from v_customer_360 c, v_order_facts o where o.customer_id = c.customer_id');
+  });
+
+  it('refuses arbitrary set-returning functions in the FROM list', () => {
+    // generate_series(1,100000000) previously reached Postgres and ran until
+    // the role's 5s statement_timeout killed it.
+    assert.match(
+      reject('select * from v_customer_360, generate_series(1, 100000000)'),
+      /generate_series/i,
+    );
+    assert.match(reject('select * from v_order_facts, xmltable()'), /xmltable/i);
+  });
+
+  it('refuses query-as-string functions wherever they appear', () => {
+    // The table name lives inside a string literal, so no relation check can
+    // ever see it — the function itself has to go.
+    assert.match(
+      reject("select query_to_xml('select count(*) from customers', true, true, '') from v_customer_360"),
+      /query_to_xml/i,
+    );
+    assert.match(
+      reject("select current_setting('is_superuser') from v_order_facts"),
+      /current_setting/i,
+    );
+  });
+
+  it('still allows unnest(), the one row source the array columns need', () => {
+    accept('select code from v_order_facts, unnest(discount_codes) as code');
+  });
+
+  it('refuses a relation that happens to share a name with a column', () => {
+    // Previously skipped as if it were extract(x from col): the guard treated
+    // any known column name after FROM/JOIN as not-a-relation. There is no
+    // such table today, but the exemption was the wrong shape.
+    assert.match(reject('select 1 from v_customer_360 join segment on true'), /"segment" is outside/i);
+    assert.match(reject('select 1 from v_customer_360, city'), /"city" is outside/i);
+  });
+
+  it('refuses a LIMIT that is not a plain integer', () => {
+    // These used to pass and then collect a second appended LIMIT, reaching
+    // Postgres as a syntax error logged as `error` rather than `refused`.
+    assert.match(reject('select 1 from v_order_facts limit (100000)'), /plain integer/i);
+    assert.match(reject('select 1 from v_order_facts limit 5e5'), /plain integer/i);
+  });
+
   it('refuses a query that reads none of the four views', () => {
     assert.match(reject('select 1'), /does not read any of the four/i);
     assert.match(reject("select version()"), /does not read any of the four/i);
@@ -225,5 +301,43 @@ describe('view catalogue', () => {
     }
     assert.ok(KNOWN_COLUMNS.has('has_phone'));
     assert.ok(KNOWN_COLUMNS.has('has_email'));
+  });
+});
+
+describe('rate limit on POST /api/agent', () => {
+  // Auth is deferred to §F9; until then this is what stops an anonymous caller
+  // from spending the OpenRouter balance and holding all four agent
+  // connections. Pure and in-memory, so it is testable without a server.
+  it('allows the first RATE_LIMIT requests and refuses the next', () => {
+    resetRateLimits();
+    for (let i = 0; i < RATE_LIMIT; i++) {
+      assert.equal(checkRateLimit('1.2.3.4').allowed, true, `request ${i + 1} should be allowed`);
+    }
+    const blocked = checkRateLimit('1.2.3.4');
+    assert.equal(blocked.allowed, false);
+    assert.ok(blocked.retryAfterSeconds >= 1);
+  });
+
+  it('counts each address separately', () => {
+    resetRateLimits();
+    for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit('1.2.3.4');
+    assert.equal(checkRateLimit('1.2.3.4').allowed, false);
+    assert.equal(checkRateLimit('5.6.7.8').allowed, true);
+  });
+
+  it('lets the caller back in once the window has passed', () => {
+    resetRateLimits();
+    const start = Date.now();
+    for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit('9.9.9.9', start);
+    assert.equal(checkRateLimit('9.9.9.9', start).allowed, false);
+    assert.equal(checkRateLimit('9.9.9.9', start + RATE_WINDOW_MS + 1).allowed, true);
+  });
+
+  it('takes the first hop of x-forwarded-for, and falls back when absent', () => {
+    const forwarded = new Request('http://x/api/agent', {
+      headers: { 'x-forwarded-for': '203.0.113.7, 70.41.3.18' },
+    });
+    assert.equal(clientKey(forwarded), '203.0.113.7');
+    assert.equal(clientKey(new Request('http://x/api/agent')), 'local');
   });
 });
