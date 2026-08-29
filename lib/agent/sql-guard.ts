@@ -223,6 +223,57 @@ function skipParens(tokens: Token[], open: number): number {
 }
 
 /**
+ * The name inside a group that is nothing but a parenthesised relation —
+ * `(customers)`, `((customers))`, `(auth.users)` — or null for anything else
+ * (a subquery, a join tree, an aliased item).
+ *
+ * Re-review of Task 8 found that skipParens treated every `(` as a subquery or
+ * join tree and never looked at a lone identifier inside one, so
+ * `select * from v_customer_360, (customers)` passed the guard. Postgres
+ * rejects that as a syntax error rather than a permission error — not
+ * exploitable, but classified as `error` instead of `refused`, the same tier as
+ * the non-integer LIMIT gap.
+ */
+function bareParenthesisedRelation(tokens: Token[], open: number): string | null {
+  let j = open + 1;
+
+  // `((customers))` — unwrap redundant nesting before deciding.
+  if (tokens[j]?.kind === 'punct' && tokens[j].text === '(') {
+    const inner = bareParenthesisedRelation(tokens, j);
+    if (!inner) return null;
+    const after = skipParens(tokens, j);
+    return tokens[after]?.kind === 'punct' && tokens[after].text === ')' ? inner : null;
+  }
+
+  if (tokens[j]?.kind !== 'word' && tokens[j]?.kind !== 'ident') return null;
+  let name = tokens[j].text;
+  j++;
+  while (
+    tokens[j]?.kind === 'punct' &&
+    tokens[j].text === '.' &&
+    (tokens[j + 1]?.kind === 'word' || tokens[j + 1]?.kind === 'ident')
+  ) {
+    name += '.' + tokens[j + 1].text;
+    j += 2;
+  }
+
+  const closing = tokens[j];
+  if (closing?.kind === 'punct' && closing.text === ')' && closing.depth === tokens[open].depth) {
+    return name;
+  }
+  return null;
+}
+
+/** A group that opens with SELECT/VALUES/TABLE is a subquery, not a join tree. */
+function opensSubquery(tokens: Token[], open: number): boolean {
+  const first = tokens[open + 1];
+  return (
+    first?.kind === 'word' &&
+    (first.text === 'select' || first.text === 'values' || first.text === 'table')
+  );
+}
+
+/**
  * Walk one FROM/JOIN item list from `start`, validating EVERY relation in it —
  * including the second and later entries of a comma-separated list, which is
  * exactly what the old regex missed.
@@ -245,10 +296,29 @@ function checkFromList(tokens: Token[], start: number, referenced: Set<string>):
 
     const token = tokens[i];
     if (!token || token.depth < baseDepth) return null;
+    // The `)` that closes the group this list lives in — the list is over.
+    if (token.kind === 'punct' && token.text === ')') return null;
 
     if (token.kind === 'punct' && token.text === '(') {
-      // A subquery or a parenthesised join. Its own FROM is a separate FROM
-      // token and is validated by the main loop on its own terms.
+      const bare = bareParenthesisedRelation(tokens, i);
+      if (bare) {
+        // Name the real problem when there is one; `(customers)` is a blocked
+        // relation first and bad grammar second.
+        if (!(AGENT_VIEWS as readonly string[]).includes(bare)) {
+          return (
+            `"${bare}" is outside the four views this agent may read ` +
+            `(${AGENT_VIEWS.join(', ')}).`
+          );
+        }
+        return 'A relation wrapped in parentheses is not a valid FROM item; drop the parentheses.';
+      }
+      // A subquery's own FROM is a separate FROM token and is validated by the
+      // main loop on its own terms. A parenthesised JOIN TREE is not — its
+      // leading relation belongs to this list, so recurse into it.
+      if (!opensSubquery(tokens, i)) {
+        const reason = checkFromList(tokens, i + 1, referenced);
+        if (reason) return reason;
+      }
       i = skipParens(tokens, i);
     } else if (token.kind === 'word' || token.kind === 'ident') {
       let name = token.text;

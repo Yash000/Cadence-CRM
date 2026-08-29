@@ -255,6 +255,43 @@ describe('guardSql — injection attempts', () => {
     assert.match(reject('select 1 from v_customer_360, city'), /"city" is outside/i);
   });
 
+  // Re-review of Task 8: skipParens treated every `(` as a subquery or join
+  // tree and never looked at a lone identifier inside one. Postgres rejects
+  // these as syntax errors rather than permission errors, so they were safe
+  // but misclassified as `error` instead of `refused`.
+  it('refuses a bare relation hidden in redundant parentheses', () => {
+    assert.match(reject('select * from v_customer_360, (customers)'), /"customers" is outside/i);
+    assert.match(
+      reject('select * from v_customer_360 join (customers) c on true'),
+      /"customers" is outside/i,
+    );
+    assert.match(reject('select * from v_customer_360, ((customers))'), /"customers" is outside/i);
+    assert.match(reject('select * from v_customer_360, (auth.users)'), /"auth.users" is outside/i);
+  });
+
+  it('refuses a blocked table leading a parenthesised join tree', () => {
+    // The same skipParens hole: the group's FIRST relation belongs to the
+    // outer FROM list and was never validated. Only the relation after JOIN
+    // was, because JOIN gets its own token.
+    assert.match(
+      reject('select * from (customers c join v_order_facts o on true)'),
+      /"customers" is outside/i,
+    );
+  });
+
+  it('refuses even a permitted view in redundant parentheses, which is not valid SQL', () => {
+    assert.match(
+      reject('select * from v_customer_360, (v_order_facts)'),
+      /parentheses/i,
+    );
+  });
+
+  it('still accepts a genuine parenthesised join tree of permitted views', () => {
+    accept(
+      'select 1 from (v_customer_360 c join v_order_facts o on o.customer_id = c.customer_id)',
+    );
+  });
+
   it('refuses a LIMIT that is not a plain integer', () => {
     // These used to pass and then collect a second appended LIMIT, reaching
     // Postgres as a syntax error logged as `error` rather than `refused`.
