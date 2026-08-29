@@ -1,0 +1,12 @@
+query VerifyShopifySeed {
+  ordersCount { count }
+  customersCount { count }
+  orders(first: 250, sortKey: PROCESSED_AT) {
+    edges { node { name processedAt customer { id } totalPriceSet { shopMoney { amount } } } }
+    pageInfo { hasNextPage }
+  }
+  customers(first: 100) {
+    edges { node { id displayName phone numberOfOrders } }
+    pageInfo { hasNextPage }
+  }
+}
