@@ -1,30 +1,52 @@
-// Pre-execution SQL validation for the AI agent (PRD-02 §F4.4).
+// Pre-execution SQL filtering for the AI agent (PRD-02 §F4.4).
 //
-// This is DEFENCE IN DEPTH, not the control. The control is the `cadence_agent`
-// Postgres role behind AGENT_DATABASE_URL: it can SELECT from exactly four
-// views and nothing else, it carries statement_timeout=5s and
-// default_transaction_read_only=on, and it has no bypassrls. A prompt
-// injection that talks the model into emitting `drop table customers` is
-// refused by Postgres itself — scripts/verify-agent-role.mjs proves that,
-// 15/15, against the live database.
+// READ THIS BEFORE TRUSTING ANYTHING BELOW.
 //
-// What this file adds is a cheaper, earlier, more legible refusal: the user
-// gets "reads outside the four permitted views" instead of a raw Postgres
-// permission error, and a query that would have been rejected never opens a
-// connection at all. Nothing here may ever be treated as a substitute for the
-// role. If you find yourself relaxing a rule below to make a query work, the
-// answer is that the agent cannot answer that question.
+// This is a BEST-EFFORT FILTER over an APPROXIMATE PARSE. It is not a SQL
+// parser, it does not implement Postgres's grammar, and it does not — cannot —
+// guarantee that a statement it accepts touches only the four permitted views.
+// It has gaps. Three separate ones were found in three consecutive reviews of
+// this file, every one of them in the parenthesis/row-source handling below:
 //
-// The relation check used to be a regex that only looked at the identifier
-// immediately after FROM/JOIN. That silently ignored relations 2..n of a
-// comma-separated FROM list, so `select * from v_customer_360, customers`
-// passed the guard (review of Task 8). Postgres refused it — the layering did
-// its job — but the guard's own claim was false, so the check is now a real
-// tokeniser that walks every item in every FROM list. See checkFromList below.
+//   1. `select * from v_customer_360, customers`   — relations after a comma
+//      were never read (the check was a regex over the token after FROM/JOIN).
+//   2. `select * from v_customer_360, (customers)` — a bare relation inside
+//      parentheses was skipped as though it were a subquery, and the leading
+//      relation of a parenthesised join tree was skipped with it.
+//   3. `select * from v_customer_360, (table customers)` — `TABLE x` is a
+//      complete row source with no FROM or JOIN keyword anywhere in it, so the
+//      keyword-driven scan never saw the name at all.
+//
+// Assume there is a fourth. The pattern across all three is the same: this
+// file walks the constructs it knows about, and Postgres's grammar is larger
+// than the set it knows about.
+//
+// THE CONTROL IS THE DATABASE ROLE, exactly as PRD-02 §F4.3 argues. The
+// `cadence_agent` role behind AGENT_DATABASE_URL can SELECT from exactly four
+// views and nothing else, carries statement_timeout=5s and
+// default_transaction_read_only=on, and has no bypassrls.
+// scripts/verify-agent-role.mjs proves that 15/15 against the live database,
+// and the role refused all three bypasses above on privileges — `permission
+// denied for table customers` — while this file was waving them through.
+//
+// What this file is FOR, then, is a cheaper and more legible refusal: the user
+// gets "customers is outside the four views this agent may read" instead of a
+// raw Postgres error, and an obviously bad query never opens a connection.
+// That is worth having. It is not worth mistaking for a boundary.
+//
+// So: never relax a rule here to make a query work (the answer is that the
+// agent cannot answer that question), never add a grant to compensate for
+// something this file blocks, and never let a change here be justified by
+// "the guard will catch it".
+//
+// Deliberately no SQL-parser dependency. It was considered and ruled out: the
+// role has caught every bypass found so far, this file is defence in depth by
+// design, and PRD-02 §9 constrains dependencies. Honest scope is the fix, not
+// a heavier tool.
 //
 // Deliberately no dependency on `server-only`, `pg` or any environment
-// variable: this module is pure so tests/sql-guard.test.ts can hammer it with
-// injection attempts without a database.
+// variable either: this module is pure so tests/sql-guard.test.ts can hammer
+// it with injection attempts without a database.
 
 import { AGENT_VIEWS } from './views';
 
@@ -53,6 +75,17 @@ const FORBIDDEN_KEYWORDS = [
   'release', 'set', 'reset', 'discard', 'comment', 'security', 'into',
   'returning', 'nextval', 'setval', 'dblink',
 ];
+
+// `TABLE customers` is a complete row source, equivalent to
+// `SELECT * FROM customers`, with no FROM and no JOIN keyword anywhere in it —
+// so the scan in checkFromList never sees the name. It was reachable as
+// `select * from v_customer_360, (table customers)` until the third review of
+// this file, and as a bare `table customers` it is not even a SELECT. It is
+// refused wholesale rather than parsed: every one of the four views is
+// reachable with an ordinary SELECT, so nothing legitimate is lost. Kept out
+// of FORBIDDEN_KEYWORDS only so the refusal can say what is actually wrong —
+// TABLE is a read, not a write.
+const TABLE_ROW_SOURCE_RE = /\btable\b/i;
 
 // Built from a plain string, not a template literal: `\b` inside a template
 // literal is a backspace character, not a word boundary, and the resulting
@@ -264,22 +297,37 @@ function bareParenthesisedRelation(tokens: Token[], open: number): string | null
   return null;
 }
 
-/** A group that opens with SELECT/VALUES/TABLE is a subquery, not a join tree. */
+/**
+ * A group that opens with SELECT or VALUES is a subquery: it has no relation of
+ * its own to check, and any FROM inside it is a separate FROM token that the
+ * main scan reaches independently.
+ *
+ * `TABLE` used to be in this list, on the same assumption — wrongly, because
+ * `TABLE customers` names a relation with no FROM keyword for the main scan to
+ * find. The keyword is now refused outright (see FORBIDDEN_KEYWORDS), so this
+ * function never sees it; it is named here only so the next reader knows the
+ * omission is deliberate.
+ */
 function opensSubquery(tokens: Token[], open: number): boolean {
   const first = tokens[open + 1];
-  return (
-    first?.kind === 'word' &&
-    (first.text === 'select' || first.text === 'values' || first.text === 'table')
-  );
+  return first?.kind === 'word' && (first.text === 'select' || first.text === 'values');
 }
 
 /**
- * Walk one FROM/JOIN item list from `start`, validating EVERY relation in it —
- * including the second and later entries of a comma-separated list, which is
- * exactly what the old regex missed.
+ * Walk one FROM/JOIN item list from `start` and check the relations it can
+ * recognise — comma-separated entries, aliases, dotted names, parenthesised
+ * relations and parenthesised join trees included.
  *
- * Returns a refusal reason, or null when every item is acceptable. Views that
- * were genuinely read are added to `referenced`.
+ * It does NOT recognise every row source Postgres accepts. Returning null
+ * means "nothing objectionable was recognised in this list", which is weaker
+ * than "this list is safe", and that difference is the reason the role exists.
+ * A construct this function does not understand is refused where it is reached
+ * (see the 'Unexpected token' return) but can be missed entirely when it is
+ * reachable without a FROM or JOIN keyword — which is precisely how `TABLE x`
+ * got past.
+ *
+ * Returns a refusal reason, or null. Views genuinely read are added to
+ * `referenced`.
  */
 function checkFromList(tokens: Token[], start: number, referenced: Set<string>): string | null {
   const baseDepth = tokens[start - 1].depth;
@@ -416,6 +464,13 @@ export function guardSql(raw: unknown): GuardResult {
   const keyword = FORBIDDEN_KEYWORD_RE.exec(sql);
   if (keyword) {
     return { ok: false, reason: `Forbidden keyword "${keyword[1].toLowerCase()}" — this agent is read-only.` };
+  }
+
+  if (TABLE_ROW_SOURCE_RE.test(sql)) {
+    return {
+      ok: false,
+      reason: 'The TABLE row source is not supported; use SELECT ... FROM one of the four views.',
+    };
   }
 
   if (CATALOGUE_RE.test(sql)) {

@@ -292,6 +292,40 @@ describe('guardSql — injection attempts', () => {
     );
   });
 
+  // Third review of Task 8: `TABLE customers` is a complete row source with no
+  // FROM and no JOIN keyword, so the keyword-driven scan never saw the name.
+  // As cadence_agent Postgres refused it on privileges; as the privileged role
+  // the same statement returned 500 real rows, so the syntax is real and it
+  // was only the role standing in the way.
+  it('refuses the TABLE row source, which names a relation with no FROM', () => {
+    assert.match(
+      reject('select * from v_customer_360, (table customers)'),
+      /TABLE row source is not supported/i,
+    );
+    assert.match(
+      reject('select * from v_customer_360, (table auth.users)'),
+      /TABLE row source is not supported/i,
+    );
+    assert.match(
+      reject('select * from v_customer_360, ((table customers))'),
+      /TABLE row source is not supported/i,
+    );
+    assert.match(
+      reject('select * from v_customer_360 join (table customers) t on true'),
+      /TABLE row source is not supported/i,
+    );
+  });
+
+  it('refuses TABLE even when it names a permitted view, and as a bare statement', () => {
+    // Nothing legitimate needs it — every view is reachable with SELECT — so
+    // the keyword is refused wholesale rather than parsed.
+    assert.match(
+      reject('select * from v_customer_360, (table v_order_facts)'),
+      /TABLE row source is not supported/i,
+    );
+    assert.match(reject('table customers'), /single SELECT/i);
+  });
+
   it('refuses a LIMIT that is not a plain integer', () => {
     // These used to pass and then collect a second appended LIMIT, reaching
     // Postgres as a syntax error logged as `error` rather than `refused`.
