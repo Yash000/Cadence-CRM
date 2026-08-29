@@ -12,6 +12,7 @@ import 'server-only';
 import { and, asc, count, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { db, schema } from '../db/index';
 import { eventTypeTag, formatEventType } from './format';
+import { isValidSegment, normalizePage, normalizePageSize } from './list-params';
 
 const { customers, orders, orderItems, customerScores, consents, events, tasks } = schema;
 
@@ -188,6 +189,12 @@ export async function getPeriodKpis(): Promise<PeriodKpis> {
   const scoredCustomers = repeatRow?.total ?? 0;
   const repeatCustomers = Number(repeatRow?.repeat ?? 0);
 
+  // JS arithmetic on Number()-converted SQL aggregates, which sits close to
+  // the "never combine money values in JS" rule but doesn't break it: curr/
+  // prev are each already a single finished SQL SUM()/COUNT() for their own
+  // period (Postgres did the row-level summing), and the % delta here is a
+  // display-only comparison of those two finished values, not a further
+  // summation of raw per-row money across rows.
   const pctDelta = (curr: number, prev: number): number | null => {
     if (prev === 0) return null;
     return ((curr - prev) / prev) * 100;
@@ -282,6 +289,11 @@ export async function getTaskQueue(limit = 10): Promise<TaskQueue> {
 
 export type CustomerSort = 'churn_desc' | 'churn_asc' | 'ltv_desc' | 'ltv_asc' | 'name_asc' | 'last_order_desc';
 
+// segment/page/pageSize validation lives in ./list-params (no server-only
+// import) so it's unit-testable without a live database — see
+// tests/list-params.test.ts.
+export { isValidSegment } from './list-params';
+
 export interface CustomerListParams {
   q?: string;
   segment?: string;
@@ -312,8 +324,8 @@ export interface CustomerListResult {
 }
 
 export async function getCustomerList(params: CustomerListParams): Promise<CustomerListResult> {
-  const page = Math.max(1, params.page ?? 1);
-  const pageSize = params.pageSize ?? 25;
+  const page = normalizePage(params.page);
+  const pageSize = normalizePageSize(params.pageSize);
   const q = params.q?.trim();
 
   const whereClauses = [];
@@ -327,8 +339,12 @@ export async function getCustomerList(params: CustomerListParams): Promise<Custo
       ),
     );
   }
-  if (params.segment && params.segment !== 'all') {
-    whereClauses.push(eq(customerScores.segment, params.segment as (typeof schema.segmentT.enumValues)[number]));
+  // Only push the segment filter once it's confirmed to be one of the 11 real
+  // segment_t values — anything else (typo, stale bookmark, crawler) is
+  // treated the same as "all" rather than reaching eq() and 500ing on the
+  // enum's "invalid input value" error.
+  if (params.segment && params.segment !== 'all' && isValidSegment(params.segment)) {
+    whereClauses.push(eq(customerScores.segment, params.segment));
   }
   const where = whereClauses.length > 0 ? and(...whereClauses) : undefined;
 
@@ -340,6 +356,9 @@ export async function getCustomerList(params: CustomerListParams): Promise<Custo
     name_asc: asc(customers.firstName),
     last_order_desc: asc(customerScores.daysSinceLastOrder),
   };
+  // Object index with a param.sort that isn't one of the 6 known keys yields
+  // undefined, not a throw — the `?? sortMap.churn_desc` below already covers
+  // an invalid/missing sort value safely.
   const orderBy = sortMap[params.sort ?? 'churn_desc'] ?? sortMap.churn_desc;
 
   const baseQuery = db

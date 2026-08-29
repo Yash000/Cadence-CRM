@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCustomerList, getSegmentOptions, type CustomerSort } from '../../lib/queries';
+import { getCustomerList, getSegmentOptions, isValidSegment, type CustomerSort } from '../../lib/queries';
 import {
   churnRiskColor,
   consentStatusColor,
@@ -36,7 +36,12 @@ export default async function CustomersPage({
 }) {
   const sp = await searchParams;
   const q = typeof sp.q === 'string' ? sp.q : undefined;
-  const segment = typeof sp.segment === 'string' ? sp.segment : undefined;
+  // A tampered/stale/crawled URL can carry any string here — getCustomerList
+  // already ignores anything that isn't a real segment_t value, but that
+  // same check is applied here too so the "ALL" chip and hidden form field
+  // reflect reality (a bogus segment renders as no filter, not as itself).
+  const rawSegment = typeof sp.segment === 'string' ? sp.segment : undefined;
+  const segment = rawSegment && isValidSegment(rawSegment) ? rawSegment : undefined;
   const sort = (typeof sp.sort === 'string' ? sp.sort : undefined) as CustomerSort | undefined;
   const page = sp.page ? Math.max(1, Number(sp.page) || 1) : 1;
   const pageSize = 25;

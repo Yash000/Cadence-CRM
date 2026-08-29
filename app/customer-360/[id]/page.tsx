@@ -24,6 +24,11 @@ export const dynamic = 'force-dynamic';
 const TIMELINE_TAG_STYLE: Record<string, string> = {
   ORDER: 'border-[#c3cff0] bg-[#f5f7fd] text-accent-blue',
   CONSENT: 'border-hairline bg-secondary text-ink-soft',
+  VIEW: 'border-hairline bg-secondary text-ink-soft',
+  CART: 'border-[#cfe4d8] bg-[#eef6f1] text-good',
+  CHK: 'border-[#c3cff0] bg-[#f5f7fd] text-accent-blue',
+  DROP: 'border-[#f0ddd7] bg-[#fbf1ee] text-bad',
+  PAGE: 'border-hairline bg-secondary text-ink-soft',
 };
 
 function timelineTagClass(tag: string) {
