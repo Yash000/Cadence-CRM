@@ -651,3 +651,41 @@ export async function getCustomerTimeline(customerId: string): Promise<TimelineE
     (a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
   );
 }
+
+// ---------------------------------------------------------------------------
+// Event simulator (Task 9 — PRD-01 §7 fallback: the storefront tracking
+// snippet's real delivery can't be verified in this dev environment, so the
+// simulator lets a demo attach a page_view/product_view/add_to_cart/
+// checkout_started event to a REAL seeded customer via the same /api/events
+// endpoint the theme posts to).
+// ---------------------------------------------------------------------------
+
+export interface SimulatorCustomerOption {
+  id: string;
+  shopifyCustomerId: number;
+  name: string;
+}
+
+/** A small sample of real, seeded customers that have a shopify_customer_id — the only ones the tracking endpoint can resolve to a customer_id (lib/events-db.ts resolveCustomerId). */
+export async function getSimulatorCustomerSample(limit = 15): Promise<SimulatorCustomerOption[]> {
+  const rows = await db
+    .select({
+      id: customers.id,
+      shopifyCustomerId: customers.shopifyCustomerId,
+      firstName: customers.firstName,
+      lastName: customers.lastName,
+      email: customers.email,
+    })
+    .from(customers)
+    .where(sql`${customers.shopifyCustomerId} is not null`)
+    .orderBy(asc(customers.createdAt))
+    .limit(limit);
+
+  return rows
+    .filter((r): r is typeof r & { shopifyCustomerId: number } => r.shopifyCustomerId !== null)
+    .map((r) => ({
+      id: r.id,
+      shopifyCustomerId: r.shopifyCustomerId,
+      name: [r.firstName, r.lastName].filter(Boolean).join(' ') || r.email || r.id.slice(0, 8),
+    }));
+}

@@ -1,0 +1,24 @@
+query ListDiscountCodes {
+  codeDiscountNodes(first: 20) {
+    edges {
+      node {
+        id
+        codeDiscount {
+          ... on DiscountCodeBasic {
+            title
+            status
+            startsAt
+            endsAt
+            appliesOncePerCustomer
+            codes(first: 1) { nodes { code } }
+            customerGets {
+              value {
+                ... on DiscountPercentage { percentage }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

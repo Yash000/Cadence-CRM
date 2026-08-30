@@ -14,4 +14,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: '/customer-360', label: 'Customer 360', icon: '◎' },
   { href: '/ask', label: 'Ask Cadence', icon: '✦' },
   { href: '/inbox', label: 'Inbox', icon: '▭' },
+  // Not one of the five mockup surfaces above — added in Task 9 as the
+  // PRD-01 §7 fallback for storefront event tracking (see app/simulator).
+  { href: '/simulator', label: 'Event Simulator', icon: '⚡' },
 ];

@@ -1,0 +1,21 @@
+mutation CreateDiscountCode($basicCodeDiscount: DiscountCodeBasicInput!) {
+  discountCodeBasicCreate(basicCodeDiscount: $basicCodeDiscount) {
+    codeDiscountNode {
+      id
+      codeDiscount {
+        ... on DiscountCodeBasic {
+          title
+          startsAt
+          appliesOncePerCustomer
+          codes(first: 1) { nodes { code } }
+          customerGets {
+            value {
+              ... on DiscountPercentage { percentage }
+            }
+          }
+        }
+      }
+    }
+    userErrors { field message }
+  }
+}

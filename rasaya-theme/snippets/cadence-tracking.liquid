@@ -1,0 +1,39 @@
+{%- comment -%}
+  Cadence CRM event tracking (PRD-01 §7).
+
+  Posts page_view, product_view, add_to_cart and checkout_started to the
+  Cadence CRM's /api/events endpoint whenever `settings.cadence_events_endpoint`
+  is configured in theme settings (Theme settings → Cadence CRM tracking).
+  Entirely client-side and fire-and-forget: a blank, unreachable or slow
+  endpoint never blocks or errors the page — see assets/cadence-tracking.js.
+{%- endcomment -%}
+{%- if settings.cadence_events_enabled and settings.cadence_events_endpoint != blank -%}
+  <script>
+    window.CadenceTracking = {
+      endpoint: {{ settings.cadence_events_endpoint | json }},
+      sessionId: (function () {
+        try {
+          var key = 'cadence_session_id';
+          var id = sessionStorage.getItem(key);
+          if (!id) {
+            id = 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+            sessionStorage.setItem(key, id);
+          }
+          return id;
+        } catch (e) {
+          return null;
+        }
+      })(),
+      customerId: {% if customer %}{{ customer.id | json }}{% else %}null{% endif %},
+      template: {{ template.name | json }},
+      product: {% if product %}{
+        id: {{ product.id | json }},
+        title: {{ product.title | json }},
+        handle: {{ product.handle | json }},
+        price: {{ product.selected_or_first_available_variant.price | json }},
+        variant_id: {{ product.selected_or_first_available_variant.id | json }}
+      }{% else %}null{% endif %}
+    };
+  </script>
+  <script src="{{ 'cadence-tracking.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
