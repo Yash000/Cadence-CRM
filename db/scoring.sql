@@ -463,11 +463,30 @@ select
   end,
 
   -- ---- next_order_date (§F3.4) ----------------------------------------
-  -- Clamped forward to today when the predicted date has already passed:
-  -- the column drives the replenishment nudge (§F6.2), and a nudge whose
-  -- fire date is in the past would never fire. The reason keeps the truth.
-  case when order_count = 0 then null
-       else greatest(due_date, today) end,
+  -- THE UNCLAMPED PREDICTION. This column is a forecast, not a trigger.
+  --
+  -- It used to be `greatest(due_date, today)`, clamped forward so that the
+  -- replenishment nudge (§F6.2) would never carry a fire date in the past.
+  -- That was wrong for three reasons, all of which showed up live:
+  --
+  --   1. It made one column serve two incompatible jobs. §F3.4 asks for a
+  --      prediction (what the CRM displays and the agent queries); §F6.2
+  --      wants a trigger fire date (necessarily forward-looking). The clamp
+  --      sacrificed the prediction for a consumer that does not exist yet.
+  --   2. It contradicted its own reason on screen. The profile page renders
+  --      this date beside next_order_reason, producing "24 Aug 2026" next to
+  --      "Was due 21 Apr 2025 — 490 days overdue". §F3.6 makes reason-beside-
+  --      score non-negotiable; two numbers disagreeing in one row is worse
+  --      than no reason at all.
+  --   3. It made `next_order_date < current_date` mean "the scores are
+  --      stale", not "the customer is overdue" — so the agent's own overdue
+  --      query returned a plausible number only while nobody had re-scored,
+  --      and collapsed the moment anyone did. A demo-day rescore, which the
+  --      now()-based ruling requires, would have broken the demo.
+  --
+  -- If §F6.2 later needs a guaranteed-future fire date, it should clamp at
+  -- trigger time or get its own column. Do not clamp the forecast.
+  case when order_count = 0 then null else due_date end,
 
   -- ---- next_order_reason (§F3.6) --------------------------------------
   case

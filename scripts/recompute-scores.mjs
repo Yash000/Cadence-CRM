@@ -485,6 +485,79 @@ for (const r of samples) {
 }
 
 // ---------------------------------------------------------------------------
+// 5b. NEXT ORDER DATE — the prediction, and whether it is actually predicting.
+//
+// This column used to be clamped forward (`greatest(due_date, today)`), which
+// parked 594 of 800 customers on the scoring run's own date. Two symptoms, and
+// this section exists so neither can come back silently:
+//
+//   · CONCENTRATION. A forecast should spread across the calendar. If any
+//     single date holds a large share of the base, the column is reporting
+//     when the job last ran, not when anyone will buy.
+//   · STABILITY. `next_order_date < current_date` is the agent's own overdue
+//     idiom (few-shot #8). Under the clamp that count only looked right while
+//     the scores were stale, and collapsed the moment anyone re-scored — so a
+//     demo-day rescore broke the demo. It must now be invariant to re-running.
+// ---------------------------------------------------------------------------
+const [dateShape] = await rows(sql`
+  select count(*)::int                                              as with_date,
+         count(distinct next_order_date)::int                       as distinct_dates,
+         min(next_order_date)                                       as earliest,
+         max(next_order_date)                                       as latest,
+         count(*) filter (where next_order_date < current_date)::int as overdue,
+         count(*) filter (where next_order_date = current_date)::int as on_today
+  from customer_scores where next_order_date is not null
+`);
+const topDates = await rows(sql`
+  select next_order_date::text as d, count(*)::int as n
+  from customer_scores where next_order_date is not null
+  group by 1 order by 2 desc, 1 limit 5
+`);
+const spread = await rows(sql`
+  select case when next_order_date < current_date - 180 then 'more than 180d ago'
+              when next_order_date < current_date - 30  then '30-180d ago'
+              when next_order_date < current_date       then 'under 30d ago'
+              when next_order_date = current_date       then 'today'
+              when next_order_date <= current_date + 30 then 'within 30d'
+              else 'more than 30d out' end as bucket,
+         count(*)::int as n, min(next_order_date) as lo, max(next_order_date) as hi
+  from customer_scores where next_order_date is not null
+  group by 1 order by min(next_order_date)
+`);
+
+console.log(rule('NEXT ORDER DATE — distribution of the prediction'));
+console.log(table(
+  ['When it falls', 'n', '%', 'earliest', 'latest'],
+  spread.map((r) => [r.bucket, r.n, `${((r.n / dateShape.with_date) * 100).toFixed(1)}%`, r.lo, r.hi]),
+));
+console.log(`\n  ${dateShape.with_date} customers with a predicted date, ` +
+            `${dateShape.distinct_dates} distinct values, spanning ${dateShape.earliest} to ${dateShape.latest}`);
+console.log(`  overdue (next_order_date < current_date): ${dateShape.overdue}   ` +
+            `landing exactly on today: ${dateShape.on_today}`);
+console.log('\n  Most common single dates (a spike here means the column is reporting the run date):');
+for (const d of topDates) {
+  console.log(`    ${d.d}   ${String(d.n).padStart(3)}  (${((d.n / dateShape.with_date) * 100).toFixed(1)}%)`);
+}
+const worstShare = topDates.length ? topDates[0].n / dateShape.with_date : 0;
+console.log(
+  worstShare > 0.05
+    ? `\n  ✗ ${(worstShare * 100).toFixed(1)}% of customers share one date — this column is NOT a forecast.`
+    : `\n  ✓ No single date holds more than ${(worstShare * 100).toFixed(1)}% of the base — the column forecasts.`,
+);
+
+// Do the date and its own reason agree? §F3.6 is worthless if they disagree.
+const [agree] = await rows(sql`
+  select count(*)::int as checked,
+         count(*) filter (where
+           (next_order_date <  current_date and next_order_reason like 'Was due%') or
+           (next_order_date >= current_date and next_order_reason like 'Last ordered%')
+         )::int as consistent
+  from customer_scores where next_order_date is not null
+`);
+console.log(`  date vs next_order_reason agree: ${agree.consistent} of ${agree.checked}` +
+            (agree.consistent === agree.checked ? '  ✓' : '  ✗ MISMATCH'));
+
+// ---------------------------------------------------------------------------
 // 6. Integrity + idempotency fingerprint.
 //
 // Every score column except computed_at, hashed in customer_id order. Two runs
