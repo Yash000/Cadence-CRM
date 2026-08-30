@@ -33,3 +33,13 @@ export function normalizePage(raw: number | undefined): number {
 export function normalizePageSize(raw: number | undefined, max = 100, fallback = 25): number {
   return Number.isFinite(raw) && (raw as number) >= 1 ? Math.min(max, Math.floor(raw as number)) : fallback;
 }
+
+// A customer id arrives from the URL on /customer-360/[id] and from the body
+// of POST /api/customers/[id]/recompute. Postgres rejects a malformed uuid
+// with "invalid input syntax for type uuid", which is a 500 if it reaches the
+// query — the same class of bug as the unvalidated ?segment= above.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isUuid(value: unknown): value is string {
+  return typeof value === 'string' && UUID_RE.test(value);
+}

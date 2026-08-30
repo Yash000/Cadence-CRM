@@ -1,9 +1,19 @@
-// Seeds the three lifecycle discount codes on rasaya-dev (task-9-brief.md):
+// Seeds discount codes on rasaya-dev (task-9-brief.md), plus the codes that
+// scripts/seed-supabase.mjs already baked into the seeded order history's
+// discount_codes[] column (branch review finding: only WELCOME10 existed on
+// both the store and the seeded orders — a live demo order using any of the
+// other four codes the seed already "used" would fail on the real store):
 //
 //   WELCOME10  — 10% off, first order        (appliesOncePerCustomer: true)
 //   COMEBACK15 — 15% off, win-back            (appliesOncePerCustomer: true)
 //   REFILL20   — 20% off, replenishment       (appliesOncePerCustomer: false —
 //                a customer refilling a consumable is expected to reuse it)
+//   WINBACK15  — 15% off, win-back            (appliesOncePerCustomer: true —
+//                same intent as COMEBACK15, matches seed-supabase.mjs's code)
+//   RASAYA5    — 5% off, general              (appliesOncePerCustomer: false)
+//   FESTIVE20  — 20% off, festive/seasonal    (appliesOncePerCustomer: false —
+//                seed-supabase.mjs marks it festiveOnly, not per-customer)
+//   DIWALI15   — 15% off, festive/seasonal    (appliesOncePerCustomer: false)
 //
 //   node scripts/seed-discounts.mjs [--dry-run]
 //
@@ -37,6 +47,30 @@ const DISCOUNTS = [
     title: 'Refill — 20% replenishment',
     code: 'REFILL20',
     percentage: 0.20,
+    appliesOncePerCustomer: false,
+  },
+  {
+    title: 'Win-back — 15% off',
+    code: 'WINBACK15',
+    percentage: 0.15,
+    appliesOncePerCustomer: true,
+  },
+  {
+    title: 'Rasaya — 5% general',
+    code: 'RASAYA5',
+    percentage: 0.05,
+    appliesOncePerCustomer: false,
+  },
+  {
+    title: 'Festive — 20% seasonal',
+    code: 'FESTIVE20',
+    percentage: 0.20,
+    appliesOncePerCustomer: false,
+  },
+  {
+    title: 'Diwali — 15% seasonal',
+    code: 'DIWALI15',
+    percentage: 0.15,
     appliesOncePerCustomer: false,
   },
 ];

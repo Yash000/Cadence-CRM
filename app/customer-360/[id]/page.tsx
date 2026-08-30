@@ -18,6 +18,7 @@ import {
   initials,
   relativeTime,
 } from '../../../lib/format';
+import { RescoreButton } from '../../../components/customer/rescore-button';
 
 export const dynamic = 'force-dynamic';
 
@@ -123,8 +124,11 @@ export default async function Customer360Page({
             <div className="flex items-center border-b border-[#eeece7] px-3 py-2.5">
               <div className="text-[13px] font-semibold">Scores</div>
               <div className="flex-1" />
-              <div className="font-mono text-[9.5px] text-muted-foreground">
-                {profile.computedAt ? `RECOMPUTED ${formatDate(profile.computedAt)}` : 'NOT SCORED'}
+              <div className="flex items-center gap-2">
+                <div className="font-mono text-[9.5px] text-muted-foreground">
+                  {profile.computedAt ? `RECOMPUTED ${formatDate(profile.computedAt)}` : 'NOT SCORED'}
+                </div>
+                <RescoreButton customerId={profile.id} />
               </div>
             </div>
             <div className="px-3 pb-1">

@@ -19,6 +19,7 @@ import {
   checkRateLimit,
   clientKey,
   RATE_LIMIT,
+  EVENTS_RATE_LIMIT,
   RATE_WINDOW_MS,
   resetRateLimits,
 } from '../lib/agent/rate-limit';
@@ -410,5 +411,26 @@ describe('rate limit on POST /api/agent', () => {
     });
     assert.equal(clientKey(forwarded), '203.0.113.7');
     assert.equal(clientKey(new Request('http://x/api/agent')), 'local');
+  });
+
+  // /api/events shares this module but needs a far larger budget — ordinary
+  // browsing fires many events a minute. The two must not draw on one counter.
+  it('honours a caller-supplied limit', () => {
+    resetRateLimits();
+    const start = Date.now();
+    for (let i = 0; i < EVENTS_RATE_LIMIT; i++) {
+      assert.equal(checkRateLimit('7.7.7.7', start, EVENTS_RATE_LIMIT).allowed, true);
+    }
+    assert.equal(checkRateLimit('7.7.7.7', start, EVENTS_RATE_LIMIT).allowed, false);
+  });
+
+  it('keeps the events and agent budgets separate when keys are namespaced', () => {
+    resetRateLimits();
+    const start = Date.now();
+    // Exhaust the agent budget for this address.
+    for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit('4.4.4.4', start);
+    assert.equal(checkRateLimit('4.4.4.4', start).allowed, false);
+    // The same address posting events is unaffected.
+    assert.equal(checkRateLimit('events:4.4.4.4', start, EVENTS_RATE_LIMIT).allowed, true);
   });
 });

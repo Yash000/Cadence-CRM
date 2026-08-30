@@ -16,13 +16,16 @@
 //
 // No HMAC here, unlike /api/webhooks/shopify — this is not a Shopify webhook,
 // there is no shared secret to verify it against, and PRD-01 §7 does not ask
-// for one. The allow-listed `type` values (lib/events.ts) and the payload
-// size cap are the only defenses against a hostile POST; this is a
+// for one. A tracking pixel that runs in the visitor's browser has no secret
+// it could keep. So this endpoint is UNAUTHENTICATED BY DESIGN, and the only
+// defenses against a hostile POST are the allow-listed `type` values and
+// payload cap in lib/events.ts, plus the per-IP rate limit below. This is a
 // best-effort analytics sink, not a source of truth the CRM's money or
 // customer-identity logic depends on.
 import { NextResponse } from 'next/server';
 import { parseEventInput } from '../../../lib/events';
 import { getRecentEvents, insertEvent } from '../../../lib/events-db';
+import { checkRateLimit, clientKey, EVENTS_RATE_LIMIT } from '../../../lib/agent/rate-limit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -30,6 +33,18 @@ export const dynamic = 'force-dynamic';
 const SIMULATOR_HEADER = 'x-cadence-source';
 
 export async function POST(request: Request): Promise<NextResponse> {
+  // Before parsing or writing: this is an unauthenticated public write into
+  // `events`, so the rate limit is the only thing bounding how fast a single
+  // address can grow that table. Namespaced key — /api/agent has its own,
+  // much smaller budget out of the same window map.
+  const limit = checkRateLimit(`events:${clientKey(request)}`, Date.now(), EVENTS_RATE_LIMIT);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { ok: false, error: 'rate limit reached' },
+      { status: 429, headers: { 'retry-after': String(limit.retryAfterSeconds) } },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -40,9 +55,12 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  // The source is decided by which header the CALLER sends, never trusted
-  // from the body — see parseEventInput's doc comment. Only the simulator UI
-  // (components/simulator/simulator-form.tsx) ever sends this header.
+  // `source` is taken from a header rather than the body only so that a body
+  // field cannot set it by accident. It is NOT a trust boundary: the header is
+  // caller-supplied on an unauthenticated endpoint, so anyone can send either
+  // value and label their own writes 'simulator' or 'storefront_pixel' at
+  // will. Treat events.source as a hint about which UI produced a row in
+  // normal operation, never as evidence of origin.
   const source =
     request.headers.get(SIMULATOR_HEADER) === 'simulator' ? 'simulator' : 'storefront_pixel';
 

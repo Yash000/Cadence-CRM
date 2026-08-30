@@ -52,10 +52,11 @@ const MAX_PAYLOAD_BYTES = 8 * 1024;
 const MAX_SESSION_ID_LEN = 128;
 
 /**
- * Validate and normalise a decoded JSON request body. `source` is supplied
- * by the caller (route.ts decides it from which code path invoked it) rather
- * than trusted from the body, so a simulator request can never masquerade as
- * a real storefront delivery in the `events` table.
+ * Validate and normalise a decoded JSON request body. `source` is supplied by
+ * the caller (route.ts derives it from a request header) rather than read from
+ * the body, so a body field cannot set it by accident. This is NOT a trust
+ * boundary — the endpoint is unauthenticated and the header is caller-supplied,
+ * so either value can be spoofed. See app/api/events/route.ts.
  */
 export function parseEventInput(
   body: unknown,

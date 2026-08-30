@@ -1,4 +1,7 @@
-// Per-IP rate limiting for POST /api/agent.
+// Per-IP rate limiting. Written for POST /api/agent, now also used by
+// POST /api/events — callers pass their own limit and namespace their key
+// (see EVENTS_RATE_LIMIT and the call site in app/api/events/route.ts) so the
+// two endpoints get separate budgets out of one shared window map.
 //
 // This route is the only one in the app that spends real money: every question
 // is ~$0.002 of OpenRouter credit against a live key, returns up to 500 rows of
@@ -13,8 +16,16 @@
 // stopped by it. It is a cheap floor, not the real control — the real control
 // is auth, and after that a shared counter at the edge.
 
-/** Requests allowed per IP per window. */
+/** Requests allowed per IP per window for POST /api/agent. */
 export const RATE_LIMIT = 10;
+
+// Storefront tracking is ordinary browsing traffic, not a paid model call: one
+// shopper moving through a few product pages legitimately fires several events
+// a minute, and a shared office or mobile NAT puts many shoppers behind one
+// address. Set well above real browsing so it never truncates a genuine
+// session, but low enough that an unauthenticated writer cannot fill `events`
+// unmetered from a single address.
+export const EVENTS_RATE_LIMIT = 120;
 
 /** Window length in milliseconds. */
 export const RATE_WINDOW_MS = 60_000;
@@ -47,7 +58,11 @@ export function clientKey(request: Request): string {
   return request.headers.get('x-real-ip')?.trim() || 'local';
 }
 
-export function checkRateLimit(key: string, now = Date.now()): RateLimitResult {
+export function checkRateLimit(
+  key: string,
+  now = Date.now(),
+  limit = RATE_LIMIT,
+): RateLimitResult {
   // Sweep expired entries before the map can grow without bound.
   if (windows.size > MAX_TRACKED_IPS) {
     for (const [k, w] of windows) {
@@ -58,16 +73,16 @@ export function checkRateLimit(key: string, now = Date.now()): RateLimitResult {
   const existing = windows.get(key);
   if (!existing || existing.resetAt <= now) {
     windows.set(key, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return { allowed: true, remaining: RATE_LIMIT - 1, retryAfterSeconds: 0 };
+    return { allowed: true, remaining: limit - 1, retryAfterSeconds: 0 };
   }
 
   const retryAfterSeconds = Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
-  if (existing.count >= RATE_LIMIT) {
+  if (existing.count >= limit) {
     return { allowed: false, remaining: 0, retryAfterSeconds };
   }
 
   existing.count += 1;
-  return { allowed: true, remaining: RATE_LIMIT - existing.count, retryAfterSeconds };
+  return { allowed: true, remaining: limit - existing.count, retryAfterSeconds };
 }
 
 /** Test-only: forget every window. */
