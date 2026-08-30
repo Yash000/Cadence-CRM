@@ -80,32 +80,32 @@ describe('parseEventInput — malformed payloads rejected', () => {
   });
 
   it('rejects a non-positive-integer customer_id', () => {
-    assert.equal(parseEventInput({ type: 'page_view', customer_id: -1 }, 's').ok, false);
-    assert.equal(parseEventInput({ type: 'page_view', customer_id: 0 }, 's').ok, false);
-    assert.equal(parseEventInput({ type: 'page_view', customer_id: 1.5 }, 's').ok, false);
-    assert.equal(parseEventInput({ type: 'page_view', customer_id: 'not-a-number' }, 's').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', customer_id: -1 }, 'storefront_pixel').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', customer_id: 0 }, 'storefront_pixel').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', customer_id: 1.5 }, 'storefront_pixel').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', customer_id: 'not-a-number' }, 'storefront_pixel').ok, false);
   });
 
   it('rejects a non-string session_id and an oversized one', () => {
-    assert.equal(parseEventInput({ type: 'page_view', session_id: 123 }, 's').ok, false);
-    assert.equal(parseEventInput({ type: 'page_view', session_id: '' }, 's').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', session_id: 123 }, 'storefront_pixel').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', session_id: '' }, 'storefront_pixel').ok, false);
     assert.equal(
-      parseEventInput({ type: 'page_view', session_id: 'x'.repeat(129) }, 's').ok,
+      parseEventInput({ type: 'page_view', session_id: 'x'.repeat(129) }, 'storefront_pixel').ok,
       false,
     );
   });
 
   it('rejects a non-object payload and an oversized one', () => {
-    assert.equal(parseEventInput({ type: 'page_view', payload: 'nope' }, 's').ok, false);
-    assert.equal(parseEventInput({ type: 'page_view', payload: [1, 2, 3] }, 's').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', payload: 'nope' }, 'storefront_pixel').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', payload: [1, 2, 3] }, 'storefront_pixel').ok, false);
     assert.equal(
-      parseEventInput({ type: 'page_view', payload: { blob: 'x'.repeat(9000) } }, 's').ok,
+      parseEventInput({ type: 'page_view', payload: { blob: 'x'.repeat(9000) } }, 'storefront_pixel').ok,
       false,
     );
   });
 
   it('rejects an unparseable occurred_at', () => {
-    assert.equal(parseEventInput({ type: 'page_view', occurred_at: 'not-a-date' }, 's').ok, false);
-    assert.equal(parseEventInput({ type: 'page_view', occurred_at: 123 }, 's').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', occurred_at: 'not-a-date' }, 'storefront_pixel').ok, false);
+    assert.equal(parseEventInput({ type: 'page_view', occurred_at: 123 }, 'storefront_pixel').ok, false);
   });
 });
