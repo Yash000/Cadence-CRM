@@ -37,6 +37,11 @@ export function gql(query, variables = {}) {
     raw = execFileSync(
       'shopify',
       ['app', 'execute', '--store', STORE,
+       // --path explicitly: when `shopify` is a wrapper/shim (e.g. the
+       // shopify-ai-toolkit plugin), the `cwd` option below is not always
+       // honoured and the CLI walks up from the drive root looking for
+       // shopify.app.toml. Passing the app dir directly removes that guess.
+       '--path', `"${APP_DIR}"`,
        '--query-file', `"${qFile}"`,
        '--variable-file', `"${vFile}"`],
       { cwd: APP_DIR, encoding: 'utf8', shell: true, stdio: ['ignore', 'pipe', 'pipe'] }

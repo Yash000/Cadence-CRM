@@ -353,9 +353,9 @@ const vsSegment = await sweep(sql`segment = 'at_risk'`);
 
 const [corr] = await rows(sql`
   select round(corr(churn_risk, days_since_last_order)::numeric, 3) as corr_days,
-         round(corr(churn_risk, days_since_last_order / median_interval_days)::numeric, 3) as corr_overdue,
+         round(corr(churn_risk, days_since_last_order / nullif(median_interval_days, 0))::numeric, 3) as corr_overdue,
          count(*)::int as n
-  from customer_scores where median_interval_days is not null
+  from customer_scores where median_interval_days is not null and median_interval_days <> 0
 `);
 const [gaps] = await rows(sql`
   select round(percentile_cont(0.10) within group (order by median_interval_days)::numeric, 1) as p10,
