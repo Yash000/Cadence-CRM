@@ -11,6 +11,24 @@ automatically_update_urls_on_dev = true
 [webhooks]
 api_version = "2026-10"
 
+# PRD-01 §6.2 — the seven live-sync topics. The `uri` is relative and resolves
+# against `application_url`, so set that to the real Cadence origin (e.g. the
+# Vercel URL) before `shopify app deploy`. On the campus network the CLI tunnel
+# fails under WARP (build-plan Task 6); when Cadence runs on Vercel instead,
+# register these against the Vercel URL with `scripts/register-webhooks.mjs`
+# rather than relying on deploy.
+[[webhooks.subscriptions]]
+topics = [
+  "orders/create",
+  "orders/updated",
+  "orders/cancelled",
+  "customers/create",
+  "customers/update",
+  "checkouts/create",
+  "checkouts/update",
+]
+uri = "/api/webhooks/shopify"
+
 # CLI 4.7 validation requires [events] with at least one subscription.
 # Placeholder only — the real PRD-01 §6.2 topics get registered against the CRM
 # endpoint once it exists. Nothing consumes this URI yet.
