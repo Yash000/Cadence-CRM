@@ -66,7 +66,7 @@ describe(
         {
           type: 'page_view',
           session_id: sessionId('page-view'),
-          payload: { template: 'index', url: 'https://rasaya-dev.myshopify.com/' },
+          payload: { template: 'index', url: 'https://homestyle-dev.myshopify.com/' },
         },
         'storefront_pixel',
       );
@@ -106,7 +106,7 @@ describe(
           type: 'product_view',
           customer_id: TEST_SHOPIFY_CUSTOMER_IDS[0],
           session_id: sessionId('product-view'),
-          payload: { id: 'gid://shopify/Product/1', title: 'Rosemary Scalp Serum' },
+          payload: { id: 'gid://shopify/Product/1', title: 'Jaipur Dhurrie Rug' },
         },
         'storefront_pixel',
       );

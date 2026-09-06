@@ -36,7 +36,11 @@ for (const p of cat.products) {
 
   const issues = [];
   if (l.status !== 'ACTIVE') issues.push(`status=${l.status}`);
-  if (!l.featuredMedia) issues.push('no image');
+  // Only a problem if the catalogue actually specifies an image_url and it
+  // didn't land — seed-catalogue.mjs deliberately seeds without media when
+  // image_url is empty (furniture photography has to be supplied, not
+  // generated), so an intentionally-imageless product is not a defect.
+  if (p.image_url && !l.featuredMedia) issues.push('no image');
   if (l.replenishment?.value !== String(p.replenishment_days)) {
     issues.push(`product replenishment=${l.replenishment?.value ?? 'MISSING'} expected ${p.replenishment_days}`);
   }

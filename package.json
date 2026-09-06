@@ -2,6 +2,9 @@
   "scripts": {
     "seed": "node --import tsx scripts/seed-supabase.mjs",
     "score": "node --import tsx scripts/recompute-scores.mjs",
+    "apply-room-view": "node --import tsx scripts/apply-room-view.mjs",
+    "capture-ids": "node --import tsx scripts/capture-shopify-ids.mjs",
+    "seed-inbox": "node --import tsx scripts/seed-inbox.mjs",
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",

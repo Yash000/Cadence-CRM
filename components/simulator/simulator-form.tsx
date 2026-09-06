@@ -8,15 +8,15 @@ import type { RecentEvent } from '../../lib/events-db';
 import { TRACKED_EVENT_TYPES, type TrackedEventType } from '../../lib/events';
 
 const DEFAULT_PAYLOADS: Record<TrackedEventType, Record<string, unknown>> = {
-  page_view: { template: 'index', url: 'https://rasaya-dev.myshopify.com/', title: 'Rasaya' },
+  page_view: { template: 'index', url: 'https://homestyle-dev.myshopify.com/', title: 'HomeStyle' },
   product_view: {
     id: 'gid://shopify/Product/1',
-    title: 'Rosemary Scalp Serum',
-    handle: 'rosemary-scalp-serum',
-    price: '899.00',
+    title: 'Jaipur Dhurrie Rug',
+    handle: 'jaipur-dhurrie-rug',
+    price: '16500.00',
   },
-  add_to_cart: { source: 'product-form', title: 'Rosemary Scalp Serum', sku: 'RSY-SS-050', qty: 1, price: 899 },
-  checkout_started: { source: 'storefront', items: 2, value: '1548.00' },
+  add_to_cart: { source: 'product-form', title: 'Jaipur Dhurrie Rug', sku: 'HSF-RUG-57', qty: 1, price: 16500 },
+  checkout_started: { source: 'storefront', items: 2, value: '38900.00' },
 };
 
 function newSessionId(): string {

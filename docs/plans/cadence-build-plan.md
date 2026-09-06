@@ -1,7 +1,11 @@
 # Cadence Build Plan
 
 **Spec:** [PRD-01-Shopify-Store.md](../../PRD-01-Shopify-Store.md), [PRD-02-AI-CRM.md](../../PRD-02-AI-CRM.md)
-**Status:** foundation complete (Supabase schema, Rasaya catalogue, Shopify tooling); application unbuilt.
+**Status:** Tasks 1–9 complete. Application built (Dashboard, Customers, Customer
+360, Rooms, Ask Cadence, Inbox, Event Simulator). Task 10 (Inbox) done. Storefront
+rebranded from Rasaya to **HomeStyle Furniture** — see
+[../homestyle-reseed-runbook.md](../homestyle-reseed-runbook.md). Still deferred:
+flows/campaigns (§F6), auth/RLS policies (§F9), demo hardening.
 
 ## Global Constraints
 
@@ -36,8 +40,9 @@
   12 products / 18 variants / 3 collections live.
 - **Postgres connections require Cloudflare WARP** — the local network blocks
   5432/6543. HTTPS is unaffected.
-- `.env.local` holds `AGENT_DATABASE_URL`, `OPENROUTER_API_KEY`, `RESEND_API_KEY`,
-  `SHOPIFY_STORE_DOMAIN`. `DATABASE_URL` is NOT yet present — Task 1 adds it.
+- `.env.local` holds `DATABASE_URL`, `AGENT_DATABASE_URL`, `OPENROUTER_API_KEY`,
+  `RESEND_API_KEY`, `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_API_SECRET`.
+- The vendored Shopify theme lives in `homestyle-theme/` (a Dawn fork).
 
 ---
 
@@ -162,7 +167,7 @@ renders live counts from Postgres to prove the connection works.
 
 **Design reference:** `Pulse CRM Interface Design/Pulse CRM.dc.html` is an
 interactive mockup of the intended UI — read it for layout, information density,
-and the reasoning-inline pattern. Rename "Pulse"/"Sattva Co." to "Cadence"/"Rasaya".
+and the reasoning-inline pattern. Rename "Pulse"/"Sattva Co." to "Cadence"/"HomeStyle".
 
 ---
 
@@ -228,20 +233,39 @@ weaken it.
 
 ## Task 9: Discounts, theme, event instrumentation
 
-**Files:** `scripts/seed-discounts.mjs`, `rasaya-theme/`
+**Files:** `scripts/seed-discounts.mjs`, `homestyle-theme/`
 
 - Three discount codes via `scripts/lib/shopify.mjs`: `WELCOME10` (10% first
   order), `COMEBACK15` (15% win-back), `REFILL20` (20% replenishment).
-- `shopify theme init` Dawn, light Rasaya branding, push to `rasaya-dev`.
+- `shopify theme init` Dawn, light HomeStyle branding, push to `rasaya-dev`
+  (the dev-store domain still carries the pre-rebrand name).
 - The §7 tracking snippet posting `page_view`, `product_view`, `add_to_cart`,
   `checkout_started` to the CRM event endpoint.
 - Fallback per PRD-01 §7: an in-app event simulator page, labelled as a simulator.
 
 ---
 
+## Task 10: Inbox
+
+**Files:** `app/inbox/`, `app/api/inbox/`, `components/inbox/`, `lib/inbox-*.ts`,
+`lib/messaging.ts`, `scripts/seed-inbox.mjs`
+
+PRD-02 §F5.3 / §F5.9 / §F5.10. See [../inbox.md](../inbox.md).
+
+- Unified conversation list (status / channel / unknown-contacts filters), threaded
+  view, AI-drafted replies held for rep approve/reject.
+- Channel simulator (`/api/inbox/simulate`, §F5.11) — the only inbound path while
+  Twilio is unconfigured. `npm run seed-inbox` for demo history.
+- Email really sends via Resend; WhatsApp/SMS are recorded-only.
+- §F5.6 (session-window) and §F5.7 (consent gating) surfaced as warnings, not
+  enforced.
+
+---
+
 ## Deferred
 
-- **Messaging (PRD-02 §F5)** — blocked: Twilio WhatsApp Sandbox not configured.
+- **Live WhatsApp/SMS (PRD-02 §F5.1)** — Twilio Sandbox still not configured. The
+  Inbox and its simulator are built; only real Twilio inbound/outbound is missing.
 - **Flows and campaigns (§F6)** — depends on messaging.
 - **Auth and RLS policies (§F9)** — RLS is enabled deny-by-default; policies land
   with Supabase Auth.

@@ -89,9 +89,14 @@ const CITIES = [
 
 const cat = JSON.parse(readFileSync(CATALOGUE_FILE, 'utf8'));
 const ALL_VARIANTS = cat.products.flatMap((p) =>
-  p.variants.map((v) => ({ sku: v.sku, price: v.price, title: `${p.title} — ${v.title}`, productType: p.product_type }))
+  p.variants.map((v) => ({ sku: v.sku, price: v.price, title: `${p.title} — ${v.title}`, productType: p.product_type, role: p.role }))
 );
-const SERUM_VARIANTS = ALL_VARIANTS.filter((v) => v.productType === 'Serum' || v.productType === 'Scalp Serum');
+// The demo protagonist's narrative (below) needs a purchase that reads as "the
+// room opened, then stalled" — that's an anchor piece (sofa, bed, dining
+// table), not a repeat-purchase item. Was SERUM_VARIANTS pre-rebrand, filtered
+// on a product_type ('Serum'/'Scalp Serum') the HomeStyle catalogue has none
+// of, which would have silently emptied the pool and broken pick().
+const ANCHOR_VARIANTS = ALL_VARIANTS.filter((v) => v.role === 'anchor');
 
 // ── segment plan — PRD-01 §5.3 definitions, volumes per task-2-brief.md ─────
 // Each entry: how many customers, how many orders each gets, and the cadence/
@@ -162,12 +167,30 @@ function median(arr) {
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
-function pickLineItems(rngBiasSerum) {
+function pickLineItems(rngBiasAnchor) {
   const n = randInt(1, 3);
   const items = [];
   for (let i = 0; i < n; i++) {
-    const v = rngBiasSerum && i === 0 && rand() < 0.7 ? pick(SERUM_VARIANTS) : pick(ALL_VARIANTS);
-    items.push({ sku: v.sku, title: v.title, price: v.price, quantity: randInt(1, 2) });
+    const v = rngBiasAnchor && i === 0 && rand() < 0.7 ? pick(ANCHOR_VARIANTS) : pick(ALL_VARIANTS);
+    // Nobody buys two sofas. quantity 1-2 stays for everything else (care &
+    // decor genuinely gets bought in twos), but a furniture piece — anchor or
+    // companion — is always a single unit, matching the room-tier convention
+    // scripts/seed-supabase.mjs already follows.
+    //
+    // randInt(1, 2) is called UNCONDITIONALLY, then overridden to 1 — never
+    // skip an rng draw based on which branch runs. This dataset is generated
+    // customer-by-customer, name/phone/email interleaved with each customer's
+    // own order lines, off one shared mulberry32 stream; a call that only
+    // fires on some branches shifts every rand() draw after it, which changes
+    // every later customer's identity. That is exactly what happened the
+    // first time this was written conditionally: customer #2 onward drew a
+    // different name/email/phone than the ones already live on the store from
+    // the original run, and the mismatch surfaced as a phone collision deep
+    // into customerCreate — a much harder trail to follow back to this line
+    // than the fix is to state.
+    let quantity = randInt(1, 2);
+    if (v.role === 'anchor' || v.role === 'companion') quantity = 1;
+    items.push({ sku: v.sku, title: v.title, price: v.price, quantity });
   }
   return items;
 }
@@ -288,8 +311,8 @@ function verify(ds) {
     if (p.orders.length < 3) issues.push('protagonist has <3 orders');
     if (Math.abs(p.lastOrderDaysAgo - 140) > 15) issues.push(`protagonist last order ${p.lastOrderDaysAgo}d ago, expected ~140`);
     const lastOrder = p.orders[p.orders.length - 1];
-    const buysSerum = lastOrder.lineItems.some((li) => SERUM_VARIANTS.some((v) => v.sku === li.sku));
-    if (!buysSerum) issues.push('protagonist last order is not a serum purchase');
+    const buysAnchorPiece = lastOrder.lineItems.some((li) => ANCHOR_VARIANTS.some((v) => v.sku === li.sku));
+    if (!buysAnchorPiece) issues.push('protagonist last order is not an anchor-piece purchase');
   }
 
   const negMedian = cs.filter((c) => c.medianGapDays != null && c.medianGapDays <= 0);

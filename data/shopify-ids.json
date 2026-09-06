@@ -1,186 +1,246 @@
 {
-  "_note": "Live Shopify IDs for the 12-product Rasaya catalogue, captured from rasaya-dev.myshopify.com. scripts/seed-supabase.mjs uses these so the CRM products/order_items mirror the real store rather than inventing IDs. Regenerate after a store rebuild with the query in _query below, run through scripts/lib/shopify.mjs.",
-  "_query": "query { products(first: 50) { edges { node { id handle title variants(first:10){edges{node{id sku title price}}} } } } }",
-  "_capturedAt": "2026-08-24T08:57:11.068Z",
+  "_note": "Live Shopify IDs for the 15-product HomeStyle catalogue, captured from rasaya-dev.myshopify.com. scripts/seed-supabase.mjs uses these so the CRM products/order_items mirror the real store rather than inventing IDs. Regenerate after a store rebuild with scripts/capture-shopify-ids.mjs.",
+  "_query": "query { products(first: 100) { edges { node { id handle title variants(first: 20) { edges { node { id sku title price } } } } } } }",
+  "_capturedAt": "2026-09-06T11:49:53.456Z",
   "store": "rasaya-dev.myshopify.com",
   "products": [
     {
-      "handle": "bhringraj-anti-hairfall-hair-oil",
-      "shopify_product_id": 10410304078120,
+      "handle": "aravalli-sofa",
+      "shopify_product_id": 10427354480936,
       "variants": [
         {
-          "sku": "RSY-HO-100",
-          "title": "100ml",
-          "price": "349.00",
-          "shopify_variant_id": 52277359116584
+          "sku": "HSF-SOF-2S",
+          "title": "2-Seater",
+          "price": "62000.00",
+          "shopify_variant_id": 52329372746024
         },
         {
-          "sku": "RSY-HO-200",
-          "title": "200ml",
-          "price": "599.00",
-          "shopify_variant_id": 52277359149352
+          "sku": "HSF-SOF-3S",
+          "title": "3-Seater",
+          "price": "84000.00",
+          "shopify_variant_id": 52329372778792
         }
       ]
     },
     {
-      "handle": "rice-water-strengthening-shampoo",
-      "shopify_product_id": 10410304405800,
+      "handle": "kota-stone-coffee-table",
+      "shopify_product_id": 10427354808616,
       "variants": [
         {
-          "sku": "RSY-SH-200",
-          "title": "200ml",
-          "price": "549.00",
-          "shopify_variant_id": 52277359575336
+          "sku": "HSF-CFT-RD",
+          "title": "Round",
+          "price": "19800.00",
+          "shopify_variant_id": 52329373106472
         },
         {
-          "sku": "RSY-SH-300",
+          "sku": "HSF-CFT-RC",
+          "title": "Rectangular",
+          "price": "22400.00",
+          "shopify_variant_id": 52329373139240
+        }
+      ]
+    },
+    {
+      "handle": "jaipur-dhurrie-rug",
+      "shopify_product_id": 10427354906920,
+      "variants": [
+        {
+          "sku": "HSF-RUG-57",
+          "title": "5x7 ft",
+          "price": "16500.00",
+          "shopify_variant_id": 52329373434152
+        },
+        {
+          "sku": "HSF-RUG-69",
+          "title": "6x9 ft",
+          "price": "24900.00",
+          "shopify_variant_id": 52329373466920
+        }
+      ]
+    },
+    {
+      "handle": "brass-arc-floor-lamp",
+      "shopify_product_id": 10427355136296,
+      "variants": [
+        {
+          "sku": "HSF-LMP-AR",
+          "title": "Standard",
+          "price": "8900.00",
+          "shopify_variant_id": 52329373696296
+        }
+      ]
+    },
+    {
+      "handle": "sheesham-platform-bed",
+      "shopify_product_id": 10427355201832,
+      "variants": [
+        {
+          "sku": "HSF-BED-QN",
+          "title": "Queen",
+          "price": "78000.00",
+          "shopify_variant_id": 52329373761832
+        },
+        {
+          "sku": "HSF-BED-KG",
+          "title": "King",
+          "price": "92000.00",
+          "shopify_variant_id": 52329373794600
+        }
+      ]
+    },
+    {
+      "handle": "mysore-teak-wardrobe",
+      "shopify_product_id": 10427355398440,
+      "variants": [
+        {
+          "sku": "HSF-WRD-2D",
+          "title": "2-Door",
+          "price": "48000.00",
+          "shopify_variant_id": 52329374122280
+        },
+        {
+          "sku": "HSF-WRD-3D",
+          "title": "3-Door",
+          "price": "64000.00",
+          "shopify_variant_id": 52329374155048
+        }
+      ]
+    },
+    {
+      "handle": "cane-weave-bedside-table",
+      "shopify_product_id": 10427355463976,
+      "variants": [
+        {
+          "sku": "HSF-BST-01",
+          "title": "Single",
+          "price": "11500.00",
+          "shopify_variant_id": 52329374318888
+        },
+        {
+          "sku": "HSF-BST-02",
+          "title": "Pair",
+          "price": "21000.00",
+          "shopify_variant_id": 52329374351656
+        }
+      ]
+    },
+    {
+      "handle": "nilgiri-dining-table",
+      "shopify_product_id": 10427355496744,
+      "variants": [
+        {
+          "sku": "HSF-DNT-04",
+          "title": "4-Seater",
+          "price": "49000.00",
+          "shopify_variant_id": 52329374384424
+        },
+        {
+          "sku": "HSF-DNT-06",
+          "title": "6-Seater",
+          "price": "68000.00",
+          "shopify_variant_id": 52329374417192
+        }
+      ]
+    },
+    {
+      "handle": "cane-back-dining-chair",
+      "shopify_product_id": 10427355529512,
+      "variants": [
+        {
+          "sku": "HSF-DNC-02",
+          "title": "Set of 2",
+          "price": "17500.00",
+          "shopify_variant_id": 52329374449960
+        },
+        {
+          "sku": "HSF-DNC-04",
+          "title": "Set of 4",
+          "price": "33000.00",
+          "shopify_variant_id": 52329374482728
+        }
+      ]
+    },
+    {
+      "handle": "terracotta-sideboard",
+      "shopify_product_id": 10427355595048,
+      "variants": [
+        {
+          "sku": "HSF-SBD-01",
+          "title": "Standard",
+          "price": "38000.00",
+          "shopify_variant_id": 52329374581032
+        }
+      ]
+    },
+    {
+      "handle": "handloom-cushion-cover-set",
+      "shopify_product_id": 10427355627816,
+      "variants": [
+        {
+          "sku": "HSF-CSH-02",
+          "title": "Set of 2",
+          "price": "1450.00",
+          "shopify_variant_id": 52329374613800
+        },
+        {
+          "sku": "HSF-CSH-04",
+          "title": "Set of 4",
+          "price": "2700.00",
+          "shopify_variant_id": 52329374646568
+        }
+      ]
+    },
+    {
+      "handle": "cotton-waffle-throw",
+      "shopify_product_id": 10427355660584,
+      "variants": [
+        {
+          "sku": "HSF-THR-01",
+          "title": "Standard",
+          "price": "2200.00",
+          "shopify_variant_id": 52329374679336
+        }
+      ]
+    },
+    {
+      "handle": "stoneware-vase-trio",
+      "shopify_product_id": 10427355693352,
+      "variants": [
+        {
+          "sku": "HSF-VAS-03",
+          "title": "Set of 3",
+          "price": "3400.00",
+          "shopify_variant_id": 52329374712104
+        }
+      ]
+    },
+    {
+      "handle": "teak-care-polish",
+      "shopify_product_id": 10427355726120,
+      "variants": [
+        {
+          "sku": "HSF-POL-200",
+          "title": "200ml",
+          "price": "649.00",
+          "shopify_variant_id": 52329374744872
+        },
+        {
+          "sku": "HSF-POL-500",
+          "title": "500ml",
+          "price": "1290.00",
+          "shopify_variant_id": 52329374777640
+        }
+      ]
+    },
+    {
+      "handle": "fabric-guard-spray",
+      "shopify_product_id": 10427355791656,
+      "variants": [
+        {
+          "sku": "HSF-FGD-300",
           "title": "300ml",
-          "price": "749.00",
-          "shopify_variant_id": 52277359608104
-        }
-      ]
-    },
-    {
-      "handle": "rosemary-scalp-serum",
-      "shopify_product_id": 10410304700712,
-      "variants": [
-        {
-          "sku": "RSY-SS-050",
-          "title": "50ml",
           "price": "899.00",
-          "shopify_variant_id": 52277359903016
-        }
-      ]
-    },
-    {
-      "handle": "amla-hibiscus-hair-mask",
-      "shopify_product_id": 10410304930088,
-      "variants": [
-        {
-          "sku": "RSY-HM-200",
-          "title": "200g",
-          "price": "649.00",
-          "shopify_variant_id": 52277360132392
-        }
-      ]
-    },
-    {
-      "handle": "gentle-foaming-cleanser",
-      "shopify_product_id": 10410305257768,
-      "variants": [
-        {
-          "sku": "RSY-CL-100",
-          "title": "100ml",
-          "price": "399.00",
-          "shopify_variant_id": 52277360460072
-        },
-        {
-          "sku": "RSY-CL-200",
-          "title": "200ml",
-          "price": "649.00",
-          "shopify_variant_id": 52277360492840
-        }
-      ]
-    },
-    {
-      "handle": "niacinamide-clarity-serum",
-      "shopify_product_id": 10410305585448,
-      "variants": [
-        {
-          "sku": "RSY-NS-030",
-          "title": "30ml",
-          "price": "899.00",
-          "shopify_variant_id": 52277360820520
-        },
-        {
-          "sku": "RSY-NS-050",
-          "title": "50ml",
-          "price": "1299.00",
-          "shopify_variant_id": 52277360853288
-        }
-      ]
-    },
-    {
-      "handle": "vitamin-c-glow-serum",
-      "shopify_product_id": 10410305880360,
-      "variants": [
-        {
-          "sku": "RSY-VC-030",
-          "title": "30ml",
-          "price": "1099.00",
-          "shopify_variant_id": 52277361180968
-        }
-      ]
-    },
-    {
-      "handle": "ceramide-repair-serum",
-      "shopify_product_id": 10410306240808,
-      "variants": [
-        {
-          "sku": "RSY-CS-030",
-          "title": "30ml",
-          "price": "1199.00",
-          "shopify_variant_id": 52277361541416
-        },
-        {
-          "sku": "RSY-CS-050",
-          "title": "50ml",
-          "price": "1499.00",
-          "shopify_variant_id": 52277361574184
-        }
-      ]
-    },
-    {
-      "handle": "tinted-mineral-spf-50",
-      "shopify_product_id": 10410306666792,
-      "variants": [
-        {
-          "sku": "RSY-SPF-050",
-          "title": "50ml",
-          "price": "1449.00",
-          "shopify_variant_id": 52277362098472
-        }
-      ]
-    },
-    {
-      "handle": "biotin-hair-nail-gummies",
-      "shopify_product_id": 10410307027240,
-      "variants": [
-        {
-          "sku": "RSY-BG-060",
-          "title": "60 count",
-          "price": "699.00",
-          "shopify_variant_id": 52277362458920
-        },
-        {
-          "sku": "RSY-BG-120",
-          "title": "120 count",
-          "price": "1199.00",
-          "shopify_variant_id": 52277362491688
-        }
-      ]
-    },
-    {
-      "handle": "ashwagandha-calm-capsules",
-      "shopify_product_id": 10410307289384,
-      "variants": [
-        {
-          "sku": "RSY-AW-060",
-          "title": "60 count",
-          "price": "599.00",
-          "shopify_variant_id": 52277362753832
-        }
-      ]
-    },
-    {
-      "handle": "triphala-gut-glow-powder",
-      "shopify_product_id": 10410307715368,
-      "variants": [
-        {
-          "sku": "RSY-TP-200",
-          "title": "200g",
-          "price": "899.00",
-          "shopify_variant_id": 52277363179816
+          "shopify_variant_id": 52329374875944
         }
       ]
     }

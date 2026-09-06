@@ -26,6 +26,18 @@ data/images/
 # drizzle-kit introspect/studio scratch output — never used for migrations
 db/.introspect-scratch/
 
+# Local scratch / temp working files (agents, notes, throwaway scripts)
+scratchpad/
+**/scratchpad/
+tmp/
+.tmp/
+*.tmp
+
+# Rebrand leftovers — pre-HomeStyle backups kept locally, not in the repo
+*.bak
+*.bak.json
+data/shopify-ids.rasaya.bak.json
+
 *.log
 .DS_Store
 Thumbs.db

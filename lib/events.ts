@@ -5,7 +5,7 @@
 // functions without DATABASE_URL or a running server.
 //
 // Two callers post here: the Dawn theme's tracking snippet
-// (rasaya-theme/snippets/cadence-tracking.liquid + assets/cadence-tracking.js)
+// (homestyle-theme/snippets/cadence-tracking.liquid + assets/cadence-tracking.js)
 // and the in-app event simulator (app/simulator) — both send the identical
 // wire shape, so this validator is the single source of truth for both.
 

@@ -66,7 +66,7 @@ async function deliver(
   const headers: Record<string, string> = {
     'content-type': 'application/json',
     'x-shopify-topic': topic,
-    'x-shopify-shop-domain': 'rasaya-dev.myshopify.com',
+    'x-shopify-shop-domain': 'homestyle-dev.myshopify.com',
     'x-shopify-api-version': '2025-07',
     'x-shopify-webhook-id': `test-${Date.now()}-${Math.random().toString(16).slice(2)}`,
   };

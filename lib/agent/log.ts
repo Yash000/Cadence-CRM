@@ -14,7 +14,7 @@
 // point — the agent cannot read or rewrite its own audit trail.
 import { db, schema } from '../../db/index';
 
-export type AgentFeature = 'agent.sql' | 'agent.answer';
+export type AgentFeature = 'agent.sql' | 'agent.answer' | 'inbox.draft';
 
 export interface AiLogEntry {
   feature: AgentFeature;

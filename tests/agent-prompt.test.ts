@@ -79,7 +79,7 @@ const SCORING_SQL_PATH = new URL('../db/scoring.sql', import.meta.url);
  * that change is reverted or amended before it lands, this test fires again,
  * which is the correct behaviour and not a fault.
  */
-const SCORING_SQL_SHA256 = '869bdaa4af83d01540e15af39d8261cf75fe6098c376d9abe8ca3c8545397a13';
+const SCORING_SQL_SHA256 = '1285f14307da744a3403fc40698e66b4e10cdf4a371d3c570e76cdfc85262bed';
 
 function scoringSqlHash(): string {
   const raw = readFileSync(SCORING_SQL_PATH, 'utf8').replace(/\r\n/g, '\n');
@@ -120,7 +120,10 @@ describe('agent system prompt', () => {
     assert.match(prompt, /days_since_signup <= 90/);
 
     // The cadence override — the branch the product's whole thesis rests on.
-    assert.match(prompt, /overdue >= 4 and days_since >= 270/);
+    // The absolute-silence floor is tier-aware: 270 days for care-tier
+    // refills, 540 for room projects, because a finished room going quiet for
+    // most of a year is normal behaviour and not a lapse.
+    assert.match(prompt, /overdue >= 4 and days_since >= \(270 for care tier, 540 for room tier\)/);
     assert.match(prompt, /churn_risk >= 65/);
     assert.match(prompt, /churn_risk <= 35/);
   });

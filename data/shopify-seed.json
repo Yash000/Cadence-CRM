@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generatedAt": "2026-08-24T09:59:21.900Z",
+    "generatedAt": "2026-09-06T18:09:23.215Z",
     "rngSeed": 20260824,
     "anchorNow": "2026-08-24T09:00:00.000Z",
     "windowDays": 540,
@@ -30,21 +30,21 @@
           "daysAgo": 140,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             }
           ]
@@ -55,9 +55,9 @@
           "daysAgo": 114,
           "lineItems": [
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             }
           ]
@@ -68,16 +68,16 @@
           "daysAgo": 76,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
             }
           ]
         },
@@ -87,16 +87,16 @@
           "daysAgo": 59,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
             }
           ]
         },
@@ -106,10 +106,10 @@
           "daysAgo": 25,
           "lineItems": [
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
-              "quantity": 2
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
+              "quantity": 1
             }
           ]
         },
@@ -119,9 +119,9 @@
           "daysAgo": 3,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             }
           ]
@@ -151,21 +151,21 @@
           "daysAgo": 191,
           "lineItems": [
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-CFT-RC",
+              "title": "Kota Stone Coffee Table — Rectangular",
+              "price": "22400.00",
               "quantity": 1
             }
           ]
@@ -176,15 +176,15 @@
           "daysAgo": 145,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             }
           ]
@@ -195,21 +195,21 @@
           "daysAgo": 118,
           "lineItems": [
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
               "quantity": 1
             }
           ]
@@ -220,21 +220,21 @@
           "daysAgo": 88,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             }
           ]
@@ -245,10 +245,10 @@
           "daysAgo": 58,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
+              "sku": "HSF-WRD-2D",
+              "title": "Mysore Teak Wardrobe — 2-Door",
+              "price": "48000.00",
+              "quantity": 1
             }
           ]
         },
@@ -258,9 +258,9 @@
           "daysAgo": 37,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -271,22 +271,22 @@
           "daysAgo": 15,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             }
           ]
         }
@@ -315,16 +315,16 @@
           "daysAgo": 149,
           "lineItems": [
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
-              "quantity": 2
+              "sku": "HSF-DNC-02",
+              "title": "Cane-Back Dining Chair — Set of 2",
+              "price": "17500.00",
+              "quantity": 1
             }
           ]
         },
@@ -334,15 +334,15 @@
           "daysAgo": 132,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 1
             }
           ]
@@ -353,21 +353,21 @@
           "daysAgo": 101,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
               "quantity": 1
             }
           ]
@@ -378,10 +378,10 @@
           "daysAgo": 78,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
             }
           ]
         },
@@ -391,15 +391,15 @@
           "daysAgo": 43,
           "lineItems": [
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
-              "price": "899.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             }
           ]
@@ -410,10 +410,10 @@
           "daysAgo": 13,
           "lineItems": [
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
             }
           ]
         }
@@ -442,21 +442,21 @@
           "daysAgo": 201,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
+              "sku": "HSF-LMP-AR",
+              "title": "Brass Arc Floor Lamp — Standard",
+              "price": "8900.00",
               "quantity": 1
             }
           ]
@@ -467,10 +467,10 @@
           "daysAgo": 180,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
             }
           ]
         },
@@ -480,9 +480,9 @@
           "daysAgo": 149,
           "lineItems": [
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
               "quantity": 1
             }
           ]
@@ -493,21 +493,21 @@
           "daysAgo": 127,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
+              "sku": "HSF-WRD-2D",
+              "title": "Mysore Teak Wardrobe — 2-Door",
+              "price": "48000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             }
           ]
@@ -518,21 +518,21 @@
           "daysAgo": 107,
           "lineItems": [
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 1
             }
           ]
@@ -543,15 +543,15 @@
           "daysAgo": 70,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
+              "sku": "HSF-WRD-2D",
+              "title": "Mysore Teak Wardrobe — 2-Door",
+              "price": "48000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
               "quantity": 1
             }
           ]
@@ -562,22 +562,22 @@
           "daysAgo": 52,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
-              "price": "899.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
-              "quantity": 2
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
+              "quantity": 1
             }
           ]
         },
@@ -587,10 +587,10 @@
           "daysAgo": 20,
           "lineItems": [
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
+              "quantity": 1
             }
           ]
         }
@@ -619,21 +619,21 @@
           "daysAgo": 177,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             }
           ]
@@ -644,16 +644,16 @@
           "daysAgo": 138,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
-              "quantity": 2
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
+              "quantity": 1
             }
           ]
         },
@@ -663,22 +663,22 @@
           "daysAgo": 89,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
-              "quantity": 2
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
+              "quantity": 1
             }
           ]
         },
@@ -688,15 +688,15 @@
           "daysAgo": 60,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -707,9 +707,9 @@
           "daysAgo": 34,
           "lineItems": [
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             }
           ]
@@ -739,15 +739,15 @@
           "daysAgo": 280,
           "lineItems": [
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-02",
+              "title": "Handloom Cushion Cover Set — Set of 2",
+              "price": "1450.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
+              "sku": "HSF-RUG-69",
+              "title": "Jaipur Dhurrie Rug — 6x9 ft",
+              "price": "24900.00",
               "quantity": 1
             }
           ]
@@ -758,16 +758,16 @@
           "daysAgo": 219,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
-              "quantity": 2
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
+              "quantity": 1
             }
           ]
         },
@@ -777,10 +777,10 @@
           "daysAgo": 156,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
+              "quantity": 1
             }
           ]
         },
@@ -790,15 +790,15 @@
           "daysAgo": 95,
           "lineItems": [
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-02",
+              "title": "Handloom Cushion Cover Set — Set of 2",
+              "price": "1450.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             }
           ]
@@ -809,21 +809,21 @@
           "daysAgo": 43,
           "lineItems": [
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
               "quantity": 1
             }
           ]
@@ -853,21 +853,21 @@
           "daysAgo": 160,
           "lineItems": [
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             }
           ]
@@ -878,16 +878,16 @@
           "daysAgo": 127,
           "lineItems": [
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-DNC-02",
+              "title": "Cane-Back Dining Chair — Set of 2",
+              "price": "17500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             }
           ]
         },
@@ -897,15 +897,15 @@
           "daysAgo": 87,
           "lineItems": [
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 1
             }
           ]
@@ -916,16 +916,16 @@
           "daysAgo": 45,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
-              "quantity": 2
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
+              "quantity": 1
             }
           ]
         }
@@ -954,15 +954,15 @@
           "daysAgo": 156,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 1
             }
           ]
@@ -973,22 +973,22 @@
           "daysAgo": 122,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
+              "quantity": 1
             }
           ]
         },
@@ -998,15 +998,15 @@
           "daysAgo": 82,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 1
             }
           ]
@@ -1017,10 +1017,10 @@
           "daysAgo": 62,
           "lineItems": [
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-LMP-AR",
+              "title": "Brass Arc Floor Lamp — Standard",
+              "price": "8900.00",
+              "quantity": 1
             }
           ]
         },
@@ -1030,10 +1030,10 @@
           "daysAgo": 25,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
+              "quantity": 1
             }
           ]
         }
@@ -1062,10 +1062,10 @@
           "daysAgo": 157,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
+              "quantity": 1
             }
           ]
         },
@@ -1075,21 +1075,21 @@
           "daysAgo": 130,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -1100,22 +1100,22 @@
           "daysAgo": 71,
           "lineItems": [
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
+              "quantity": 1
             }
           ]
         },
@@ -1125,9 +1125,9 @@
           "daysAgo": 41,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -1157,9 +1157,9 @@
           "daysAgo": 150,
           "lineItems": [
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
               "quantity": 1
             }
           ]
@@ -1170,9 +1170,9 @@
           "daysAgo": 104,
           "lineItems": [
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
               "quantity": 1
             }
           ]
@@ -1183,15 +1183,15 @@
           "daysAgo": 77,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-02",
+              "title": "Handloom Cushion Cover Set — Set of 2",
+              "price": "1450.00",
               "quantity": 1
             }
           ]
@@ -1202,15 +1202,15 @@
           "daysAgo": 18,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -1240,15 +1240,15 @@
           "daysAgo": 160,
           "lineItems": [
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
               "quantity": 1
             }
           ]
@@ -1259,21 +1259,21 @@
           "daysAgo": 112,
           "lineItems": [
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-POL-200",
+              "title": "Teak Care Polish — 200ml",
+              "price": "649.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
-              "price": "899.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 1
             }
           ]
@@ -1284,22 +1284,22 @@
           "daysAgo": 84,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             }
           ]
         },
@@ -1309,15 +1309,15 @@
           "daysAgo": 59,
           "lineItems": [
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
-              "quantity": 2
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             }
           ]
@@ -1328,16 +1328,16 @@
           "daysAgo": 27,
           "lineItems": [
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RC",
+              "title": "Kota Stone Coffee Table — Rectangular",
+              "price": "22400.00",
+              "quantity": 1
             }
           ]
         }
@@ -1366,16 +1366,16 @@
           "daysAgo": 130,
           "lineItems": [
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-LMP-AR",
+              "title": "Brass Arc Floor Lamp — Standard",
+              "price": "8900.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
+              "quantity": 1
             }
           ]
         },
@@ -1385,8 +1385,8 @@
           "daysAgo": 99,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 2
             }
@@ -1398,16 +1398,16 @@
           "daysAgo": 74,
           "lineItems": [
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             }
           ]
         },
@@ -1417,22 +1417,22 @@
           "daysAgo": 15,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
             }
           ]
         }
@@ -1461,21 +1461,21 @@
           "daysAgo": 42,
           "lineItems": [
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
+              "sku": "HSF-CFT-RC",
+              "title": "Kota Stone Coffee Table — Rectangular",
+              "price": "22400.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
+              "sku": "HSF-CFT-RC",
+              "title": "Kota Stone Coffee Table — Rectangular",
+              "price": "22400.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
               "quantity": 1
             }
           ]
@@ -1486,9 +1486,9 @@
           "daysAgo": 24,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             }
           ]
@@ -1518,9 +1518,9 @@
           "daysAgo": 41,
           "lineItems": [
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             }
           ]
@@ -1531,22 +1531,22 @@
           "daysAgo": 12,
           "lineItems": [
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
+              "quantity": 1
             }
           ]
         }
@@ -1575,16 +1575,16 @@
           "daysAgo": 38,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-RUG-69",
+              "title": "Jaipur Dhurrie Rug — 6x9 ft",
+              "price": "24900.00",
+              "quantity": 1
             }
           ]
         },
@@ -1594,21 +1594,21 @@
           "daysAgo": 14,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
               "quantity": 1
             }
           ]
@@ -1638,9 +1638,9 @@
           "daysAgo": 49,
           "lineItems": [
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 1
             }
           ]
@@ -1651,9 +1651,9 @@
           "daysAgo": 24,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             }
           ]
@@ -1683,16 +1683,16 @@
           "daysAgo": 238,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
+              "quantity": 1
             }
           ]
         },
@@ -1702,9 +1702,9 @@
           "daysAgo": 180,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             }
           ]
@@ -1715,21 +1715,21 @@
           "daysAgo": 140,
           "lineItems": [
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
               "quantity": 1
             }
           ]
@@ -1759,10 +1759,10 @@
           "daysAgo": 306,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
+              "quantity": 1
             }
           ]
         },
@@ -1772,21 +1772,21 @@
           "daysAgo": 276,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-200",
+              "title": "Teak Care Polish — 200ml",
+              "price": "649.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-200",
+              "title": "Teak Care Polish — 200ml",
+              "price": "649.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 1
             }
           ]
@@ -1797,21 +1797,21 @@
           "daysAgo": 216,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
               "quantity": 1
             }
           ]
@@ -1822,21 +1822,21 @@
           "daysAgo": 156,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
-              "price": "899.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             }
           ]
@@ -1847,22 +1847,22 @@
           "daysAgo": 126,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
-              "quantity": 2
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
+              "quantity": 1
             }
           ]
         }
@@ -1891,22 +1891,22 @@
           "daysAgo": 323,
           "lineItems": [
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
-              "price": "899.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
             }
           ]
         },
@@ -1916,22 +1916,22 @@
           "daysAgo": 259,
           "lineItems": [
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
-              "quantity": 2
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RC",
+              "title": "Kota Stone Coffee Table — Rectangular",
+              "price": "22400.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
-              "quantity": 2
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
+              "quantity": 1
             }
           ]
         },
@@ -1941,21 +1941,21 @@
           "daysAgo": 201,
           "lineItems": [
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -1966,16 +1966,16 @@
           "daysAgo": 148,
           "lineItems": [
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-LMP-AR",
+              "title": "Brass Arc Floor Lamp — Standard",
+              "price": "8900.00",
+              "quantity": 1
             }
           ]
         }
@@ -2004,16 +2004,16 @@
           "daysAgo": 334,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-WRD-2D",
+              "title": "Mysore Teak Wardrobe — 2-Door",
+              "price": "48000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-LMP-AR",
+              "title": "Brass Arc Floor Lamp — Standard",
+              "price": "8900.00",
+              "quantity": 1
             }
           ]
         },
@@ -2023,21 +2023,21 @@
           "daysAgo": 268,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
+              "sku": "HSF-RUG-69",
+              "title": "Jaipur Dhurrie Rug — 6x9 ft",
+              "price": "24900.00",
               "quantity": 1
             }
           ]
@@ -2048,16 +2048,16 @@
           "daysAgo": 212,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
             }
           ]
         },
@@ -2067,15 +2067,15 @@
           "daysAgo": 160,
           "lineItems": [
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-RUG-69",
+              "title": "Jaipur Dhurrie Rug — 6x9 ft",
+              "price": "24900.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             }
           ]
@@ -2086,15 +2086,15 @@
           "daysAgo": 129,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
+              "sku": "HSF-WRD-2D",
+              "title": "Mysore Teak Wardrobe — 2-Door",
+              "price": "48000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-POL-200",
+              "title": "Teak Care Polish — 200ml",
+              "price": "649.00",
               "quantity": 1
             }
           ]
@@ -2124,15 +2124,15 @@
           "daysAgo": 249,
           "lineItems": [
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
               "quantity": 1
             }
           ]
@@ -2143,15 +2143,15 @@
           "daysAgo": 200,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             }
           ]
@@ -2162,21 +2162,21 @@
           "daysAgo": 167,
           "lineItems": [
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             }
           ]
@@ -2187,15 +2187,15 @@
           "daysAgo": 126,
           "lineItems": [
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
               "quantity": 1
             }
           ]
@@ -2225,16 +2225,16 @@
           "daysAgo": 240,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
-              "quantity": 2
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
+              "quantity": 1
             }
           ]
         },
@@ -2244,14 +2244,14 @@
           "daysAgo": 202,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 1
             }
@@ -2263,9 +2263,9 @@
           "daysAgo": 170,
           "lineItems": [
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 1
             }
           ]
@@ -2276,15 +2276,15 @@
           "daysAgo": 145,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
               "quantity": 1
             }
           ]
@@ -2314,9 +2314,9 @@
           "daysAgo": 289,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             }
           ]
@@ -2327,10 +2327,10 @@
           "daysAgo": 245,
           "lineItems": [
             {
-              "sku": "RSY-NS-050",
-              "title": "Niacinamide Clarity Serum — 50ml",
-              "price": "1299.00",
-              "quantity": 2
+              "sku": "HSF-DNT-04",
+              "title": "Nilgiri Dining Table — 4-Seater",
+              "price": "49000.00",
+              "quantity": 1
             }
           ]
         },
@@ -2340,10 +2340,10 @@
           "daysAgo": 206,
           "lineItems": [
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
+              "quantity": 1
             }
           ]
         },
@@ -2353,16 +2353,16 @@
           "daysAgo": 164,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
-              "quantity": 2
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
+              "quantity": 1
             }
           ]
         },
@@ -2372,8 +2372,8 @@
           "daysAgo": 115,
           "lineItems": [
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 2
             }
@@ -2404,22 +2404,22 @@
           "daysAgo": 240,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HO-200",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-              "price": "599.00",
-              "quantity": 2
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-CFT-RD",
+              "title": "Kota Stone Coffee Table — Round",
+              "price": "19800.00",
+              "quantity": 1
             }
           ]
         },
@@ -2429,9 +2429,9 @@
           "daysAgo": 208,
           "lineItems": [
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-THR-01",
+              "title": "Cotton Waffle Throw — Standard",
+              "price": "2200.00",
               "quantity": 1
             }
           ]
@@ -2442,15 +2442,15 @@
           "daysAgo": 162,
           "lineItems": [
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             }
           ]
@@ -2461,9 +2461,9 @@
           "daysAgo": 134,
           "lineItems": [
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
               "quantity": 1
             }
           ]
@@ -2493,14 +2493,14 @@
           "daysAgo": 265,
           "lineItems": [
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-BST-01",
+              "title": "Cane Weave Bedside Table — Single",
+              "price": "11500.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 1
             }
@@ -2512,15 +2512,15 @@
           "daysAgo": 219,
           "lineItems": [
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
+              "sku": "HSF-WRD-2D",
+              "title": "Mysore Teak Wardrobe — 2-Door",
+              "price": "48000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SPF-050",
-              "title": "Tinted Mineral SPF 50 — 50ml",
-              "price": "1449.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]
@@ -2550,16 +2550,16 @@
           "daysAgo": 527,
           "lineItems": [
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
-              "quantity": 2
+              "sku": "HSF-RUG-69",
+              "title": "Jaipur Dhurrie Rug — 6x9 ft",
+              "price": "24900.00",
+              "quantity": 1
             }
           ]
         },
@@ -2569,21 +2569,21 @@
           "daysAgo": 467,
           "lineItems": [
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-DNC-02",
+              "title": "Cane-Back Dining Chair — Set of 2",
+              "price": "17500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-3S",
+              "title": "Aravalli Sofa — 3-Seater",
+              "price": "84000.00",
               "quantity": 1
             }
           ]
@@ -2594,15 +2594,15 @@
           "daysAgo": 414,
           "lineItems": [
             {
-              "sku": "RSY-HM-200",
-              "title": "Amla & Hibiscus Hair Mask — 200g",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-BED-QN",
+              "title": "Sheesham Platform Bed — Queen",
+              "price": "78000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-AW-060",
-              "title": "Ashwagandha Calm Capsules — 60 count",
-              "price": "599.00",
+              "sku": "HSF-POL-500",
+              "title": "Teak Care Polish — 500ml",
+              "price": "1290.00",
               "quantity": 2
             }
           ]
@@ -2632,15 +2632,15 @@
           "daysAgo": 524,
           "lineItems": [
             {
-              "sku": "RSY-SH-300",
-              "title": "Rice Water Strengthening Shampoo — 300ml",
-              "price": "749.00",
+              "sku": "HSF-RUG-57",
+              "title": "Jaipur Dhurrie Rug — 5x7 ft",
+              "price": "16500.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 1
             }
           ]
@@ -2651,15 +2651,15 @@
           "daysAgo": 439,
           "lineItems": [
             {
-              "sku": "RSY-VC-030",
-              "title": "Vitamin C Glow Serum — 30ml",
-              "price": "1099.00",
+              "sku": "HSF-DNT-06",
+              "title": "Nilgiri Dining Table — 6-Seater",
+              "price": "68000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-NS-030",
-              "title": "Niacinamide Clarity Serum — 30ml",
-              "price": "899.00",
+              "sku": "HSF-BST-02",
+              "title": "Cane Weave Bedside Table — Pair",
+              "price": "21000.00",
               "quantity": 1
             }
           ]
@@ -2689,15 +2689,15 @@
           "daysAgo": 279,
           "lineItems": [
             {
-              "sku": "RSY-BG-120",
-              "title": "Biotin Hair & Nail Gummies — 120 count",
-              "price": "1199.00",
+              "sku": "HSF-VAS-03",
+              "title": "Stoneware Vase Trio — Set of 3",
+              "price": "3400.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-CS-030",
-              "title": "Ceramide Repair Serum — 30ml",
-              "price": "1199.00",
+              "sku": "HSF-DNC-02",
+              "title": "Cane-Back Dining Chair — Set of 2",
+              "price": "17500.00",
               "quantity": 1
             }
           ]
@@ -2708,21 +2708,21 @@
           "daysAgo": 225,
           "lineItems": [
             {
-              "sku": "RSY-SH-200",
-              "title": "Rice Water Strengthening Shampoo — 200ml",
-              "price": "549.00",
-              "quantity": 2
+              "sku": "HSF-CFT-RC",
+              "title": "Kota Stone Coffee Table — Rectangular",
+              "price": "22400.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-TP-200",
-              "title": "Triphala Gut & Glow Powder — 200g",
+              "sku": "HSF-FGD-300",
+              "title": "Fabric Guard & Upholstery Spray — 300ml",
               "price": "899.00",
               "quantity": 2
             },
             {
-              "sku": "RSY-SS-050",
-              "title": "Rosemary Scalp Serum — 50ml",
-              "price": "899.00",
+              "sku": "HSF-LMP-AR",
+              "title": "Brass Arc Floor Lamp — Standard",
+              "price": "8900.00",
               "quantity": 1
             }
           ]
@@ -2733,21 +2733,21 @@
           "daysAgo": 197,
           "lineItems": [
             {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
-              "quantity": 2
+              "sku": "HSF-SBD-01",
+              "title": "Terracotta Sideboard — Standard",
+              "price": "38000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-200",
-              "title": "Gentle Foaming Cleanser — 200ml",
-              "price": "649.00",
-              "quantity": 2
+              "sku": "HSF-WRD-3D",
+              "title": "Mysore Teak Wardrobe — 3-Door",
+              "price": "64000.00",
+              "quantity": 1
             },
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             }
           ]
@@ -2777,9 +2777,9 @@
           "daysAgo": 273,
           "lineItems": [
             {
-              "sku": "RSY-HO-100",
-              "title": "Bhringraj Anti-Hairfall Hair Oil — 100ml",
-              "price": "349.00",
+              "sku": "HSF-SOF-2S",
+              "title": "Aravalli Sofa — 2-Seater",
+              "price": "62000.00",
               "quantity": 1
             }
           ]
@@ -2809,21 +2809,21 @@
           "daysAgo": 478,
           "lineItems": [
             {
-              "sku": "RSY-CL-100",
-              "title": "Gentle Foaming Cleanser — 100ml",
-              "price": "399.00",
-              "quantity": 2
-            },
-            {
-              "sku": "RSY-CS-050",
-              "title": "Ceramide Repair Serum — 50ml",
-              "price": "1499.00",
+              "sku": "HSF-BED-KG",
+              "title": "Sheesham Platform Bed — King",
+              "price": "92000.00",
               "quantity": 1
             },
             {
-              "sku": "RSY-BG-060",
-              "title": "Biotin Hair & Nail Gummies — 60 count",
-              "price": "699.00",
+              "sku": "HSF-DNC-04",
+              "title": "Cane-Back Dining Chair — Set of 4",
+              "price": "33000.00",
+              "quantity": 1
+            },
+            {
+              "sku": "HSF-CSH-04",
+              "title": "Handloom Cushion Cover Set — Set of 4",
+              "price": "2700.00",
               "quantity": 2
             }
           ]

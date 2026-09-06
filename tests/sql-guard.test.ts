@@ -49,7 +49,17 @@ describe('guardSql — well-formed queries', () => {
       const sql = accept(example.sql);
       assert.match(sql, /\blimit\s+\d+/i, `no limit enforced on: ${example.question}`);
     }
-    assert.ok(FEW_SHOT.length >= 8 && FEW_SHOT.length <= 10, 'PRD-02 §F4.8 asks for 8-10 examples');
+    // PRD-02 §F4.8 asked for 8-10, written when the agent had four views. The
+    // fifth, v_room_completion, has a query shape none of the original examples
+    // demonstrate — one row per customer PER ROOM, an attach rate to sort by,
+    // and a signed window countdown — so it carries its own examples rather
+    // than leaving the model to infer the shape. The ceiling moved to 14 for
+    // that reason and no other; it is not a licence to keep appending.
+    assert.ok(FEW_SHOT.length >= 8 && FEW_SHOT.length <= 14, 'PRD-02 §F4.8: 8-14 examples (10 + up to 4 for v_room_completion)');
+    assert.ok(
+      FEW_SHOT.some((e) => /v_room_completion/.test(e.sql)),
+      'v_room_completion ships with no example, so the model has no model of its shape',
+    );
   });
 
   it('accepts a join across two permitted views', () => {
@@ -354,12 +364,13 @@ describe('guardSql — injection attempts', () => {
 });
 
 describe('view catalogue', () => {
-  it('lists exactly the four views the role can read', () => {
+  it('lists exactly the five views the role can read', () => {
     assert.deepEqual([...AGENT_VIEWS], [
       'v_customer_360',
       'v_order_facts',
       'v_customer_scores',
       'v_conversation_summary',
+      'v_room_completion',
     ]);
     assert.deepEqual(Object.keys(VIEW_CATALOGUE).sort(), [...AGENT_VIEWS].sort());
   });

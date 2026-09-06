@@ -27,6 +27,11 @@ export const RATE_LIMIT = 10;
 // unmetered from a single address.
 export const EVENTS_RATE_LIMIT = 120;
 
+// The inbound channel simulator (PRD-02 §F5.11) writes a conversation + message
+// per call. A rep clicking through a demo sends a handful a minute; this is well
+// above that and far below anything that could bloat the tables from one IP.
+export const INBOX_RATE_LIMIT = 60;
+
 /** Window length in milliseconds. */
 export const RATE_WINDOW_MS = 60_000;
 

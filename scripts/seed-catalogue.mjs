@@ -1,4 +1,4 @@
-// Pushes the 12-product Rasaya catalogue (PRD-01 §3) to the dev store.
+// Pushes the HomeStyle catalogue (data/catalogue.json, PRD-01 §3) to the dev store.
 //
 //   node scripts/seed-catalogue.mjs
 //
@@ -40,7 +40,13 @@ for (const c of cat.collections) {
       input: {
         handle: c.handle,
         title: c.title,
-        descriptionHtml: `<p>${c.title} — typical repurchase cycle ${c.cycle_days} days.</p>`,
+        // care-decor is the only genuinely repeat-purchase collection; the three
+        // room collections are projects, and cycle_days is how long a room
+        // typically takes to complete once its anchor piece lands.
+        descriptionHtml:
+          c.handle === 'care-decor'
+            ? `<p>${c.title} — typical repurchase cycle ${c.cycle_days} days.</p>`
+            : `<p>${c.title} — rooms are typically completed within ${c.cycle_days} days of the first piece.</p>`,
       },
     }).collectionCreate.collection;
     collectionIds[c.handle] = made.id;
@@ -85,7 +91,7 @@ for (const p of cat.products) {
     title: p.title,
     descriptionHtml:
       `<p>${p.description}</p>` +
-      `<p><strong>Ingredients.</strong> ${p.ingredients}</p>`,
+      `<p><strong>Materials.</strong> ${p.materials}</p>`,
     productType: p.product_type,
     vendor: cat.brand,
     status: 'ACTIVE',
@@ -94,17 +100,27 @@ for (const p of cat.products) {
     // Product-level per PRD-01 §3.2 …
     metafields: [
       { namespace: 'custom', key: 'replenishment_days', type: 'number_integer', value: String(p.replenishment_days) },
-      { namespace: 'custom', key: 'concern_tags', type: 'single_line_text_field', value: p.tags.join(', ') },
+      { namespace: 'custom', key: 'piece_tags', type: 'single_line_text_field', value: p.tags.join(', ') },
+      { namespace: 'custom', key: 'tier', type: 'single_line_text_field', value: p.role },
     ],
-    files: [{ originalSource: p.image_url, contentType: 'IMAGE', alt: p.title, filename }],
+    // A product with no image still seeds. The HomeStyle catalogue ships with
+    // image_url empty because furniture photography has to be supplied rather
+    // than generated, and a store that refuses to seed until every render
+    // exists blocks the whole pipeline on an asset. Shopify rejects a `files`
+    // entry with an empty originalSource, so the key is omitted entirely.
+    ...(p.image_url ? { files: [{ originalSource: p.image_url, contentType: 'IMAGE', alt: p.title, filename }] } : {}),
     productOptions: [{
-      name: 'Size',
+      // Named per product: a sofa varies by Size, a coffee table by Shape, a
+      // dining table by Seats. One hardcoded 'Size' across a furniture
+      // catalogue puts 'Round / Rectangular' under a heading that does not
+      // describe them, on the live storefront.
+      name: p.option_name ?? 'Size',
       values: p.variants.map(v => ({ name: v.title })),
     }],
     // … and per variant, because sizes deplete at different rates and §F3.4
     // predicts next-order-date from this number.
     variants: p.variants.map((v, i) => ({
-      optionValues: [{ optionName: 'Size', name: v.title }],
+      optionValues: [{ optionName: p.option_name ?? 'Size', name: v.title }],
       price: v.price,
       sku: v.sku,
       position: i + 1,

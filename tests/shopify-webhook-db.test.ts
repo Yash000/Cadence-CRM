@@ -201,7 +201,7 @@ describe('webhook sync against Postgres', { skip: HAS_DATABASE_URL ? false : 'DA
     assert.equal(row.total, '1708.00');
     assert.equal(row.subtotal, '1898.00');
     assert.equal(row.discountTotal, '190.00');
-    assert.deepEqual(row.discountCodes, ['RASAYA10']);
+    assert.deepEqual(row.discountCodes, ['HOMESTYLE10']);
     assert.equal(row.financialStatus, 'paid');
     assert.equal(row.cancelledAt, null);
     assert.equal(row.processedAt.toISOString(), '2026-08-24T08:42:07.000Z');

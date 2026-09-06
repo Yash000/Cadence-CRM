@@ -4,11 +4,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Cadence design language — implements DESIGN.md ("Mobbin Analysis").
-   Gallery-white monochrome: near-black ink on a pure white canvas, structure
-   carried by a ladder of barely-perceptible neutral tints and 1px hairlines
-   rather than by shadows or color. Every interactive element is a stadium
-   pill; containers sit at 24px, media and inputs at 16px.
+/* Cadence design language — implements DESIGN.md ("Showroom Warm").
+   A warmed gallery system: warm near-black ink on a bone canvas, structure
+   carried by a ladder of barely-perceptible warm-neutral tints and 1px
+   hairlines rather than by shadows or color. Every interactive element is a
+   stadium pill; containers sit at 24px, media and inputs at 16px.
+
+   The STRUCTURE is inherited unchanged from the Mobbin analysis this started
+   as — only the palette moved. A showroom is bone walls and warm light, and
+   the furniture is the color; the same reason a gallery is white. Nothing in
+   the component layer knows this changed.
 
    Two documented adaptations for this app (an information-dense CRM rather
    than a marketing site):
@@ -89,22 +94,24 @@
 
 :root {
   /* ── DESIGN.md colors ── */
-  --ink: #141414;
-  --ink-soft: #262626;
-  --text-muted: #707070;
-  --text-faint: #adadad;
-  --canvas: #ffffff;
-  --canvas-soft: #f3f3f3;
-  --field: #f0f0f0;
-  --hairline-soft: #f0f0f0;
-  --hairline: #e0e0e0;
-  --on-primary: #ffffff;
-  --brand-accent: #0066ff;
+  --ink: #1c1917;
+  --ink-soft: #2e2926;
+  --text-muted: #6f665e;
+  --text-faint: #a89e93;
+  --canvas: #fbfaf7;
+  --canvas-soft: #f2efe9;
+  --field: #efebe4;
+  --hairline-soft: #efebe4;
+  --hairline: #e3ddd3;
+  --on-primary: #fbfaf7;
+  --brand-accent: #8a5a3c;
 
-  /* Desaturated semantic trio — text and dots only (see header note). */
-  --good: #2e6f52;
-  --warn: #8a6516;
-  --bad: #a83a26;
+  /* Desaturated semantic trio — text and dots only (see header note).
+     Warmed to sit on bone rather than on pure white; contrast against
+     --canvas is held at or above the 4.5:1 the originals carried. */
+  --good: #2f6b4f;
+  --warn: #8a5d14;
+  --bad: #a33a22;
 
   /* ── shadcn/base-ui surface mapping ── */
   --background: var(--canvas);
@@ -143,21 +150,21 @@
 
 /* Polarity inversion — the same ladder read from the dark end. */
 .dark {
-  --ink: #f5f5f5;
-  --ink-soft: #d6d6d6;
-  --text-muted: #8f8f8f;
-  --text-faint: #5c5c5c;
-  --canvas: #141414;
-  --canvas-soft: #1e1e1e;
-  --field: #222222;
-  --hairline-soft: #222222;
-  --hairline: #303030;
-  --on-primary: #141414;
-  --brand-accent: #3d8bff;
+  --ink: #f6f4f0;
+  --ink-soft: #d8d2c9;
+  --text-muted: #948b81;
+  --text-faint: #5f574e;
+  --canvas: #17150f;
+  --canvas-soft: #201d16;
+  --field: #24211a;
+  --hairline-soft: #24211a;
+  --hairline: #332e26;
+  --on-primary: #17150f;
+  --brand-accent: #c08a63;
 
-  --good: #6aa587;
-  --warn: #c09a4a;
-  --bad: #d97a66;
+  --good: #6fa98a;
+  --warn: #c39a53;
+  --bad: #dc7f68;
 
   --background: var(--canvas);
   --foreground: var(--ink);

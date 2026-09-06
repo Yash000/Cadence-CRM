@@ -19,7 +19,7 @@
   "customer_locale": "en-IN",
   "discount_codes": [
     {
-      "code": "RASAYA10",
+      "code": "HOMESTYLE10",
       "amount": "190.00",
       "type": "percentage"
     }
@@ -31,7 +31,7 @@
   "note": null,
   "number": 147,
   "order_number": 1147,
-  "order_status_url": "https://rasaya-dev.myshopify.com/orders/9900000000101",
+  "order_status_url": "https://homestyle-dev.myshopify.com/orders/9900000000101",
   "payment_gateway_names": [
     "razorpay"
   ],
@@ -94,51 +94,51 @@
       "admin_graphql_api_id": "gid://shopify/LineItem/14200000000101",
       "fulfillable_quantity": 1,
       "grams": 60,
-      "name": "Niacinamide Clarity Serum — 50ml",
+      "name": "Jaipur Dhurrie Rug — 5x7 ft",
       "price": "1299.00",
-      "product_id": 10410305585448,
+      "product_id": 10427354906920,
       "quantity": 1,
       "requires_shipping": true,
-      "sku": "RSY-NS-050",
+      "sku": "HSF-RUG-57",
       "taxable": true,
-      "title": "Niacinamide Clarity Serum — 50ml",
-      "variant_id": 52277360853288,
-      "variant_title": "50ml",
-      "vendor": "Rasaya"
+      "title": "Jaipur Dhurrie Rug — 5x7 ft",
+      "variant_id": 52329373434152,
+      "variant_title": "5x7 ft",
+      "vendor": "HomeStyle"
     },
     {
       "id": 14200000000102,
       "admin_graphql_api_id": "gid://shopify/LineItem/14200000000102",
       "fulfillable_quantity": 1,
       "grams": 120,
-      "name": "Gentle Foaming Cleanser — 100ml",
+      "name": "Brass Arc Floor Lamp — Standard",
       "price": "399.00",
-      "product_id": 10410305257768,
+      "product_id": 10427355136296,
       "quantity": 1,
       "requires_shipping": true,
-      "sku": "RSY-CL-100",
+      "sku": "HSF-LMP-AR",
       "taxable": true,
-      "title": "Gentle Foaming Cleanser — 100ml",
-      "variant_id": 52277360460072,
-      "variant_title": "100ml",
-      "vendor": "Rasaya"
+      "title": "Brass Arc Floor Lamp — Standard",
+      "variant_id": 52329373696296,
+      "variant_title": "Standard",
+      "vendor": "HomeStyle"
     },
     {
       "id": 14200000000103,
       "admin_graphql_api_id": "gid://shopify/LineItem/14200000000103",
       "fulfillable_quantity": 2,
       "grams": 220,
-      "name": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
+      "name": "Kota Stone Coffee Table — Rectangular",
       "price": "599.00",
-      "product_id": 10410304078120,
+      "product_id": 10427354808616,
       "quantity": 2,
       "requires_shipping": true,
-      "sku": "RSY-HO-200",
+      "sku": "HSF-CFT-RC",
       "taxable": true,
-      "title": "Bhringraj Anti-Hairfall Hair Oil — 200ml",
-      "variant_id": 52277359149352,
-      "variant_title": "200ml",
-      "vendor": "Rasaya"
+      "title": "Kota Stone Coffee Table — Rectangular",
+      "variant_id": 52329373139240,
+      "variant_title": "Rectangular",
+      "vendor": "HomeStyle"
     }
   ],
   "shipping_address": {

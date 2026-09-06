@@ -27,6 +27,29 @@
 --    could be reproduced by a global "silent for N days" cutoff, this file
 --    would have failed at its only job.
 --
+-- 1b. TWO TIERS, ONE CURVE. Furniture does not deplete, so `cadence_days`
+--    does not mean the same thing for every customer, and the catalogue says
+--    which meaning applies (data/catalogue.json):
+--
+--      ROOM tier  (living-room / bedroom / dining) — the cadence is an
+--        ATTACH WINDOW. A sofa opens a room project; the coffee table, rug
+--        and lamp follow within weeks. Being "overdue" means the room
+--        stalled with the window closed, which is a cross-sell that is
+--        slipping away — not a customer who forgot to reorder.
+--
+--      CARE tier  (care-decor) — cushion covers, throws, vases, polish and
+--        fabric guard genuinely do get rebought. The cadence is an ordinary
+--        replenishment cycle and means exactly what it meant before.
+--
+--    The piecewise curve, the RFM grid and the three-layer segment logic are
+--    IDENTICAL across both tiers and are deliberately left untouched. Only
+--    three things are tier-aware: which store-median a single-order customer
+--    borrows (per-tier, because one blended median across a ₹649 polish and
+--    a ₹92,000 bed is a number describing nobody), how long absolute silence
+--    must run before `lost`/`hibernating` fire, and what the reason strings
+--    say. A finished living room going quiet for eight months is normal; a
+--    fabric guard eight months late is not.
+--
 -- 2. MONEY STAYS IN POSTGRES `numeric`. Money columns are numeric(12,2) and
 --    the JS driver hands them back as strings precisely so nobody
 --    parseFloat()s them. All money arithmetic happens here, in exact
@@ -55,9 +78,9 @@ with params as (
     -- timezone the connection happened to inherit is a job that scores
     -- differently from the pooler than from psql.
     (now() at time zone 'UTC')::date as today,
-    -- Gross margin assumption for §F3.3. Ayurvedic/wellness D2C at Rasaya's
-    -- price points; a single named constant so the assumption is arguable
-    -- rather than buried in an expression.
+    -- Gross margin assumption for §F3.3. Own-manufacture furniture retail at
+    -- HomeStyle's price points; a single named constant so the assumption is
+    -- arguable rather than buried in an expression.
     0.45::numeric        as margin,
     365::numeric         as horizon_days,
     -- Ceiling on predicted future orders. A 15-day-gap customer mathematically
@@ -106,28 +129,72 @@ per_customer as (
   group by customer_id
 ),
 
--- Store-wide fallbacks, used ONLY where a personal cadence cannot exist
--- (a customer with a single order has no inter-purchase gap). Where this
--- fallback is used the reason string says so out loud, so a borrowed number
--- is never passed off as a personal one.
-store as (
-  select
-    round((percentile_cont(0.5) within group (order by median_gap)
-      filter (where median_gap is not null))::numeric, 4)          as store_median_gap,
-    (count(*) filter (where order_count > 1))::numeric
-      / nullif(count(*), 0)::numeric                               as repeat_rate
-  from per_customer
-),
-
--- The customer's most recent order, and the replenishment cadence implied by
--- what was in it (§F3.4). Quantity-weighted: two tubs of a 30-day product
--- outweigh one 60-day product.
+-- The customer's most recent order. Defined here rather than further down
+-- because both the tier and the store-wide fallbacks below depend on it.
 last_order as (
   select distinct on (customer_id) customer_id, id as order_id, processed_at
   from paid_orders
   order by customer_id, processed_at desc, id
 ),
 
+-- Which tier the customer's last order belongs to (header note 1b), decided
+-- by quantity-weighted majority of the line items. `care-decor` is the only
+-- genuinely repeat-purchase collection in the catalogue; the three room
+-- collections are projects.
+--
+-- Ties go to `room`, deliberately: a basket of one rug and one cushion cover
+-- is somebody furnishing a room who added a cushion, not somebody restocking
+-- cushions who added a rug. The anchor piece is what the outreach is about.
+last_tier as (
+  select
+    lo.customer_id,
+    case
+      when coalesce(sum(oi.qty) filter (where p.collection =  'care-decor'), 0)
+         > coalesce(sum(oi.qty) filter (where p.collection <> 'care-decor'), 0)
+      then 'care' else 'room'
+    end as tier
+  from last_order lo
+  join order_items oi on oi.order_id = lo.order_id
+  join products p     on p.id = oi.product_id
+  group by lo.customer_id
+),
+
+per_customer_t as (
+  select pc.*, coalesce(lt.tier, 'room') as tier
+  from per_customer pc
+  left join last_tier lt on lt.customer_id = pc.customer_id
+),
+
+-- Store-wide fallbacks, used ONLY where a personal cadence cannot exist
+-- (a customer with a single order has no inter-purchase gap). Where this
+-- fallback is used the reason string says so out loud, so a borrowed number
+-- is never passed off as a personal one.
+--
+-- The median is taken PER TIER. A single blend across both tiers would be a
+-- number describing nobody: room projects run in weeks-to-months and care
+-- refills in months-to-half-years, so the pooled median sits in the empty
+-- gap between the two humps and would make every borrower look wrong in the
+-- same direction. `store_median_gap` survives as the last-resort fallback for
+-- the case where a tier has no multi-order customers at all to learn from.
+store as (
+  select
+    round((percentile_cont(0.5) within group (order by median_gap)
+      filter (where median_gap is not null))::numeric, 4)          as store_median_gap,
+    round((percentile_cont(0.5) within group (order by median_gap)
+      filter (where median_gap is not null and tier = 'room'))::numeric, 4)
+                                                                   as store_median_gap_room,
+    round((percentile_cont(0.5) within group (order by median_gap)
+      filter (where median_gap is not null and tier = 'care'))::numeric, 4)
+                                                                   as store_median_gap_care,
+    (count(*) filter (where order_count > 1))::numeric
+      / nullif(count(*), 0)::numeric                               as repeat_rate
+  from per_customer_t
+),
+
+-- The cadence implied by what was in the last order (§F3.4). Quantity-
+-- weighted: two of a 30-day item outweigh one 60-day item. For the room tier
+-- `replenishment_days` is the attach window of the piece, not a refill cycle
+-- (header note 1b), and the reason strings below say which one they mean.
 replenishment as (
   select
     lo.customer_id,
@@ -174,15 +241,16 @@ rfm as (
     coalesce(pc.lifetime_value, 0)::numeric(12,2)        as lifetime_value,
     pc.aov,
     pc.median_gap,
+    coalesce(pc.tier, 'room')                            as tier,
     r.repl_days,
     r.repl_driver,
     q.rfm_r,
     q.rfm_f,
     q.rfm_m
   from customers c
-  left join per_customer  pc on pc.customer_id = c.id
-  left join replenishment r  on r.customer_id  = c.id
-  left join quintiles     q  on q.customer_id  = c.id
+  left join per_customer_t pc on pc.customer_id = c.id
+  left join replenishment  r  on r.customer_id  = c.id
+  left join quintiles      q  on q.customer_id  = c.id
 ),
 
 cadence as (
@@ -190,13 +258,25 @@ cadence as (
     rfm.*,
     p.now_ts, p.today, p.margin, p.horizon_days, p.max_future_orders,
     s.store_median_gap,
+    -- The fallback this customer would borrow, chosen by their tier.
+    coalesce(
+      case rfm.tier when 'care' then s.store_median_gap_care
+                    else             s.store_median_gap_room end,
+      s.store_median_gap
+    )                                                                  as tier_median_gap,
     s.repeat_rate,
     -- Whole calendar days since the last order (see header note 3).
     case when rfm.last_at is not null
          then (p.today - (rfm.last_at at time zone 'UTC')::date) end       as days_since,
     (p.today - (rfm.created_at at time zone 'UTC')::date)                 as days_since_signup,
-    -- THE denominator. Personal wherever a personal number exists.
-    coalesce(rfm.median_gap, s.store_median_gap)                    as cadence_days,
+    -- THE denominator. Personal wherever a personal number exists; otherwise
+    -- borrowed from this customer's OWN tier, never from the pooled median.
+    coalesce(
+      rfm.median_gap,
+      case rfm.tier when 'care' then s.store_median_gap_care
+                    else             s.store_median_gap_room end,
+      s.store_median_gap
+    )                                                               as cadence_days,
     (rfm.median_gap is null)                                        as cadence_borrowed
   from rfm cross join params p cross join store s
 ),
@@ -329,7 +409,16 @@ final as (
     graded.*,
     (case
       -- Dead by any measure: months past their own cadence AND long silent.
-      when order_count > 0 and overdue >= 4 and days_since >= 270
+      --
+      -- The absolute floor is tier-aware (header note 1b). 270 days was
+      -- calibrated against a consumable line where nine months of silence is
+      -- unambiguous. It is not unambiguous for furniture: somebody who
+      -- finished their living room in March is *supposed* to be quiet in
+      -- December, and calling them `lost` would bury a perfectly healthy
+      -- customer under a win-back campaign they will resent. The room tier
+      -- gets 18 months; the care tier keeps the original nine.
+      when order_count > 0 and overdue >= 4
+           and days_since >= (case when tier = 'care' then 270 else 540 end)
         then case when rfm_m = 5 then 'cant_lose_them' else 'lost' end
 
       -- Overdue against their OWN gap — promote into the risk segments even
@@ -337,7 +426,8 @@ final as (
       when order_count >= 2 and churn_risk >= 65
            and grid_segment not in ('at_risk', 'cant_lose_them', 'hibernating', 'lost')
         then case when rfm_m = 5 then 'cant_lose_them'
-                  when days_since >= 180 then 'hibernating'
+                  when days_since >= (case when tier = 'care' then 180 else 365 end)
+                    then 'hibernating'
                   else 'at_risk' end
 
       -- Inside their OWN gap — rescue from the risk segments. A long personal
@@ -375,8 +465,9 @@ final as (
     end as expected_orders,
 
     -- Blended next-order cadence (§F3.4): the customer's own gap weighted
-    -- 2:1 against the replenishment cadence of what they last bought.
-    -- Behaviour outweighs the label on the jar, but the jar still votes.
+    -- 2:1 against the cadence implied by what they last bought — a refill
+    -- cycle in the care tier, an attach window in the room tier. Behaviour
+    -- outweighs the catalogue, but the catalogue still votes.
     case
       when median_gap is not null and repl_days is not null
         then round((2 * median_gap + repl_days) / 3)
@@ -410,32 +501,45 @@ select
   churn_risk,
 
   -- ---- churn_reason (§F3.6) -------------------------------------------
+  -- Tier decides the vocabulary, never the arithmetic: the same `overdue`
+  -- multiple is described as a stalled room project or as a late refill,
+  -- because those are the two things it can actually mean (header note 1b).
   case
     when order_count = 0 then
-      format('No orders yet — customer for %s days, no purchase cadence to measure against.',
+      format('No orders yet — customer for %s days, no purchase rhythm to measure against.',
              days_since_signup)
-    when order_count = 1 then
-      format('1 order, %s days ago, no repeat purchase yet — no personal cadence, so scored against the %s-day store median gap (%sx).',
+    when order_count = 1 and tier = 'care' then
+      format('1 care order, %s days ago, no repeat yet — no personal cycle, so scored against the %s-day care-tier median (%sx).',
              days_since,
-             round(store_median_gap, 0),
+             round(tier_median_gap, 0),
              trim(to_char(overdue, 'FM9990.0')))
-    when order_count = 2 then
-      format('2 orders, last %s days ago, their one gap was %s days — %sx %s.',
+    when order_count = 1 then
+      format('1 order, %s days ago, no follow-on piece yet — scored against the %s-day room-tier median (%sx). %s',
              days_since,
-             trim(to_char(median_gap, 'FM9990.0')),
+             round(tier_median_gap, 0),
              trim(to_char(overdue, 'FM9990.0')),
-             case when overdue >= 1.2 then 'overdue'
-                  when overdue >= 0.8 then 'of their usual gap, due about now'
-                  else 'of their usual gap, on schedule' end)
-    else
-      format('%s orders, last %s days ago, typical gap %s days — %sx %s.',
+             case when overdue >= 2   then 'The room stalled after its opening piece.'
+                  when overdue >= 1   then 'The attach window has closed.'
+                  else                     'Still inside the attach window.' end)
+    when tier = 'care' then
+      format('%s orders, last %s days ago, typical cycle %s days — %sx %s.',
              order_count,
              days_since,
              trim(to_char(median_gap, 'FM9990.0')),
              trim(to_char(overdue, 'FM9990.0')),
-             case when overdue >= 1.2 then 'overdue'
-                  when overdue >= 0.8 then 'of their usual gap, due about now'
-                  else 'of their usual gap, on schedule' end)
+             case when overdue >= 1.2 then 'overdue for a refill'
+                  when overdue >= 0.8 then 'of their usual cycle, due about now'
+                  else 'of their usual cycle, on schedule' end)
+    else
+      format('%s orders, last %s days ago, typical %s days between pieces — %sx %s.',
+             order_count,
+             days_since,
+             trim(to_char(median_gap, 'FM9990.0')),
+             trim(to_char(overdue, 'FM9990.0')),
+             case when overdue >= 2   then 'their usual gap; the room has stalled'
+                  when overdue >= 1.2 then 'their usual gap; the attach window has closed'
+                  when overdue >= 0.8 then 'of their usual gap, the next piece is due about now'
+                  else 'of their usual gap, the room is still filling on schedule' end)
   end,
 
   predicted_ltv,
@@ -444,10 +548,11 @@ select
   case
     when order_count = 0 then 'No orders yet — no spend history to project from.'
     when order_count = 1 then
-      format('AOV %s x %s expected orders over 12 months (%s-day store median gap, %s%% survival, %s%% of first-time buyers ever reorder) x %s%% margin = %s.',
+      format('AOV %s x %s expected orders over 12 months (%s-day %s-tier median gap, %s%% survival, %s%% of first-time buyers ever reorder) x %s%% margin = %s.',
              '₹' || trim(to_char(aov, 'FM9,999,990')),
              trim(to_char(expected_orders, 'FM9990.00')),
-             round(store_median_gap, 0),
+             round(tier_median_gap, 0),
+             tier,
              greatest(5, round(100 - churn_risk)),
              round(repeat_rate * 100),
              round(margin * 100),
@@ -495,34 +600,44 @@ select
       format('Last ordered %s; %s -> due %s%s.',
              to_char(last_at at time zone 'UTC', 'DD Mon YYYY'),
              case when median_gap is not null and repl_days is not null
-                    then format('own %s-day gap blended with the %s-day replenishment cycle of %s',
+                    then format('own %s-day gap blended with the %s-day %s of %s',
                                 trim(to_char(median_gap, 'FM9990.0')),
-                                round(repl_days), repl_driver)
+                                round(repl_days),
+                                case when tier = 'care' then 'refill cycle' else 'attach window' end,
+                                repl_driver)
                   when median_gap is not null
                     then format('own %s-day gap', trim(to_char(median_gap, 'FM9990.0')))
                   when repl_days is not null
-                    then format('the %s-day replenishment cycle of %s, their only order — no personal gap yet',
-                                round(repl_days), repl_driver)
-                  else format('%s-day store median gap (no personal or product cadence)',
-                              round(store_median_gap, 0)) end,
+                    then format('the %s-day %s of %s, their only order — no personal gap yet',
+                                round(repl_days),
+                                case when tier = 'care' then 'refill cycle' else 'attach window' end,
+                                repl_driver)
+                  else format('%s-day %s-tier median gap (no personal or product cadence)',
+                              round(tier_median_gap, 0), tier) end,
              to_char(due_date, 'DD Mon YYYY'),
              case when due_date = today then ' — today' else '' end)
     else
-      format('Was due %s (last ordered %s, %s) — %s days overdue, nudge now.',
+      format('Was due %s (last ordered %s, %s) — %s days overdue, %s',
              to_char(due_date, 'DD Mon YYYY'),
              to_char(last_at at time zone 'UTC', 'DD Mon YYYY'),
              case when median_gap is not null and repl_days is not null
-                    then format('own %s-day gap blended with the %s-day replenishment cycle of %s',
+                    then format('own %s-day gap blended with the %s-day %s of %s',
                                 trim(to_char(median_gap, 'FM9990.0')),
-                                round(repl_days), repl_driver)
+                                round(repl_days),
+                                case when tier = 'care' then 'refill cycle' else 'attach window' end,
+                                repl_driver)
                   when median_gap is not null
                     then format('own %s-day gap', trim(to_char(median_gap, 'FM9990.0')))
                   when repl_days is not null
-                    then format('the %s-day replenishment cycle of %s, their only order — no personal gap yet',
-                                round(repl_days), repl_driver)
-                  else format('%s-day store median gap (no personal or product cadence)',
-                              round(store_median_gap, 0)) end,
-             (today - due_date))
+                    then format('the %s-day %s of %s, their only order — no personal gap yet',
+                                round(repl_days),
+                                case when tier = 'care' then 'refill cycle' else 'attach window' end,
+                                repl_driver)
+                  else format('%s-day %s-tier median gap (no personal or product cadence)',
+                              round(tier_median_gap, 0), tier) end,
+             (today - due_date),
+             case when tier = 'care' then 'nudge now.'
+                  else 'suggest the next piece for the room now.' end)
   end,
 
   median_gap::numeric(6,1),

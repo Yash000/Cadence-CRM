@@ -2,7 +2,7 @@
   "id": 9900000000901,
   "token": "8a7c6b5d4e3f2a1b0c9d8e7f6a5b4c3d",
   "cart_token": "c1-9f2b7a41d5e64c0e8f3b2a1c7d904e55",
-  "abandoned_checkout_url": "https://rasaya-dev.myshopify.com/checkouts/c1-9f2b7a41d5e64c0e8f3b2a1c7d904e55/recover",
+  "abandoned_checkout_url": "https://homestyle-dev.myshopify.com/checkouts/c1-9f2b7a41d5e64c0e8f3b2a1c7d904e55/recover",
   "buyer_accepts_marketing": true,
   "completed_at": null,
   "created_at": "2026-08-24T14:08:31+05:30",
@@ -10,7 +10,7 @@
   "customer_locale": "en-IN",
   "email": "ananya.iyer@cadence-webhook-test.invalid",
   "gateway": null,
-  "landing_site": "/products/niacinamide-clarity-serum",
+  "landing_site": "/products/jaipur-dhurrie-rug",
   "phone": "+919900000201",
   "presentment_currency": "INR",
   "referring_site": "https://www.google.com/",
@@ -32,24 +32,24 @@
     {
       "key": "52277360853288:9b1c",
       "price": "1299.00",
-      "product_id": 10410305585448,
+      "product_id": 10427354906920,
       "quantity": 1,
-      "sku": "RSY-NS-050",
-      "title": "Niacinamide Clarity Serum — 50ml",
-      "variant_id": 52277360853288,
-      "variant_title": "50ml",
-      "vendor": "Rasaya"
+      "sku": "HSF-RUG-57",
+      "title": "Jaipur Dhurrie Rug — 5x7 ft",
+      "variant_id": 52329373434152,
+      "variant_title": "5x7 ft",
+      "vendor": "HomeStyle"
     },
     {
       "key": "52277360460072:4d2a",
       "price": "399.00",
-      "product_id": 10410305257768,
+      "product_id": 10427355136296,
       "quantity": 1,
-      "sku": "RSY-CL-100",
-      "title": "Gentle Foaming Cleanser — 100ml",
-      "variant_id": 52277360460072,
-      "variant_title": "100ml",
-      "vendor": "Rasaya"
+      "sku": "HSF-LMP-AR",
+      "title": "Brass Arc Floor Lamp — Standard",
+      "variant_id": 52329373696296,
+      "variant_title": "Standard",
+      "vendor": "HomeStyle"
     }
   ],
   "shipping_address": {

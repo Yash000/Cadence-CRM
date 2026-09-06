@@ -82,8 +82,8 @@ Dawn (free, Shopify's reference theme), lightly branded: logo, colour palette, h
 Built and pushed via Shopify CLI, not the admin theme editor:
 
 ```bash
-shopify theme init rasaya-theme          # scaffolds Dawn locally
-cd rasaya-theme
+shopify theme init homestyle-theme          # scaffolds Dawn locally
+cd homestyle-theme
 shopify theme dev --store <store>       # local preview, hot reload (~1s)
 shopify theme push                      # upload when satisfied
 ```

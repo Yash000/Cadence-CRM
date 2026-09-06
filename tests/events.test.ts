@@ -39,7 +39,7 @@ describe('parseEventInput — valid payloads accepted', () => {
         type: 'product_view',
         customer_id: 8675309,
         session_id: 'sess_abc123',
-        payload: { id: 'gid://shopify/Product/1', title: 'Rosemary Scalp Serum', price: '899.00' },
+        payload: { id: 'gid://shopify/Product/1', title: 'Jaipur Dhurrie Rug', price: '16500.00' },
         occurred_at: '2026-08-24T09:00:00Z',
       },
       'storefront_pixel',
@@ -48,7 +48,7 @@ describe('parseEventInput — valid payloads accepted', () => {
     if (!r.ok) return;
     assert.equal(r.value.shopifyCustomerId, 8675309);
     assert.equal(r.value.sessionId, 'sess_abc123');
-    assert.equal(r.value.payload.title, 'Rosemary Scalp Serum');
+    assert.equal(r.value.payload.title, 'Jaipur Dhurrie Rug');
     assert.equal(r.value.occurredAt.toISOString(), '2026-08-24T09:00:00.000Z');
   });
 

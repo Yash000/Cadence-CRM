@@ -65,7 +65,12 @@ describe('HMAC verification (§F1.2)', () => {
     //     tests/fixtures/shopify/orders-create.json | openssl base64 -A
     // .gitattributes marks tests/fixtures/** as -text so these bytes survive
     // checkout on Windows; if that were lost, this assertion is what fails.
-    const goldenOrders = 'iRzCgI8dHaTQIrsmdVXT7r1LMewDryZJnvCvnYjd/qo=';
+    // Recomputed with the OpenSSL command above (not with node:crypto, which
+    // would defeat the point) after the fixture was rebranded to HomeStyle —
+    // the shop domain, vendor, discount code, line-item title, and finally the
+    // product_id/variant_id (once real Shopify ids were captured from the live
+    // store) all changed, so the digest over the raw bytes changed with them.
+    const goldenOrders = 'OIjqOc9nlLpzgmT50rrPLtsF2rxf4/LoucZMzWvRueE=';
     const goldenCustomers = 'z2dzWVAIm/dmNbiwslbJFbQoRUSt25WNczsIF5LeVhM=';
 
     assert.equal(signShopifyBody(ordersCreateRaw, TEST_SECRET), goldenOrders);
@@ -275,7 +280,7 @@ describe('order payload mapping', () => {
     assert.equal(order.total, '1708.00');
     assert.equal(order.subtotal, '1898.00');
     assert.equal(order.discountTotal, '190.00');
-    assert.deepEqual(order.discountCodes, ['RASAYA10']);
+    assert.deepEqual(order.discountCodes, ['HOMESTYLE10']);
     assert.equal(order.currency, 'INR');
     assert.equal(order.financialStatus, 'paid');
     assert.equal(order.cancelledAt, null);
@@ -285,7 +290,7 @@ describe('order payload mapping', () => {
   it('carries the line items with real catalogue product ids', () => {
     assert.equal(order.lines.length, 3);
     assert.deepEqual(order.lines.map((l) => l.shopifyProductId), [
-      10410305585448, 10410305257768, 10410304078120,
+      10427354906920, 10427355136296, 10427354808616,
     ]);
     assert.deepEqual(order.lines.map((l) => l.qty), [1, 1, 2]);
     assert.deepEqual(order.lines.map((l) => l.price), ['1299.00', '399.00', '599.00']);

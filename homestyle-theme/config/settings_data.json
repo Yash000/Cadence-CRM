@@ -7,61 +7,61 @@
       "color_schemes": {
         "scheme-1": {
           "settings": {
-            "background": "#FBF7F0",
+            "background": "#FBFAF7",
             "background_gradient": "",
-            "text": "#2B2318",
-            "button": "#4B6B4B",
-            "button_label": "#FBF7F0",
-            "secondary_button_label": "#2B2318",
-            "shadow": "#2B2318"
+            "text": "#1C1917",
+            "button": "#8A5A3C",
+            "button_label": "#FBFAF7",
+            "secondary_button_label": "#1C1917",
+            "shadow": "#1C1917"
           }
         },
         "scheme-2": {
           "settings": {
-            "background": "#F1ECE1",
+            "background": "#F2EFE9",
             "background_gradient": "",
-            "text": "#2B2318",
-            "button": "#4B6B4B",
-            "button_label": "#F1ECE1",
-            "secondary_button_label": "#2B2318",
-            "shadow": "#2B2318"
+            "text": "#1C1917",
+            "button": "#8A5A3C",
+            "button_label": "#FBFAF7",
+            "secondary_button_label": "#1C1917",
+            "shadow": "#1C1917"
           }
         },
         "scheme-3": {
           "settings": {
-            "background": "#2B2318",
+            "background": "#1C1917",
             "background_gradient": "",
-            "text": "#FBF7F0",
-            "button": "#FBF7F0",
-            "button_label": "#2B2318",
-            "secondary_button_label": "#FBF7F0",
-            "shadow": "#121212"
+            "text": "#FBFAF7",
+            "button": "#FBFAF7",
+            "button_label": "#1C1917",
+            "secondary_button_label": "#FBFAF7",
+            "shadow": "#17150F"
           }
         },
         "scheme-4": {
           "settings": {
-            "background": "#121212",
+            "background": "#17150F",
             "background_gradient": "",
-            "text": "#FFFFFF",
-            "button": "#FFFFFF",
-            "button_label": "#121212",
-            "secondary_button_label": "#FFFFFF",
-            "shadow": "#121212"
+            "text": "#FBFAF7",
+            "button": "#FBFAF7",
+            "button_label": "#17150F",
+            "secondary_button_label": "#FBFAF7",
+            "shadow": "#17150F"
           }
         },
         "scheme-5": {
           "settings": {
-            "background": "#4B6B4B",
+            "background": "#8A5A3C",
             "background_gradient": "",
-            "text": "#FBF7F0",
-            "button": "#FBF7F0",
-            "button_label": "#4B6B4B",
-            "secondary_button_label": "#FBF7F0",
-            "shadow": "#121212"
+            "text": "#FBFAF7",
+            "button": "#FBFAF7",
+            "button_label": "#8A5A3C",
+            "secondary_button_label": "#FBFAF7",
+            "shadow": "#17150F"
           }
         }
       },
-      "type_header_font": "assistant_n4",
+      "type_header_font": "playfair_display_n4",
       "heading_scale": 100,
       "type_body_font": "assistant_n4",
       "body_scale": 100,
@@ -156,8 +156,8 @@
       "badge_corner_radius": 40,
       "sale_badge_color_scheme": "scheme-4",
       "sold_out_badge_color_scheme": "scheme-3",
-      "brand_headline": "Rasaya — rejuvenation, made routine.",
-      "brand_description": "<p>Ayurveda-adjacent hair, skin and wellness care for the everyday.</p>",
+      "brand_headline": "HomeStyle — rooms that finish well.",
+      "brand_description": "<p>Solid-wood furniture and handloom decor, made in India. Buy the piece the room is built around, then finish it at your own pace.</p>",
       "brand_image_width": 100,
       "social_twitter_link": "",
       "social_facebook_link": "",

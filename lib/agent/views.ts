@@ -16,6 +16,7 @@ export const AGENT_VIEWS = [
   'v_order_facts',
   'v_customer_scores',
   'v_conversation_summary',
+  'v_room_completion',
 ] as const;
 
 export type AgentView = (typeof AGENT_VIEWS)[number];
@@ -31,7 +32,11 @@ export const FINANCIAL_STATUS_VALUES = [
   'voided', 'cancelled',
 ] as const;
 
-export const COLLECTION_VALUES = ['skin-care', 'hair-care', 'wellness'] as const;
+export const COLLECTION_VALUES = ['living-room', 'bedroom', 'dining', 'care-decor'] as const;
+
+/** The four collections split into the two tiers the scoring model uses. */
+export const ROOM_COLLECTIONS = ['living-room', 'bedroom', 'dining'] as const;
+export const CARE_COLLECTION = 'care-decor';
 
 type ViewSpec = {
   /** Live row count at introspection time, and what the view is for. */
@@ -74,19 +79,19 @@ export const VIEW_CATALOGUE: Record<AgentView, ViewSpec> = {
       'Join to customers on customer_id.',
     columns: {
       order_id: 'uuid',
-      order_number: 'text — e.g. "#RSY-11902"',
+      order_number: 'text — e.g. "#HSF-11902"',
       customer_id: 'uuid — joins v_customer_360.customer_id / v_customer_scores.customer_id',
       total: 'numeric(12,2) INR',
       discount_total: 'numeric(12,2) INR',
-      discount_codes: 'text[] — e.g. WELCOME10, WINBACK15, RASAYA5, FESTIVE20, DIWALI15',
+      discount_codes: 'text[] — e.g. WELCOME10, WINBACK15, HOMESTYLE5, FESTIVE20, DIWALI15',
       currency: 'text — always INR',
       financial_status: 'financial_status_t enum — live data is only paid (2,743) and partially_refunded (37)',
       processed_at: 'timestamptz',
       cancelled_at: 'timestamptz — null unless cancelled',
       line_count: 'bigint — distinct line items on the order',
       unit_count: 'bigint — total units',
-      collections: 'text[] — only skin-care, hair-care, wellness',
-      product_titles: 'text[] — e.g. "Rosemary Scalp Serum", "Bhringraj Anti-Hairfall Hair Oil"',
+      collections: 'text[] — only living-room, bedroom, dining, care-decor. The first three are ROOMS (furniture); care-decor is the repeat-purchase tier (cushion covers, throws, vases, polish, fabric guard).',
+      product_titles: 'text[] — e.g. "Aravalli Sofa", "Jaipur Dhurrie Rug", "Teak Care Polish"',
     },
   },
   v_customer_scores: {
@@ -115,12 +120,45 @@ export const VIEW_CATALOGUE: Record<AgentView, ViewSpec> = {
       computed_at: 'timestamptz — when the score was last recomputed',
     },
   },
+  v_room_completion: {
+    note:
+      'One row per customer per ROOM they have started (living-room, bedroom or ' +
+      'dining) — care-decor is not a room and never appears here. This is the ' +
+      'view behind the Room Completion Board: it says which pieces of a room a ' +
+      'customer already owns, which are missing, and which missing piece is the ' +
+      'best one to suggest next. Use it for any question about cross-sell, ' +
+      '"what should we offer X", unfinished rooms, or attach rates. Join to ' +
+      'v_customer_360 on customer_id for city/segment/consent.',
+    columns: {
+      customer_id: 'uuid',
+      room: 'text — living-room, bedroom or dining',
+      pieces_total: 'integer — how many distinct products the room contains in the catalogue',
+      pieces_owned: 'integer — how many of them this customer has bought',
+      completion_pct: 'integer 0-100 — pieces_owned / pieces_total',
+      anchor_title: 'text — the room\u2019s anchor piece (sofa / bed / dining table)',
+      anchor_bought_at: 'timestamptz — when they bought the anchor, i.e. when the project opened',
+      days_since_anchor: 'integer — days since the project opened',
+      last_piece_at: 'timestamptz — when they last bought anything for this room',
+      days_since_last_piece: 'integer',
+      attach_window_days: 'integer — the typical days between pieces for this room, from the catalogue',
+      window_closes_in_days: 'integer — attach_window_days minus days_since_last_piece; NEGATIVE means the window has already closed',
+      owned_titles: 'text[] — the pieces they have',
+      missing_titles: 'text[] — the pieces they do not have, best suggestion first',
+      next_best_title: 'text — the single missing piece to suggest next; null when the room is complete',
+      next_best_price: 'numeric(12,2) INR — its price',
+      next_best_attach_rate: 'numeric — share of customers who bought the anchor and later bought this piece, 0-1',
+      room_value_remaining: 'numeric(12,2) INR — total price of everything still missing from the room',
+    },
+  },
+
   v_conversation_summary: {
     note:
-      'EMPTY — 0 rows. Messaging (PRD-02 §F5) is blocked on Twilio, so ' +
-      'conversations and messages have never been written to. Any question ' +
-      'about conversations, replies or WhatsApp threads will correctly return ' +
-      'nothing; say so rather than inventing an answer.',
+      'One row per conversation. Live Twilio/Resend inbound is still not ' +
+      'configured (PRD-02 §F5 partly deferred), so every row here was created ' +
+      'either by the Inbox channel simulator (§F5.11) or the seed-inbox ' +
+      'script — real in the database, but demo traffic, not customer volume. ' +
+      'May legitimately be empty if neither has been run. held_count > 0 means ' +
+      'an AI draft is awaiting rep approval.',
     columns: {
       conversation_id: 'uuid',
       customer_id: 'uuid',

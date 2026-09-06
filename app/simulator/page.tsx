@@ -20,7 +20,7 @@ export default async function SimulatorPage() {
       <p className="max-w-2xl type-body-sm text-muted-foreground">
         Not live storefront traffic. This posts the exact same JSON shape the
         Dawn theme&apos;s tracking snippet posts (
-        <code className="text-ink">rasaya-theme/snippets/cadence-tracking.liquid</code>
+        <code className="text-ink">homestyle-theme/snippets/cadence-tracking.liquid</code>
         ) to the same <code className="text-ink">/api/events</code> endpoint —
         page_view, product_view, add_to_cart, checkout_started — so the
         endpoint and the customer-360 timeline can be exercised without a

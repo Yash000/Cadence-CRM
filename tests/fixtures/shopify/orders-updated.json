@@ -9,7 +9,7 @@
   "currency": "INR",
   "discount_codes": [
     {
-      "code": "RASAYA10",
+      "code": "HOMESTYLE10",
       "amount": "130.00",
       "type": "percentage"
     }
@@ -43,15 +43,15 @@
   "line_items": [
     {
       "id": 14200000000101,
-      "name": "Niacinamide Clarity Serum — 50ml",
+      "name": "Jaipur Dhurrie Rug — 5x7 ft",
       "price": "1299.00",
-      "product_id": 10410305585448,
+      "product_id": 10427354906920,
       "quantity": 1,
-      "sku": "RSY-NS-050",
-      "title": "Niacinamide Clarity Serum — 50ml",
-      "variant_id": 52277360853288,
-      "variant_title": "50ml",
-      "vendor": "Rasaya"
+      "sku": "HSF-RUG-57",
+      "title": "Jaipur Dhurrie Rug — 5x7 ft",
+      "variant_id": 52329373434152,
+      "variant_title": "5x7 ft",
+      "vendor": "HomeStyle"
     }
   ]
 }

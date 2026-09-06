@@ -17,7 +17,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Cadence',
-  description: 'Cadence — the AI-native retention CRM for Rasaya.',
+  description: 'Cadence — the AI-native retention CRM for HomeStyle Furniture.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span className="h-5 w-px bg-hairline" />
             <div className="flex items-center gap-2 type-body-sm text-muted-foreground">
               <span className="inline-block size-1.5 rounded-full bg-good" />
-              <span className="font-medium text-ink">Rasaya</span>
+              <span className="font-medium text-ink">HomeStyle</span>
               <span className="text-faint">·</span>
               <span>Shopify synced</span>
             </div>

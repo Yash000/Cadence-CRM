@@ -87,6 +87,15 @@ const HOUR = 3_600_000;
 const MINUTE = 60_000;
 const WINDOW_DAYS = 540; // 18 months
 const MAX_SPAN_DAYS = WINDOW_DAYS - 6; // leave headroom for hour-level jitter
+// Floor on any REALIZED gap between two of a customer's orders. Gaps are
+// floored at 8 days when drawn, but the festive warp below can pull an interior
+// order forward by up to three weeks and collapse a real gap to nearly nothing.
+// That matters far beyond tidiness: median_gap is the denominator of
+// churn_risk (days_since / cadence_days) in db/scoring.sql, so a customer whose
+// median gap warps to 1 day scores 100 on a rhythm the seed invented rather
+// than on anything they did. 7, not 8, because the hour-level jitter applied to
+// each timestamp can shave ~10 hours off a legitimately-drawn 8-day gap.
+const MIN_REALIZED_GAP_DAYS = 7;
 // The catalogue is older than the order window — a store's products exist
 // before its first order. Fixed so products.created_at/updated_at are
 // reproducible rather than now().
@@ -98,14 +107,18 @@ const CATALOGUE_EPOCH = new Date(ANCHOR_MS - (WINDOW_DAYS + 30) * DAY);
 const PHONE_PATTERN = '^\\+91[6-9][0-9]{9}$';
 
 // Synthetic Shopify id ranges. Deliberately far above any id the live store
-// will mint (real Rasaya product ids are ~1.04e13), so a future webhook sync of
+// will mint (real HomeStyle product ids are ~1.04e13), so a future webhook sync of
 // genuine Shopify customers/orders can never collide with seeded rows and the
 // seeded rows stay trivially identifiable.
 const CUSTOMER_ID_BASE = 900_000_000_000_000;
 const ORDER_ID_BASE = 900_000_000_000_000;
 
 // AOV (in paise) above which a frequent, recent buyer counts as a Champion.
-const CHAMPION_AOV_PAISE = 200_000; // ₹2,000
+// Furniture, not consumables: a ₹2,000 threshold would have made a customer
+// who buys cushion covers five times a Champion alongside somebody furnishing
+// a whole flat. Set above any all-care basket and below a typical room order,
+// so Champions here are the multi-room customers they should be.
+const CHAMPION_AOV_PAISE = 1_800_000; // ₹18,000
 
 // ---------------------------------------------------------------------------
 // Deterministic PRNG + helpers
@@ -175,6 +188,27 @@ function toDecimal(paise) {
 // ---------------------------------------------------------------------------
 const catalogue = JSON.parse(readFileSync(new URL('../data/catalogue.json', import.meta.url), 'utf8'));
 const shopifyIds = JSON.parse(readFileSync(new URL('../data/shopify-ids.json', import.meta.url), 'utf8'));
+
+// data/shopify-ids.json can legitimately hold PLACEHOLDER ids: they exist so
+// the generator can be validated with --dry-run before the store has been
+// rebuilt. Writing them to the database is a different matter. products
+// .shopify_product_id and order_items.variant_id are how a live Shopify
+// webhook finds the row it is about (PRD-02 §F1.5), so seeding placeholders
+// produces a database that looks completely healthy and silently fails to
+// match a single real delivery — the kind of thing found weeks later.
+//
+// A dry run is always allowed; a real write demands the flag.
+if (shopifyIds._provisional && !DRY_RUN && !flag('allow-provisional-ids')) {
+  console.error(
+    'data/shopify-ids.json is marked _provisional — its Shopify ids are placeholders,\n' +
+    'not ids captured from a real store.\n\n' +
+    'Capture the real ones first:\n' +
+    '  node --import tsx scripts/capture-shopify-ids.mjs\n\n' +
+    'Or, to seed a CRM-only demo knowing live webhook identity resolution will not\n' +
+    'match anything, re-run with --allow-provisional-ids.',
+  );
+  process.exit(1);
+}
 const idsByHandle = new Map(shopifyIds.products.map((p) => [p.handle, p]));
 
 const PRODUCTS = catalogue.products.map((p, i) => {
@@ -211,6 +245,59 @@ const PRODUCTS = catalogue.products.map((p, i) => {
 const BY_COLLECTION = {};
 for (const p of PRODUCTS) (BY_COLLECTION[p.collection] ??= []).push(p);
 const COLLECTIONS = Object.keys(BY_COLLECTION);
+
+// ---------------------------------------------------------------------------
+// TWO TIERS (see db/scoring.sql header note 1b). Furniture does not deplete,
+// so the seed cannot model every customer as somebody who runs out of things.
+//
+//   ROOM tier  — a project. It opens with an anchor piece (sofa, bed, dining
+//     table) and is completed by companions (coffee table, rug, lamp…) over
+//     the following weeks. Crucially these are drawn WITHOUT REPLACEMENT: a
+//     customer who bought a sofa does not buy that sofa again. That single
+//     property is what makes the Room Completion Board mean anything — some
+//     rooms finish, some stall halfway, and the difference is visible.
+//
+//   CARE tier  — cushion covers, throws, vases, polish, fabric guard. These
+//     genuinely do get rebought, so this tier keeps the original
+//     replenishment behaviour unchanged, staple SKU and all.
+//
+// Tier is decided per customer below, weighted by cohort.
+// ---------------------------------------------------------------------------
+const CARE_COLLECTION = 'care-decor';
+const ROOMS = catalogue.collections
+  .map((c) => c.handle)
+  .filter((h) => h !== CARE_COLLECTION);
+
+const ANCHOR_BY_ROOM = {};
+const COMPANIONS_BY_ROOM = {};
+for (const p of PRODUCTS) {
+  if (p.collection === CARE_COLLECTION) continue;
+  if (p.role === 'anchor') ANCHOR_BY_ROOM[p.collection] = p;
+  else (COMPANIONS_BY_ROOM[p.collection] ??= []).push(p);
+}
+for (const r of ROOMS) {
+  if (!ANCHOR_BY_ROOM[r]) throw new Error(`catalogue room "${r}" has no role:anchor product`);
+  COMPANIONS_BY_ROOM[r] ??= [];
+}
+const CARE_PRODUCTS = BY_COLLECTION[CARE_COLLECTION] ?? [];
+if (!CARE_PRODUCTS.length) throw new Error('catalogue has no care-decor products');
+
+/** Every piece that belongs to a room, anchor first. */
+const roomPieces = (room) => [ANCHOR_BY_ROOM[room], ...COMPANIONS_BY_ROOM[room]];
+
+// Share of each cohort that is a room-project customer rather than a
+// care-and-decor repeat buyer. Champions are 100% room by construction: with
+// CHAMPION_AOV_PAISE at ₹18,000 an all-care basket mathematically cannot reach
+// Champion AOV, so allowing care-tier Champions would just make the chain
+// redraw 24 times and throw.
+const ROOM_SHARE = {
+  champions: 1.0,
+  loyal: 0.85,
+  promising: 0.70,
+  at_risk: 0.70,
+  hibernating: 0.72,
+  one_and_done: 0.78,
+};
 
 // ---------------------------------------------------------------------------
 // Cohort plan — PRD-01 §5.3. Shares must sum to 1.
@@ -253,29 +340,30 @@ const COHORT_COUNTS = apportion(CUSTOMER_COUNT, COHORTS);
  * cleared by at least ~3 days so that the hour-level timestamp jitter added
  * later can never flip a customer into a neighbouring cohort.
  */
-function drawBehaviour(cohortKey, replenishmentBasis, unitsPerPurchase) {
+function drawBehaviour(cohortKey, replenishmentBasis, unitsPerPurchase, tier) {
   const u = rnd();
   const between = (lo, hi) => lo + Math.floor(u * (Math.max(lo, hi) - lo + 1));
 
   // ---- where the cadence actually comes from -------------------------------
-  // The customer's rhythm starts from the replenishment cycle of the variant
-  // they habitually buy (30–75 days across this catalogue: 30 for Triphala or
-  // 60-count gummies, 75 for a 200ml hair oil), multiplied by how many units
-  // they take at a time, then by a personal factor for how heavily that
-  // individual uses it.
+  // The customer's rhythm starts from the cadence of the variant they open
+  // with, multiplied by how many units they take at a time, then by a personal
+  // factor. What that cadence MEANS depends on the tier:
   //
-  // The units term is the one that legitimately produces the long tail: someone
-  // who buys two bottles of a 60-day product per order is on a ~120-day rhythm
-  // for an entirely mechanical reason, and the same propensity drives their
-  // basket quantities below, so the data and the explanation agree. Widening
-  // the random `personal` term instead would have hit the same percentile
-  // targets while making the spread LESS attributable to the catalogue, which
-  // is the opposite of what this change is for.
+  //   ROOM tier — the anchor's attach window (35–50 days here): how long after
+  //     the sofa lands before the coffee table follows. Units are always 1;
+  //     nobody buys two dining tables, and multiplying an attach window by a
+  //     quantity would be meaningless.
   //
-  // Two people buying the same 45-day hair oil still genuinely differ — one is
-  // oiling twice a week, one is not — but a Triphala buyer and a 200ml
-  // hair-oil buyer differ structurally, and that reason is in the catalogue
-  // rather than in a random number.
+  //   CARE tier — a genuine refill cycle (90–180 days here), multiplied by
+  //     units exactly as before: somebody who buys two tins of polish at a time
+  //     is on a double-length rhythm for a mechanical reason, and the same
+  //     propensity drives their basket quantities below, so the data and the
+  //     explanation agree.
+  //
+  // Two people furnishing the same living room still genuinely differ — one is
+  // buying the whole room in six weeks, one is spreading it over a year — but a
+  // polish buyer and a sofa buyer differ structurally, and that reason is in
+  // the catalogue rather than in a random number.
   //
   // This replaced a per-cohort random draw whose clamps (18–40, 38–72, 20–58…)
   // were what actually squeezed the population into a 2.6× spread. Cohort
@@ -283,10 +371,13 @@ function drawBehaviour(cohortKey, replenishmentBasis, unitsPerPurchase) {
   // them — e.g. At Risk cannot exceed ~85 days because 2× its own median must
   // still land under the 180-day Hibernating line. Those are consequences of
   // PRD-01 §5.3, not tuning knobs.
-  // Centred at 0.82, not 1.0: a catalogue's `replenishment_days` is a
-  // conservative "lasts up to N days" claim, and real users finish a bottle
-  // somewhat sooner than the label promises.
-  const personal = Math.min(3.4, Math.max(0.40, 0.82 * Math.exp(normal(0, 0.62))));
+  // The care tier centres at 0.82, not 1.0: a refill cycle is a conservative
+  // "lasts up to N days" claim and real users finish a tin sooner than the
+  // label promises. The room tier centres at 1.0, because an attach window is
+  // already a typical-case estimate of when the next piece follows, not a
+  // maximum — biasing it down would invent urgency the catalogue never claimed.
+  const centre = tier === 'care' ? 0.82 : 1.0;
+  const personal = Math.min(3.4, Math.max(0.40, centre * Math.exp(normal(0, 0.62))));
   const base = replenishmentBasis * unitsPerPurchase * personal;
   const clamp = (lo, hi) => Math.max(lo, Math.min(hi, Math.round(base)));
 
@@ -405,44 +496,131 @@ const DISCOUNTS = [
   { code: 'DIWALI15', pct: 15, festiveOnly: true },
   { code: 'WELCOME10', pct: 10, festiveOnly: false },
   { code: 'WINBACK15', pct: 15, festiveOnly: false },
-  { code: 'RASAYA5', pct: 5, festiveOnly: false },
+  { code: 'HOMESTYLE5', pct: 5, festiveOnly: false },
 ];
 
 // ---------------------------------------------------------------------------
 // Generation
 // ---------------------------------------------------------------------------
-function buildBasket(customer, { festive, champion }) {
+/** Pick `k` distinct entries from `pool` without replacement. */
+function pickSome(pool, k) {
+  let rest = [...pool];
+  const out = [];
+  for (let i = 0; i < k && rest.length; i++) {
+    const chosen = pick(rest);
+    out.push(chosen);
+    rest = rest.filter((x) => x !== chosen);
+  }
+  return out;
+}
+
+/** Quantity for one line. Furniture is bought once; care & decor stacks. */
+function qtyFor(product, customer, festive) {
+  if (product.collection !== CARE_COLLECTION) return 1;
+  let qty = product === customer.favourite
+    ? customer.unitsPerPurchase
+    : weighted([[1, 72], [2, 22], [3, 6]]);
+  if (festive && chance(0.5)) qty += 1;
+  return qty;
+}
+
+function variantFor(product, customer) {
+  // On their staple they mostly re-buy the same size. That matters for the care
+  // tier: the customer's cadence was derived from that variant's refill cycle,
+  // so if they kept switching between the 200ml and the 500ml the rhythm in the
+  // data would not match the rhythm in the catalogue.
+  if (product === customer.favourite && chance(0.8)) return customer.favouriteVariant;
+  if (product.variants.length === 1) return product.variants[0];
+  return weighted(product.variants.map((v, i) => [v, i === 0 ? 6 : 4]));
+}
+
+/**
+ * `owned` is a Set of product handles the customer already has, carried across
+ * their whole order chain. It is what makes the room tier a project rather than
+ * a shopping loop: pieces come out of the room WITHOUT REPLACEMENT, so nobody
+ * buys the same wardrobe twice and a room can genuinely be finished.
+ */
+function buildBasket(customer, { festive, champion, orderIndex, owned }) {
+  // ---- CARE tier: unchanged replenishment behaviour ----------------------
+  if (customer.tier === 'care') {
+    const wantedLines = champion ? randInt(2, 4) : weighted([[1, 58], [2, 27], [3, 11], [4, 4]]);
+    const candidates = [];
+    // Bias hard toward care & decor so repeat purchases repeat the same
+    // products — replenishment prediction (§F3.4) has nothing to work with if
+    // every order is a random draw across the whole catalogue.
+    for (const p of CARE_PRODUCTS) candidates.push([p, 8]);
+    for (const p of PRODUCTS) if (p.collection !== CARE_COLLECTION) candidates.push([p, 1]);
+
+    const chosen = new Set();
+    if (chance(0.72)) chosen.add(customer.favourite);
+    let guard = 0;
+    while (chosen.size < wantedLines && guard++ < 40) chosen.add(weighted(candidates));
+
+    const lines = [];
+    for (const product of chosen) {
+      lines.push({ product, variant: variantFor(product, customer), qty: qtyFor(product, customer, festive) });
+      owned.add(product.handle);
+    }
+    return lines;
+  }
+
+  // ---- ROOM tier: a project, drawn without replacement -------------------
+  const room = customer.room;
+  const anchor = customer.anchor;
+  const chosen = [];
+
+  // How much of THIS room the customer will ever buy from HomeStyle. Not every
+  // room gets finished here, and pretending otherwise was the first version's
+  // mistake: unbounded, 68% of rooms completed and the Room Completion Board
+  // had almost nothing left to recommend. People buy the sofa here and the rug
+  // at a market, or already own a coffee table. `budget` is what stops a room
+  // short, and the leftover pieces are exactly the cross-sell the board exists
+  // to surface.
+  const budget = customer.roomBudgetPieces;
+  const ownedInRoom = roomPieces(room).filter((x) => owned.has(x.handle)).length;
+  const headroom = Math.max(0, budget - ownedInRoom);
+
+  if (orderIndex === 0 || !owned.has(anchor.handle)) {
+    // The room opens with its anchor piece, and about a third of the time the
+    // customer takes one companion home in the same order.
+    chosen.push(anchor);
+    const alsoNow = COMPANIONS_BY_ROOM[room].filter((x) => !owned.has(x.handle));
+    if (alsoNow.length && headroom >= 2 && chance(0.32)) chosen.push(pick(alsoNow));
+  } else {
+    const remaining = headroom > 0
+      ? COMPANIONS_BY_ROOM[room].filter((x) => !owned.has(x.handle))
+      : [];
+    if (remaining.length) {
+      const want = Math.min(remaining.length, headroom, weighted([[1, 74], [2, 26]]));
+      chosen.push(...pickSome(remaining, want));
+      // Polish bought alongside the wardrobe — a care item rides along
+      // sometimes, which is also how care-tier products reach room customers.
+      if (chance(0.18)) chosen.push(pick(CARE_PRODUCTS));
+    } else {
+      // They are done with this room — either it is finished, or they have
+      // spent what they were ever going to spend on it here. From here they
+      // either settle into care & decor or open a second room, and the same
+      // per-room budget applies there, so a second room stops short too.
+      const secondRoom = ROOMS.filter((r) => r !== room).find((r) => {
+        const pieces = roomPieces(r);
+        return pieces.some((x) => !owned.has(x.handle))
+          && pieces.filter((x) => owned.has(x.handle)).length < budget;
+      });
+      if (secondRoom && chance(0.38)) {
+        const next = ANCHOR_BY_ROOM[secondRoom];
+        chosen.push(owned.has(next.handle)
+          ? pick(roomPieces(secondRoom).filter((x) => !owned.has(x.handle)))
+          : next);
+      } else {
+        chosen.push(...pickSome(CARE_PRODUCTS, weighted([[1, 68], [2, 26], [3, 6]])));
+      }
+    }
+  }
+
   const lines = [];
-  const wantedLines = champion ? randInt(2, 4) : weighted([[1, 58], [2, 27], [3, 11], [4, 4]]);
-
-  const candidates = [];
-  // Bias hard toward the customer's own collection so repeat purchases repeat
-  // the same products — replenishment prediction (§F3.4) has nothing to work
-  // with if every order is a random draw from all 12 SKUs.
-  for (const p of BY_COLLECTION[customer.collection]) candidates.push([p, 6]);
-  for (const p of PRODUCTS) if (p.collection !== customer.collection) candidates.push([p, 1]);
-
-  const chosen = new Set();
-  if (chance(0.72)) chosen.add(customer.favourite);
-  while (chosen.size < wantedLines) chosen.add(weighted(candidates));
-
   for (const product of chosen) {
-    // On their staple product they mostly re-buy the same size. That matters:
-    // the customer's cadence was derived from that variant's replenishment
-    // cycle, so if they kept switching between the 100ml and the 200ml the
-    // rhythm in the data would not match the rhythm in the catalogue.
-    const variant = product === customer.favourite && chance(0.8)
-      ? customer.favouriteVariant
-      : product.variants.length === 1
-        ? product.variants[0]
-        : weighted(product.variants.map((v, i) => [v, i === 0 ? 6 : 4]));
-    // Their staple comes in their usual stock-up size — the same propensity
-    // the cadence was built from. Everything else is an ordinary single unit.
-    let qty = product === customer.favourite
-      ? customer.unitsPerPurchase
-      : weighted([[1, 84], [2, 13], [3, 3]]);
-    if (festive && chance(0.5)) qty += 1;
-    lines.push({ product, variant, qty });
+    lines.push({ product, variant: variantFor(product, customer), qty: qtyFor(product, customer, festive) });
+    owned.add(product.handle);
   }
   return lines;
 }
@@ -480,16 +658,34 @@ function generate() {
       // resolution edge case in PRD-02 §F1.5 (email-only customers that a
       // WhatsApp-first CRM cannot reach or match on).
       const hasPhone = !chance(0.15);
-      const collection = weighted([['hair-care', 40], ['skin-care', 40], ['wellness', 20]]);
-      const favourite = pick(BY_COLLECTION[collection]);
-      // The staple SKU, down to the size. Its replenishment_days is what the
-      // customer's purchase rhythm is built from below — a 30-day Triphala
-      // buyer and a 75-day 200ml-hair-oil buyer should not share a cadence.
+      // Which tier this customer belongs to, weighted by cohort (see ROOM_SHARE).
+      const tier = chance(ROOM_SHARE[cohort.key]) ? 'room' : 'care';
+      // Room customers are furnishing one room to begin with; care customers
+      // live entirely in care & decor.
+      const room = tier === 'room'
+        ? weighted([['living-room', 38], ['bedroom', 32], ['dining', 30]])
+        : null;
+      const anchor = room ? ANCHOR_BY_ROOM[room] : null;
+      const collection = room ?? CARE_COLLECTION;
+      // The piece their rhythm is built from: the room's anchor, or their
+      // staple care SKU.
+      const favourite = tier === 'room' ? anchor : pick(CARE_PRODUCTS);
+      // Down to the size. Its replenishment_days is what the customer's
+      // purchase rhythm is built from below — a 35-day dining-table attach
+      // window and a 180-day fabric-guard refill should not share a cadence.
       const favouriteVariant = pick(favourite.variants);
       // How many units of their staple they take per order. Feeds BOTH the
       // cadence basis and the basket quantities below, so a customer who
-      // stocks up two at a time genuinely reappears half as often.
-      const unitsPerPurchase = weighted([[1, 70], [2, 21], [3, 9]]);
+      // stocks up two at a time genuinely reappears half as often. Always 1 in
+      // the room tier — you do not buy two beds, and scaling an attach window
+      // by a quantity would be nonsense.
+      const unitsPerPurchase = tier === 'care' ? weighted([[1, 70], [2, 21], [3, 9]]) : 1;
+      // How many pieces of any one room this customer will ever buy here (see
+      // buildBasket). 99 means "whatever the room holds" — the minority who
+      // genuinely furnish a whole room from one retailer.
+      const roomBudgetPieces = tier === 'room'
+        ? weighted([[1, 26], [2, 31], [3, 27], [99, 16]])
+        : 0;
 
       const customer = {
         id,
@@ -510,6 +706,10 @@ function generate() {
         city,
         state,
         country: 'IN',
+        tier,
+        room,
+        anchor,
+        roomBudgetPieces,
         collection,
         favourite,
         favouriteVariant,
@@ -539,7 +739,7 @@ function generate() {
       let customerOrders = null;
       let n = 0, cadence = 0, silence = 0;
       for (let attempt = 0; attempt < 24 && !customerOrders; attempt++) {
-        const drawn = drawBehaviour(cohort.key, favouriteVariant.replenishmentDays, unitsPerPurchase);
+        const drawn = drawBehaviour(cohort.key, favouriteVariant.replenishmentDays, unitsPerPurchase, tier);
         n = drawn.n;
         cadence = drawn.cadence;
         const silenceFor = drawn.silenceFor;
@@ -578,8 +778,16 @@ function generate() {
           // The most recent order is never warped: that would move `silence`.
           warped.push({ ms: o < n - 1 ? warpToFestive(ms) : ms, seq: o });
         }
-        if (chainCohort(warped) === cohort.key) customerOrders = warped;
-        else if (chainCohort(plain) === cohort.key) customerOrders = plain;
+        // Cohort integrity is not the only thing the warp can break; so is the
+        // gap floor (see MIN_REALIZED_GAP_DAYS). Both chains are held to it, and
+        // the plain chain always passes by construction, so this can only ever
+        // reject a warp — seasonality yields, never the cadence.
+        const gapsOk = (chain) => {
+          const t = [...chain].map((x) => x.ms).sort((a, b) => a - b);
+          return t.slice(1).every((v, i) => (v - t[i]) / DAY >= MIN_REALIZED_GAP_DAYS);
+        };
+        if (gapsOk(warped) && chainCohort(warped) === cohort.key) customerOrders = warped;
+        else if (gapsOk(plain) && chainCohort(plain) === cohort.key) customerOrders = plain;
         else if (attempt === 0) redraws++;
       }
       if (!customerOrders) {
@@ -588,19 +796,54 @@ function generate() {
       customerOrders = [...customerOrders].sort((a, b) => a.ms - b.ms);
 
       let lifetimePaise = 0;
+      // Everything this customer already owns, carried across the whole chain.
+      // The room tier draws from it without replacement (see buildBasket).
+      const owned = new Set();
+      let orderIndex = 0;
       for (const co of customerOrders) {
         const oid = uuid5(`order:${idx}:${co.seq}`);
         const festive = isFestive(co.ms);
         const isChampion = cohort.key === 'champions';
-        let lines = buildBasket(customer, { festive, champion: isChampion });
+        let lines = buildBasket(customer, { festive, champion: isChampion, orderIndex, owned });
+        orderIndex++;
         let sub = subtotalOf(lines);
 
         // Champions are defined by high AOV as well as frequency+recency, so
         // top the basket up until the order clears the threshold with margin.
+        //
+        // Topping up by QUANTITY is wrong here — three sofas on one order is
+        // not a high-value customer, it is a data bug that would then flow
+        // into the attach-rate analysis as a real signal. So the basket grows
+        // by adding PIECES, priciest first, which is what a customer
+        // furnishing a room at pace actually does. The qty fallback survives
+        // only for the care tier, where stacking is genuine.
         if (isChampion) {
-          const priciest = lines.reduce((a, b) => (b.variant.pricePaise > a.variant.pricePaise ? b : a));
-          while (sub - Math.floor(sub * 0.2) < CHAMPION_AOV_PAISE + 40_000) {
-            priciest.qty += 1;
+          const target = CHAMPION_AOV_PAISE + 40_000;
+          let guard = 0;
+          while (sub - Math.floor(sub * 0.2) < target && guard++ < 12) {
+            // `owned`, not just this basket: a piece they bought three orders
+            // ago is not available to top up with either. Leaving it out is how
+            // every Champion ended up buying the same ₹92,000 bed on repeat.
+            const spare = PRODUCTS
+              .filter((x) => !owned.has(x.handle) && x.collection !== CARE_COLLECTION)
+              .sort((a, b) => b.pricePaise - a.pricePaise)[0];
+            if (spare && lines.length < 5) {
+              lines.push({ product: spare, variant: variantFor(spare, customer), qty: 1 });
+              owned.add(spare.handle);
+            } else {
+              // Nothing left to buy that they do not already own. Stack a care
+              // item instead — that is the one thing a furnished home genuinely
+              // reorders, and it is the only honest way to lift this basket.
+              let care = lines.find((l) => l.product.collection === CARE_COLLECTION);
+              if (!care) {
+                const p = pick(CARE_PRODUCTS);
+                care = { product: p, variant: variantFor(p, customer), qty: 1 };
+                lines.push(care);
+                owned.add(p.handle);
+              } else {
+                care.qty += 1;
+              }
+            }
             sub = subtotalOf(lines);
           }
         }
@@ -620,7 +863,7 @@ function generate() {
         orders.push({
           id: oid,
           shopifyOrderId: ORDER_ID_BASE + orderSeq,
-          orderNumber: `#RSY-${10001 + orderSeq}`,
+          orderNumber: `#HSF-${10001 + orderSeq}`,
           customerId: id,
           total: toDecimal(totalPaise),
           subtotal: toDecimal(sub),
@@ -666,7 +909,7 @@ function generate() {
         const pageViews = randInt(1, 3);
         for (let v = 0; v < pageViews; v++) {
           push('page_view', co.ms - (30 - v * 4) * MINUTE - randInt(0, 120) * 1000, {
-            path: pick(['/', '/collections/' + customer.collection, '/pages/routine-quiz', '/blogs/journal']),
+            path: pick(['/', '/collections/' + customer.collection, '/pages/room-planner', '/blogs/journal']),
           });
         }
         for (const l of lines.slice(0, 3)) {
@@ -765,6 +1008,8 @@ function generate() {
         _cohort: cohort.key,
         _orders: customerOrders.length,
         _lifetimePaise: lifetimePaise,
+        _tier: tier,
+        _room: room,
       });
     }
   }
@@ -913,6 +1158,50 @@ if (DRY_RUN) {
     `p90 ${Math.round(pct(0.9))}  max ${Math.round(medians[medians.length - 1])}   ` +
     `spread p90/p10 = ${(pct(0.9) / pct(0.1)).toFixed(1)}×`);
 
+  // ---- the two-tier claim, proved from the generated rows -----------------
+  // The whole rebrand rests on one property: furniture is drawn WITHOUT
+  // replacement, so a room can genuinely be finished and the Room Completion
+  // Board has something real to show. Assert it here rather than trusting the
+  // basket code to keep being right.
+  const ordersByCustomer = new Map();
+  for (const o of data.orders) {
+    if (!ordersByCustomer.has(o.customerId)) ordersByCustomer.set(o.customerId, []);
+    ordersByCustomer.get(o.customerId).push(o);
+  }
+  let repurchasedFurniture = 0;
+  const completion = new Map();
+  const tierCount = new Map();
+  for (const c of data.customers) {
+    tierCount.set(c._tier, (tierCount.get(c._tier) ?? 0) + 1);
+    if (c._tier !== 'room') continue;
+    const timesBought = new Map();
+    for (const o of ordersByCustomer.get(c.id) ?? []) {
+      for (const l of o._lines) {
+        if (l.product.collection === CARE_COLLECTION) continue;
+        timesBought.set(l.product.handle, (timesBought.get(l.product.handle) ?? 0) + 1);
+      }
+    }
+    for (const n of timesBought.values()) if (n > 1) repurchasedFurniture++;
+    const pieces = roomPieces(c._room);
+    const owned = pieces.filter((x) => timesBought.has(x.handle)).length;
+    const bucket = owned >= pieces.length ? 'complete'
+      : owned / pieces.length >= 0.5 ? 'half or more'
+      : 'just started';
+    completion.set(bucket, (completion.get(bucket) ?? 0) + 1);
+  }
+  console.log('\nTier split:');
+  console.log(table(['Tier', 'Customers'], [...tierCount.keys()].sort().map((k) => [k, tierCount.get(k)])));
+  console.log('\nRoom-tier customers by state of their FIRST room:');
+  console.log(table(
+    ['State', 'Customers'],
+    ['just started', 'half or more', 'complete'].map((k) => [k, completion.get(k) ?? 0]),
+  ));
+  if (repurchasedFurniture) {
+    console.error(`\n✗ ${repurchasedFurniture} furniture pieces were bought twice by the same customer — the room tier must draw without replacement.`);
+    process.exit(1);
+  }
+  console.log('  ✓ no furniture piece is bought twice by the same customer');
+
   const noPhone = data.customers.filter((c) => c.phoneE164 === null).length;
   console.log(`\nCustomers with no phone: ${noPhone} (${((noPhone / data.customers.length) * 100).toFixed(1)}%)`);
   const abandoned = data.events.filter((e) => e.type === 'checkout_abandoned').length;
@@ -1005,7 +1294,7 @@ await batched(
 await batched(
   'customers    ',
   customers,
-  data.customers.map(({ _cohort, _orders, _lifetimePaise, ...row }) => row),
+  data.customers.map(({ _cohort, _orders, _lifetimePaise, _tier, _room, ...row }) => row),
   ['shopifyCustomerId', 'email', 'phoneE164', 'firstName', 'lastName', 'city', 'state', 'country', 'acceptsMarketing', 'createdAt', 'updatedAt'],
   400,
 );
@@ -1400,7 +1689,7 @@ COHORTS.forEach((c, i) => {
 if ((dbCounts.get('other') ?? 0) !== 0) problems.push(`${dbCounts.get('other')} customers fall outside every cohort`);
 if (span.undated) problems.push(`${span.undated} orders have no processed_at`);
 if (productLink.orphan_items) problems.push(`${productLink.orphan_items} order_items are not linked to a product`);
-if (replen.with_replen !== 12) problems.push(`only ${replen.with_replen}/12 products carry replenishment_days`);
+if (replen.with_replen !== PRODUCTS.length) problems.push(`only ${replen.with_replen}/${PRODUCTS.length} products carry replenishment_days`);
 if (abandoned / span.n < 2.5 || abandoned / span.n > 3.6) problems.push(`abandoned/order ratio ${(abandoned / span.n).toFixed(2)} is outside 2.5–3.6×`);
 
 console.log('\n' + '═'.repeat(72));

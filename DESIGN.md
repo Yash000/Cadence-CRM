@@ -1,21 +1,21 @@
 ---
 version: alpha
-name: Mobbin Analysis
-description: An analysis of Mobbin's design language — a gallery-white, monochrome interface system built to disappear behind the content it curates. Near-black ink on white canvas, a ladder of barely-there neutral tints instead of shadows, stadium-pill controls, 24px card geometry, iOS-style 30% squircle icon tiles, and the Saans typeface at unusual variable weights (652 display, 456 text, 300 light). One electric blue accent is reserved for commercial signals; every other color on screen belongs to the product screenshots being showcased.
+name: Showroom Warm
+description: HomeStyle's design language — a bone-and-warm-ink interface system built to disappear behind the furniture it shows. Warm near-black on a bone canvas, a ladder of barely-there warm-neutral tints instead of shadows, stadium-pill controls, 24px card geometry, iOS-style 30% squircle icon tiles, and the Saans typeface at unusual variable weights (652 display, 456 text, 300 light). One walnut accent is reserved for commercial signals; every other color on screen belongs to the rooms being shown. Structurally this is the Mobbin analysis it grew out of — the geometry, type ladder, spacing and component specs are inherited unchanged, and only the palette moved off neutral.
 
 colors:
-  primary: "#141414"
-  on-primary: "#ffffff"
-  ink: "#141414"
-  ink-soft: "#262626"
-  text-muted: "#707070"
-  text-faint: "#adadad"
-  canvas: "#ffffff"
-  canvas-soft: "#f3f3f3"
-  field: "#f0f0f0"
-  hairline-soft: "#f0f0f0"
-  hairline: "#e0e0e0"
-  accent: "#0066ff"
+  primary: "#1c1917"
+  on-primary: "#fbfaf7"
+  ink: "#1c1917"
+  ink-soft: "#2e2926"
+  text-muted: "#6f665e"
+  text-faint: "#a89e93"
+  canvas: "#fbfaf7"
+  canvas-soft: "#f2efe9"
+  field: "#efebe4"
+  hairline-soft: "#efebe4"
+  hairline: "#e3ddd3"
+  accent: "#8a5a3c"
 
 typography:
   display:
@@ -277,19 +277,19 @@ components:
 
 ## Overview
 
-Mobbin is a reference library of real product interfaces, and its own interface is engineered to get out of the way. The system is strictly monochrome: near-black ink (`{colors.ink}` — #141414) on a pure white canvas (`{colors.canvas}`), with structure carried by a ladder of barely-perceptible neutral tints rather than by shadows or color. The thousands of app screenshots, icon tiles, and brand logos the site exists to show are the only saturated elements on any page — the chrome frames them the way a gallery wall frames paintings.
+HomeStyle sells rooms, and the interface that sells them is engineered to get out of the way. The system is near-monochrome and warm: warm near-black ink (`{colors.ink}` — #1c1917) on a bone canvas (`{colors.canvas}` — #fbfaf7), with structure carried by a ladder of barely-perceptible warm-neutral tints rather than by shadows or color. Furniture photography — teak, cane, brass, terracotta, handloom cotton — is the only saturated thing on any page. The chrome frames it the way a showroom's bone walls frame the pieces standing in front of them, which is the same reason a gallery is white: the room recedes so the object reads.
 
-The geometry does the brand work that color refuses to do. Every interactive element is a stadium pill (`{rounded.full}`): the floating navigation bar, every button, the segmented billing toggle, the overlay badges. Containers sit at a calm `{rounded.md}` (24px), media tiles at `{rounded.sm}` (16px), and app icons render as iOS-style squircles at 30% corner radius. Type is set in Saans at deliberately non-standard variable weights — a chunky 652 for every heading, a bookish 456 for text, an airy 300 for hero subtitles — which gives the monochrome pages a strong typographic voice without a single decorative flourish.
+The geometry does the brand work that color refuses to do, and it is inherited wholesale. Every interactive element is a stadium pill (`{rounded.full}`): the floating navigation bar, every button, the segmented toggle, the overlay badges. Containers sit at a calm `{rounded.md}` (24px), media tiles at `{rounded.sm}` (16px), and icon tiles render as iOS-style squircles at 30% corner radius. Type is set in Saans at deliberately non-standard variable weights — a chunky 652 for every heading, a bookish 456 for text, an airy 300 for hero subtitles — which gives the near-monochrome pages a strong typographic voice without a single decorative flourish.
 
-One color is allowed to interrupt: an electric blue accent (`{colors.accent}` — #0066ff), used exclusively for commercial signals — the "Popular" plan badge and the yearly-savings callout on pricing. Its scarcity is the point; when blue appears, it is asking for a decision.
+One color is allowed to interrupt: a walnut accent (`{colors.accent}` — #8a5a3c), used exclusively for commercial signals — the featured badge, a savings callout, the next-best-piece recommendation. Its scarcity is the point; when walnut appears, it is asking for a decision. It is drawn from the catalogue's own material palette rather than imported from outside it, so the one chromatic note in the chrome is a color the products already contain.
 
 **Key Characteristics:**
-- Gallery-white monochrome palette — `{colors.ink}` on `{colors.canvas}`, zero brand chroma outside the single `{colors.accent}` blue
+- Bone-and-warm-ink palette — `{colors.ink}` on `{colors.canvas}`, zero brand chroma outside the single `{colors.accent}` walnut
 - Stadium-pill interaction language: nav bar, buttons, toggles, and badges all at `{rounded.full}`
 - Shadow-free elevation — hierarchy built from a neutral tint ladder (`{colors.canvas-soft}`, `{colors.field}`, `{colors.hairline}`) and 1px hairlines
 - Saans at signature variable weights: 652 headings with tight 1.0–1.13 line-height, 456 body, 300 light subtitles
 - iOS-style squircle icon tiles (30% radius) as a recurring visual motif across library counters and brand marquees
-- Content supplies the color: app screenshots, brand icons, and grayscale curator portraits carry all visual richness
+- Content supplies the color: furniture photography, material swatches and room scenes carry all visual richness
 - Full-bleed near-black `{colors.ink}` footer with rounded top corners closes every page in polarity inversion
 
 ## Colors
@@ -297,24 +297,25 @@ One color is allowed to interrupt: an electric blue accent (`{colors.accent}` �
 Source pages: home, pricing, awards, signup.
 
 ### Brand & Accent
-- **Ink Black** (`{colors.primary}` — #141414): The brand color. Fills every primary CTA pill, the footer band, and all display typography. Mobbin's identity is this near-black, softened just off pure black to sit comfortably next to photography.
-- **Electric Blue** (`{colors.accent}` — #0066ff): The only chromatic accent in the system. Reserved for commercial emphasis — the "Popular" pricing badge and savings callouts. Never used decoratively, never used for CTAs.
+- **Warm Ink** (`{colors.primary}` — #1c1917): The brand color. Fills every primary CTA pill, the footer band, and all display typography. HomeStyle's identity is this warm near-black — the color of oiled dark wood rather than of printer's ink, softened off pure black to sit comfortably next to photography.
+- **Walnut** (`{colors.accent}` — #8a5a3c): The only chromatic accent in the system. Reserved for commercial emphasis — featured badges, savings callouts, the next-best-piece recommendation. Never used decoratively, never used for CTAs.
 
 ### Surface
-- **Canvas** (`{colors.canvas}` — #ffffff): Default page and card background across all pages.
-- **Soft Canvas** (`{colors.canvas-soft}` — #f3f3f3): The workhorse tint — a 6% ink wash over white. Fills the floating nav pill, the featured pricing card, FAQ accordion rows, soft utility pills, segmented-control tracks, and the highlighted comparison-table column.
-- **Field** (`{colors.field}` — #f0f0f0): An 8% ink wash used as the fill for form inputs, giving fields presence without borders.
-- **Soft Hairline** (`{colors.hairline-soft}` — #f0f0f0): 1px card outlines — the faintest possible edge, used on white-on-white cards (pricing, testimonials).
-- **Hairline** (`{colors.hairline}` — #e0e0e0): The stronger 16% control border, used on outlined pill buttons and interactive chrome.
+- **Canvas** (`{colors.canvas}` — #fbfaf7): Bone. Default page and card background across all pages. Off-white rather than white so that unbleached cotton, undyed cane and raw linen in the photography do not read as dirty against it.
+- **Soft Canvas** (`{colors.canvas-soft}` — #f2efe9): Linen. The workhorse tint — a ~6% warm-ink wash over bone. Fills the floating nav pill, the featured card, accordion rows, soft utility pills, segmented-control tracks, and the highlighted comparison-table column.
+- **Field** (`{colors.field}` — #efebe4): An ~8% warm-ink wash used as the fill for form inputs, giving fields presence without borders.
+- **Soft Hairline** (`{colors.hairline-soft}` — #efebe4): 1px card outlines — the faintest possible edge, used on bone-on-bone cards.
+- **Hairline** (`{colors.hairline}` — #e3ddd3): The stronger ~16% control border, used on outlined pill buttons and interactive chrome.
 
 ### Text
-- **Ink** (`{colors.ink}` — #141414): Headings, body copy, and nav links.
-- **Soft Ink** (`{colors.ink-soft}` — #262626): Slightly lifted dark used for secondary lockups and the awards wordmark.
-- **Muted** (`{colors.text-muted}` — #707070): Secondary copy — supporting paragraphs, plan descriptions, vote counts, underlined inline links.
-- **Faint** (`{colors.text-faint}` — #adadad): Tertiary text — placeholders, de-emphasized footer links, fine print.
+- **Ink** (`{colors.ink}` — #1c1917): Headings, body copy, and nav links.
+- **Soft Ink** (`{colors.ink-soft}` — #2e2926): Slightly lifted dark used for secondary lockups and wordmarks.
+- **Muted** (`{colors.text-muted}` — #6f665e): Secondary copy — supporting paragraphs, descriptions, counts, underlined inline links. Holds 5.4:1 on canvas, so it is legitimate body text and not decoration.
+- **Faint** (`{colors.text-faint}` — #a89e93): Tertiary text — placeholders, de-emphasized footer links, fine print. Deliberately sub-AA at 2.5:1 and therefore never load-bearing — exactly the role its #adadad predecessor held.
 
 ### Semantic
-- The system ships no dedicated success/warning/error palette on its marketing surfaces; state communication stays within the monochrome ladder, with `{colors.accent}` as the sole positive-emphasis signal.
+- The marketing surfaces ship no dedicated success/warning/error palette; state communication stays within the warm-neutral ladder, with `{colors.accent}` as the sole positive-emphasis signal.
+- The **CRM application** is the documented exception. Churn risk, KPI deltas and consent status genuinely need at-a-glance triage, so a desaturated warm trio survives there — **good** #2f6b4f, **warn** #8a5d14, **bad** #a33a22 — and is permitted **as text and dots only**. Never as fills, never as colored bands. Each clears 4.9:1 against both `{colors.canvas}` and `{colors.canvas-soft}`. See the header note in `app/globals.css`.
 
 ## Typography
 
@@ -464,7 +465,7 @@ The system is essentially shadow-free: no drop shadows appear on any card, butto
 
 **`portrait-tile`** — curator/juror grid cell
 - Grayscale photograph at `{rounded.md}`, name + role caption overlaid at bottom center in `{colors.on-primary}`
-- The strict black-and-white treatment keeps the people grid inside the monochrome system
+- The strict desaturated treatment keeps the people grid inside the near-monochrome system
 
 ### Inputs & Forms
 
@@ -472,7 +473,7 @@ The system is essentially shadow-free: no drop shadows appear on any card, butto
 - `{colors.field}` fill, no border, `{colors.ink}` text with `{colors.text-faint}` placeholder, `{rounded.sm}` corners, padding `{spacing.sm} {spacing.md}`
 
 **`text-input-focused`**
-- Same chrome plus a 2px `{colors.ink}` ring — focus is signaled in ink, consistent with the monochrome system
+- Same chrome plus a 2px `{colors.ink}` ring — focus is signaled in ink, consistent with the near-monochrome system
 
 ### Navigation
 
@@ -492,7 +493,7 @@ The system is essentially shadow-free: no drop shadows appear on any card, butto
 
 **`brand-chip`** — marquee lockup of squircle icon + brand name in `{typography.heading-3}` ink; scrolls horizontally in full-bleed strips of recognizable products
 
-**`badge-popular`** — compact `{colors.accent}` chip with `{colors.on-primary}` label marking the featured pricing tier; the only blue element on the page
+**`badge-popular`** — compact `{colors.accent}` chip with `{colors.on-primary}` label marking the featured tier; the only walnut element on the page
 
 **`badge-overlay`** — translucent gray pill (rgba(115, 115, 115, 0.56)) with `{colors.on-primary}` `{typography.label}` text, laid over photography and screenshots (category tags, portrait captions)
 
@@ -542,10 +543,10 @@ The system is essentially shadow-free: no drop shadows appear on any card, butto
 ## Do's and Don'ts
 
 ### Do
-- Keep the canvas `{colors.canvas}` white and let imported content (screenshots, icons, logos) supply all saturation.
+- Keep the canvas `{colors.canvas}` bone and let imported content (furniture photography, material swatches, room scenes) supply all saturation.
 - Use `{rounded.full}` for every interactive element — a rectangular button does not exist in this system.
 - Build emphasis with the tint ladder: `{colors.canvas-soft}` fill for featured surfaces, `{colors.hairline-soft}` outlines for resting cards.
-- Reserve `{colors.accent}` for commercial signals (featured badges, savings callouts) — one or two blue elements per page at most.
+- Reserve `{colors.accent}` for commercial signals (featured badges, savings callouts, next-best-piece) — one or two walnut elements per page at most.
 - Set every heading in Saans 652 with line-height 1.0–1.13 and end headline sentences with a period.
 - Pair heavy 652 headings with 300-weight `{typography.body-lg}` subtitles for hierarchy without color.
 - Render app icons as 30% squircles and portraits in grayscale to keep third-party imagery inside the system.

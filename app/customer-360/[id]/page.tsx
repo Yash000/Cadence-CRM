@@ -18,6 +18,7 @@ import {
   initials,
   relativeTime,
 } from '../../../lib/format';
+import { getCustomerRooms, formatRoom } from '../../../lib/queries-rooms';
 import { RescoreButton } from '../../../components/customer/rescore-button';
 import { Tag, pillVariants } from '../../../components/ui/pill';
 
@@ -81,10 +82,11 @@ export default async function Customer360Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [profile, consents, timeline] = await Promise.all([
+  const [profile, consents, timeline, rooms] = await Promise.all([
     getCustomerProfile(id),
     getCustomerConsents(id),
     getCustomerTimeline(id),
+    getCustomerRooms(id),
   ]);
 
   if (!profile) notFound();
@@ -177,6 +179,100 @@ export default async function Customer360Page({
               />
             </div>
           </div>
+
+          {/* Rooms — what they are part-way through, and what is missing.
+              Complete rooms are shown too (unlike the /rooms board default):
+              on a profile, "this one is finished" is context before a pitch,
+              not noise. A care-tier customer has no rooms and the panel is
+              simply absent — that is correct, not an empty state. */}
+          {rooms.length > 0 && (
+            <div className="surface-card">
+              <div className="row-divider flex items-center gap-3 px-5 py-4">
+                <div className="type-title">Rooms</div>
+                <div className="flex-1" />
+                <Link
+                  href="/rooms"
+                  className={pillVariants({ variant: 'soft', size: 'xs' })}
+                >
+                  Board
+                </Link>
+              </div>
+              <div className="flex flex-col gap-4 px-5 py-4">
+                {rooms.map((r) => (
+                  <div key={r.room}>
+                    <div className="flex items-baseline gap-2">
+                      <span className="type-body-sm font-semibold text-ink">
+                        {formatRoom(r.room)}
+                      </span>
+                      <span className="type-caption text-faint tabular-nums">
+                        {r.piecesOwned} of {r.piecesTotal} pieces
+                      </span>
+                      <div className="flex-1" />
+                      <span className="type-caption text-muted-foreground tabular-nums">
+                        {r.completionPct}%
+                      </span>
+                    </div>
+
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-field">
+                      <div
+                        className="h-full rounded-full bg-ink"
+                        style={{ width: `${Math.max(0, Math.min(100, r.completionPct))}%` }}
+                      />
+                    </div>
+
+                    <div className="mt-2 flex flex-col gap-1">
+                      {r.ownedTitles.map((t) => (
+                        <div key={t} className="flex items-center gap-2 type-caption text-muted-foreground">
+                          <span className="size-1.5 flex-none rounded-full bg-ink" />
+                          <span className="truncate">{t}</span>
+                        </div>
+                      ))}
+                      {r.missingTitles.map((t) => (
+                        <div key={t} className="flex items-center gap-2 type-caption text-faint">
+                          <span className="size-1.5 flex-none rounded-full border border-hairline" />
+                          <span className="truncate">{t}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {r.nextBestTitle ? (
+                      <div className="mt-2.5 type-caption text-muted-foreground">
+                        Next best:{' '}
+                        <span className="font-semibold text-ink">{r.nextBestTitle}</span>
+                        {' · '}
+                        <span className="tabular-nums">{formatINR(r.nextBestPrice)}</span>
+                        {r.nextBestAttachRate !== null && (
+                          <>
+                            {' · '}
+                            <span className="tabular-nums">
+                              {Math.round(Number(r.nextBestAttachRate) * 100)}%
+                            </span>{' '}
+                            of {r.anchorTitle ?? 'anchor'} buyers take it
+                          </>
+                        )}
+                        {r.windowClosesInDays !== null && (
+                          <>
+                            {'. '}
+                            {r.windowClosesInDays >= 0
+                              ? `Attach window closes in ${r.windowClosesInDays} days.`
+                              : `Attach window closed ${Math.abs(r.windowClosesInDays)} days ago.`}
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mt-2.5 type-caption text-faint">
+                        Room complete — nothing left to suggest here.
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div className="mt-1 type-caption text-muted-foreground">
+                  Attach rates are measured from order items, not assigned: of the customers who
+                  bought this room&rsquo;s anchor piece, the share who later bought each other one.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Consent & reachability */}
           <div className="surface-card">

@@ -16,7 +16,7 @@ const { customers, events } = schema;
 
 /**
  * Resolve a Shopify customer id (as sent by the theme's tracking snippet —
- * see rasaya-theme/snippets/cadence-tracking.liquid) to this CRM's internal
+ * see homestyle-theme/snippets/cadence-tracking.liquid) to this CRM's internal
  * customers.id. Read-only: an event never creates a customer row, unlike the
  * Shopify webhook path (lib/shopify-sync.ts upsertCustomer) — a storefront
  * visitor Shopify hasn't told us about yet just gets a null customer_id,

@@ -10,7 +10,7 @@
 //                a customer refilling a consumable is expected to reuse it)
 //   WINBACK15  — 15% off, win-back            (appliesOncePerCustomer: true —
 //                same intent as COMEBACK15, matches seed-supabase.mjs's code)
-//   RASAYA5    — 5% off, general              (appliesOncePerCustomer: false)
+//   HOMESTYLE5 — 5% off, general              (appliesOncePerCustomer: false)
 //   FESTIVE20  — 20% off, festive/seasonal    (appliesOncePerCustomer: false —
 //                seed-supabase.mjs marks it festiveOnly, not per-customer)
 //   DIWALI15   — 15% off, festive/seasonal    (appliesOncePerCustomer: false)
@@ -44,8 +44,8 @@ const DISCOUNTS = [
     appliesOncePerCustomer: true,
   },
   {
-    title: 'Refill — 20% replenishment',
-    code: 'REFILL20',
+    title: 'Complete the room — 20% off the next piece',
+    code: 'COMPLETE20',
     percentage: 0.20,
     appliesOncePerCustomer: false,
   },
@@ -56,8 +56,8 @@ const DISCOUNTS = [
     appliesOncePerCustomer: true,
   },
   {
-    title: 'Rasaya — 5% general',
-    code: 'RASAYA5',
+    title: 'HomeStyle — 5% general',
+    code: 'HOMESTYLE5',
     percentage: 0.05,
     appliesOncePerCustomer: false,
   },

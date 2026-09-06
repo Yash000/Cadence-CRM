@@ -1,7 +1,7 @@
 // Storefront event tracking endpoint — PRD-01 §7.
 //
 // Two callers: the Dawn theme's tracking snippet
-// (rasaya-theme/snippets/cadence-tracking.liquid, assets/cadence-tracking.js),
+// (homestyle-theme/snippets/cadence-tracking.liquid, assets/cadence-tracking.js),
 // reachable from the open internet with no auth once the theme is live and a
 // public URL is configured in theme settings; and the in-app event simulator
 // (app/simulator), same-origin from inside this app. Both post the identical
