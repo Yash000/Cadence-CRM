@@ -8,6 +8,7 @@ import {
   formatSegment,
   initials,
 } from '../../lib/format';
+import { Tag, pillVariants } from '../../components/ui/pill';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,14 @@ const SORT_OPTIONS: { value: CustomerSort; label: string }[] = [
   { value: 'name_asc', label: 'Name A–Z' },
   { value: 'last_order_desc', label: 'Most recent order' },
 ];
+
+// One template shared by the header and every row, so the two can never drift
+// apart. Each column has a floor wide enough for its content at the body-sm
+// (14px) size DESIGN.md specifies for table bodies; the whole grid carries a
+// min-width and scrolls inside its own container rather than letting the
+// flexible columns collapse — the shell is only 1024px wide at its narrowest.
+const COLUMNS =
+  'grid grid-cols-[minmax(200px,1.5fr)_140px_72px_112px_120px_minmax(200px,1.4fr)_92px] items-center gap-4';
 
 function buildHref(params: Record<string, string | number | undefined>) {
   const sp = new URLSearchParams();
@@ -38,7 +47,7 @@ export default async function CustomersPage({
   const q = typeof sp.q === 'string' ? sp.q : undefined;
   // A tampered/stale/crawled URL can carry any string here — getCustomerList
   // already ignores anything that isn't a real segment_t value, but that
-  // same check is applied here too so the "ALL" chip and hidden form field
+  // same check is applied here too so the "All" chip and hidden form field
   // reflect reality (a bogus segment renders as no filter, not as itself).
   const rawSegment = typeof sp.segment === 'string' ? sp.segment : undefined;
   const segment = rawSegment && isValidSegment(rawSegment) ? rawSegment : undefined;
@@ -55,74 +64,63 @@ export default async function CustomersPage({
   const activeSort = sort ?? 'churn_desc';
 
   return (
-    <div className="px-4.5 py-4 pb-7">
-      <div className="mb-3 flex items-end gap-3">
-        <div>
-          <div className="text-[19px] font-semibold tracking-tight">Customers</div>
-          <div className="text-xs text-muted-foreground">
-            {formatCount(total)} records · synced from Shopify · scored by Cadence
-          </div>
-        </div>
+    <div className="px-6 pb-12">
+      <div className="mb-6">
+        <h1 className="type-heading-4">Customers.</h1>
+        <p className="mt-1.5 type-body-sm text-muted-foreground">
+          {formatCount(total)} records · synced from Shopify · scored by Cadence
+        </p>
       </div>
 
       {/* Filter bar */}
-      <form
-        method="get"
-        className="mb-2.5 flex flex-wrap items-center gap-2 rounded-md border border-hairline bg-card px-2.5 py-2"
-      >
-        <div className="flex w-64 items-center gap-1.5 rounded border border-hairline bg-secondary/40 px-2 py-1.5">
-          <span className="font-mono text-[11px] text-muted-foreground">⌕</span>
+      <form method="get" className="surface-soft mb-4 flex flex-wrap items-center gap-3 p-4">
+        {/* text-input — field tint fill, no border at rest, 2px ink focus ring */}
+        <div className="field-shell flex h-10 w-72 items-center gap-2 px-4">
+          <span className="type-body-sm text-faint">⌕</span>
           <input
             type="text"
             name="q"
             defaultValue={q ?? ''}
             placeholder="Name, phone, or email"
-            className="w-full flex-1 bg-transparent text-[12px] outline-none"
+            className="w-full flex-1 bg-transparent type-body-sm text-ink outline-none placeholder:text-faint"
           />
         </div>
         {segment && <input type="hidden" name="segment" value={segment} />}
         {sort && <input type="hidden" name="sort" value={sort} />}
-        <button
-          type="submit"
-          className="rounded border border-hairline bg-card px-2.5 py-1.5 text-[11.5px] hover:bg-secondary"
-        >
+        <button type="submit" className={pillVariants({ variant: 'outline', size: 'sm' })}>
           Search
         </button>
-        <div className="h-5 w-px bg-hairline" />
-        <div className="flex flex-wrap gap-1.5">
+        <span className="h-6 w-px bg-hairline" />
+        <div className="flex flex-wrap gap-2">
           <Link
             href={buildHref({ q, sort })}
-            className={`rounded border px-2 py-1 font-mono text-[10.5px] ${
-              !segment ? 'border-ink bg-ink text-paper' : 'border-hairline bg-card text-ink-soft hover:bg-secondary'
-            }`}
+            className={pillVariants({ variant: !segment ? 'primary' : 'chip', size: 'sm' })}
           >
-            ALL
+            All
           </Link>
           {segmentOptions.map((s) => (
             <Link
               key={s}
               href={buildHref({ q, sort, segment: s })}
-              className={`rounded border px-2 py-1 font-mono text-[10.5px] ${
-                segment === s
-                  ? 'border-ink bg-ink text-paper'
-                  : 'border-hairline bg-card text-ink-soft hover:bg-secondary'
-              }`}
+              className={pillVariants({
+                variant: segment === s ? 'primary' : 'chip',
+                size: 'sm',
+              })}
             >
-              {formatSegment(s).toUpperCase()}
+              {formatSegment(s)}
             </Link>
           ))}
         </div>
-        <div className="flex-1" />
-        <div className="flex flex-wrap gap-1.5">
+        <div className="w-full" />
+        <div className="flex flex-wrap gap-2">
           {SORT_OPTIONS.map((o) => (
             <Link
               key={o.value}
               href={buildHref({ q, segment, sort: o.value })}
-              className={`rounded border px-2 py-1 text-[10.5px] ${
-                activeSort === o.value
-                  ? 'border-ink bg-ink text-paper'
-                  : 'border-hairline bg-card text-ink-soft hover:bg-secondary'
-              }`}
+              className={pillVariants({
+                variant: activeSort === o.value ? 'primary' : 'chip',
+                size: 'sm',
+              })}
             >
               {o.label}
             </Link>
@@ -130,100 +128,114 @@ export default async function CustomersPage({
         </div>
       </form>
 
-      {/* Table */}
-      <div className="overflow-hidden rounded-md border border-hairline bg-card">
-        <div className="grid grid-cols-[1fr_140px_64px_100px_100px_1fr_110px] gap-0 border-b border-hairline bg-secondary/40 px-3 py-1.75 font-mono text-[9.5px] tracking-[0.09em] text-muted-foreground">
-          <div>CUSTOMER</div>
-          <div>SEGMENT</div>
-          <div className="text-right">ORD</div>
-          <div className="text-right">LTV</div>
-          <div className="text-right">LAST ORDER</div>
-          <div className="pl-3.5">CHURN RISK</div>
-          <div>CONSENT</div>
-        </div>
-        {rows.map((c) => (
-          <Link
-            key={c.id}
-            href={`/customer-360/${c.id}`}
-            className="grid grid-cols-[1fr_140px_64px_100px_100px_1fr_110px] items-center gap-0 border-b border-[#f2f0ec] px-3 py-2 last:border-b-0 hover:bg-secondary/30"
-          >
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex h-5.5 w-5.5 flex-none items-center justify-center rounded-full bg-secondary font-mono text-[9.5px] font-semibold text-ink-soft">
-                {initials(c.name.split(' ')[0] ?? null, c.name.split(' ').slice(1).join(' ') || null)}
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-[12.5px] font-medium">{c.name}</div>
-                <div className="font-mono text-[9.5px] text-muted-foreground">{c.city ?? '—'}</div>
-              </div>
+      {/* Table — wide content scrolls inside its own container so the page
+          body never scrolls horizontally. */}
+      <div className="surface-card overflow-hidden">
+        <div className="overflow-x-auto">
+          <div className="min-w-[1000px]">
+            {/* ex-data-table-cell — canvas-soft header, caption typography,
+                sentence case (no all-caps, no tracking). */}
+            <div
+              className={`${COLUMNS} row-divider bg-canvas-soft px-5 py-3 type-caption text-muted-foreground`}
+            >
+              <div>Customer</div>
+              <div>Segment</div>
+              <div className="text-right">Orders</div>
+              <div className="text-right">LTV</div>
+              <div className="text-right">Last order</div>
+              <div>Churn risk</div>
+              <div className="text-right">Consent</div>
             </div>
-            <div>
-              <span className="rounded bg-secondary px-1.5 py-0.5 text-[10.5px] font-medium text-ink-soft">
-                {formatSegment(c.segment)}
-              </span>
-            </div>
-            <div className="text-right font-mono text-[12px] text-ink-soft">
-              {formatCount(c.orderCount)}
-            </div>
-            <div className="text-right font-mono text-[12px] text-foreground">
-              {formatINR(c.lifetimeValue)}
-            </div>
-            <div className="text-right font-mono text-[11.5px] text-ink-soft">
-              {c.daysSinceLastOrder != null ? `${c.daysSinceLastOrder}d ago` : '—'}
-            </div>
-            <div className="flex items-center gap-2 pl-3.5">
-              <div className="h-1.25 w-11 flex-none overflow-hidden rounded bg-secondary">
-                <div
-                  className="h-1.25 bg-accent-blue"
-                  style={{ width: `${c.churnRisk ?? 0}%` }}
-                />
-              </div>
-              <span className={`font-mono text-[11.5px] font-medium ${churnRiskColor(c.churnRisk)}`}>
-                {c.churnRisk ?? '—'}
-              </span>
-              <span className="truncate text-[10px] text-muted-foreground">{c.churnReason ?? ''}</span>
-            </div>
-            <div className="flex gap-1">
-              <span
-                className={`rounded border border-hairline px-1 py-0.5 font-mono text-[9px] ${consentStatusColor(c.waConsent)}`}
+
+            {rows.map((c) => (
+              <Link
+                key={c.id}
+                href={`/customer-360/${c.id}`}
+                className={`${COLUMNS} row-divider px-5 py-3.5 transition-colors last:border-b-0 hover:bg-canvas-soft`}
               >
-                WA
-              </span>
-              <span
-                className={`rounded border border-hairline px-1 py-0.5 font-mono text-[9px] ${consentStatusColor(c.emailConsent)}`}
-              >
-                EM
-              </span>
-            </div>
-          </Link>
-        ))}
-        {rows.length === 0 && (
-          <div className="px-3 py-6 text-center text-xs text-muted-foreground">
-            No customers match this filter.
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex size-8 flex-none items-center justify-center rounded-full bg-canvas-soft type-caption font-semibold text-ink-soft">
+                    {initials(
+                      c.name.split(' ')[0] ?? null,
+                      c.name.split(' ').slice(1).join(' ') || null,
+                    )}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate type-body-sm font-semibold text-ink">
+                      {c.name}
+                    </span>
+                    <span className="block truncate type-caption text-faint">{c.city ?? '—'}</span>
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <Tag className="max-w-full truncate">{formatSegment(c.segment)}</Tag>
+                </div>
+                <div className="text-right type-body-sm text-ink-soft">
+                  {formatCount(c.orderCount)}
+                </div>
+                <div className="text-right type-body-sm text-ink">{formatINR(c.lifetimeValue)}</div>
+                <div className="text-right type-body-sm text-ink-soft">
+                  {c.daysSinceLastOrder != null ? `${c.daysSinceLastOrder}d ago` : '—'}
+                </div>
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <span className="h-1.5 w-12 flex-none overflow-hidden rounded-full bg-field">
+                    <span
+                      className="block h-1.5 rounded-full bg-ink"
+                      style={{ width: `${c.churnRisk ?? 0}%` }}
+                    />
+                  </span>
+                  <span
+                    className={`w-7 flex-none type-body-sm font-semibold ${churnRiskColor(c.churnRisk)}`}
+                  >
+                    {c.churnRisk ?? '—'}
+                  </span>
+                  <span className="min-w-0 truncate type-caption text-faint">
+                    {c.churnReason ?? ''}
+                  </span>
+                </div>
+                <div className="flex justify-end gap-1.5">
+                  <span
+                    className={`inline-flex h-[22px] items-center rounded-full bg-canvas-soft px-2 type-caption ${consentStatusColor(c.waConsent)}`}
+                  >
+                    WA
+                  </span>
+                  <span
+                    className={`inline-flex h-[22px] items-center rounded-full bg-canvas-soft px-2 type-caption ${consentStatusColor(c.emailConsent)}`}
+                  >
+                    EM
+                  </span>
+                </div>
+              </Link>
+            ))}
+
+            {rows.length === 0 && (
+              <div className="px-5 py-10 text-center type-body-sm text-muted-foreground">
+                No customers match this filter.
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Pagination */}
-        <div className="flex items-center gap-2 bg-secondary/40 px-3 py-2">
-          <div className="font-mono text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-3 bg-canvas-soft px-5 py-3">
+          <div className="type-caption text-muted-foreground">
             Page {page} of {totalPages} · {formatCount(total)} customers
           </div>
           <div className="flex-1" />
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1.5">
             <Link
               href={buildHref({ q, segment, sort, page: Math.max(1, page - 1) })}
-              className={`rounded border border-hairline bg-card px-2 py-1 font-mono text-[11px] ${
-                page <= 1 ? 'pointer-events-none opacity-40' : 'hover:bg-secondary'
+              className={`${pillVariants({ variant: 'outline', size: 'sm' })} ${
+                page <= 1 ? 'pointer-events-none opacity-40' : ''
               }`}
             >
               ←
             </Link>
-            <span className="rounded border border-ink bg-ink px-2 py-1 font-mono text-[11px] text-paper">
-              {page}
-            </span>
+            <span className={pillVariants({ variant: 'primary', size: 'sm' })}>{page}</span>
             <Link
               href={buildHref({ q, segment, sort, page: Math.min(totalPages, page + 1) })}
-              className={`rounded border border-hairline bg-card px-2 py-1 font-mono text-[11px] ${
-                page >= totalPages ? 'pointer-events-none opacity-40' : 'hover:bg-secondary'
+              className={`${pillVariants({ variant: 'outline', size: 'sm' })} ${
+                page >= totalPages ? 'pointer-events-none opacity-40' : ''
               }`}
             >
               →

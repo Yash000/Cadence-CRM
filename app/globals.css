@@ -4,15 +4,32 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Cadence design language — dense, monospace-accented, information-rich.
-   Palette lifted verbatim from Pulse CRM Interface Design/Pulse CRM.dc.html
-   (the interactive mockup), renamed PULSE -> Cadence / Sattva Co. -> Rasaya. */
+/* Cadence design language — implements DESIGN.md ("Mobbin Analysis").
+   Gallery-white monochrome: near-black ink on a pure white canvas, structure
+   carried by a ladder of barely-perceptible neutral tints and 1px hairlines
+   rather than by shadows or color. Every interactive element is a stadium
+   pill; containers sit at 24px, media and inputs at 16px.
+
+   Two documented adaptations for this app (an information-dense CRM rather
+   than a marketing site):
+   1. Density — the type ladder ships in full below, but app surfaces use the
+      heading-4 / title / body-sm rungs. 80px display type and 120px section
+      gaps would put three panels below the fold on the dashboard.
+   2. Semantic signals — DESIGN.md ships no success/warning/error palette.
+      Churn risk, KPI deltas and consent status genuinely need at-a-glance
+      triage here, so a desaturated trio survives as TEXT AND DOTS ONLY.
+      Never as fills, never as colored bands. */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plex-sans);
-  --font-mono: var(--font-plex-mono);
-  --font-heading: var(--font-plex-sans);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+  --font-heading: var(--font-inter);
+  /* Code is content, not UI chrome: SQL in a proportional face is
+     unreadable, so `pre`/`code` keep a system monospace stack. No
+     extra webfont is downloaded for it. */
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -42,99 +59,132 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* DESIGN.md brand primitives, addressable as Tailwind colors */
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
-  --color-paper: var(--paper);
+  --color-canvas: var(--canvas);
+  --color-canvas-soft: var(--canvas-soft);
+  --color-field: var(--field);
   --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-faint: var(--text-faint);
+  --color-brand-accent: var(--brand-accent);
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-bad: var(--bad);
-  --color-bad-soft: var(--bad-soft);
-  --color-bad-soft-bg: var(--bad-soft-bg);
-  --color-accent-blue: var(--accent-blue);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  /* `paper` predates this design; kept as an alias of on-primary so any
+     stray usage renders as light-on-ink rather than as the old warm tint. */
+  --color-paper: var(--on-primary);
+
+  /* rounded.none / sm / md / full — DESIGN.md §Shapes */
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 24px;
+  --radius-xl: 24px;
+  --radius-2xl: 24px;
+  --radius-3xl: 9999px;
+  --radius-4xl: 9999px;
 }
 
 :root {
-  /* Cadence brand tokens (from the mockup) */
-  --ink: #1c1b19;
-  --ink-soft: #56534d;
-  --paper: #f4f3f0;
-  --hairline: #e4e1db;
-  --good: #2f8558;
-  --warn: #b5771a;
-  --bad: #c0452f;
-  --bad-soft: #8f3826;
-  --bad-soft-bg: #fbf1ee;
-  --accent-blue: #3d5ccc;
+  /* ── DESIGN.md colors ── */
+  --ink: #141414;
+  --ink-soft: #262626;
+  --text-muted: #707070;
+  --text-faint: #adadad;
+  --canvas: #ffffff;
+  --canvas-soft: #f3f3f3;
+  --field: #f0f0f0;
+  --hairline-soft: #f0f0f0;
+  --hairline: #e0e0e0;
+  --on-primary: #ffffff;
+  --brand-accent: #0066ff;
 
-  --background: #f4f3f0;
-  --foreground: #1c1b19;
-  --card: #ffffff;
-  --card-foreground: #1c1b19;
-  --popover: #ffffff;
-  --popover-foreground: #1c1b19;
-  --primary: #1c1b19;
-  --primary-foreground: #f4f3f0;
-  --secondary: #eeece7;
-  --secondary-foreground: #1c1b19;
-  --muted: #eeece7;
-  --muted-foreground: #8a8680;
-  --accent: #eeece7;
-  --accent-foreground: #1c1b19;
-  --destructive: #8f3826;
-  --border: #e4e1db;
-  --input: #e4e1db;
-  --ring: #3d5ccc;
-  --chart-1: #3d5ccc;
-  --chart-2: #2f8558;
-  --chart-3: #b5771a;
-  --chart-4: #c0452f;
-  --chart-5: #8a8680;
-  --radius: 0.375rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1c1b19;
-  --sidebar-primary: #1c1b19;
-  --sidebar-primary-foreground: #f4f3f0;
-  --sidebar-accent: #f4f3f0;
-  --sidebar-accent-foreground: #1c1b19;
-  --sidebar-border: #e4e1db;
-  --sidebar-ring: #3d5ccc;
+  /* Desaturated semantic trio — text and dots only (see header note). */
+  --good: #2e6f52;
+  --warn: #8a6516;
+  --bad: #a83a26;
+
+  /* ── shadcn/base-ui surface mapping ── */
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--canvas);
+  --card-foreground: var(--ink);
+  --popover: var(--canvas);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--on-primary);
+  --secondary: var(--canvas-soft);
+  --secondary-foreground: var(--ink);
+  --muted: var(--canvas-soft);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--canvas-soft);
+  --accent-foreground: var(--ink);
+  --destructive: var(--bad);
+  --border: var(--hairline);
+  --input: var(--field);
+  --ring: var(--ink);
+  --chart-1: var(--ink);
+  --chart-2: var(--ink-soft);
+  --chart-3: var(--text-muted);
+  --chart-4: var(--text-faint);
+  --chart-5: var(--hairline);
+  --radius: 24px;
+  --sidebar: var(--canvas);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--on-primary);
+  --sidebar-accent: var(--canvas-soft);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--ink);
 }
 
+/* Polarity inversion — the same ladder read from the dark end. */
 .dark {
-  --background: #171614;
-  --foreground: #f4f3f0;
-  --card: #221f1c;
-  --card-foreground: #f4f3f0;
-  --popover: #221f1c;
-  --popover-foreground: #f4f3f0;
-  --primary: #f4f3f0;
-  --primary-foreground: #1c1b19;
-  --secondary: #2a2823;
-  --secondary-foreground: #f4f3f0;
-  --muted: #2a2823;
-  --muted-foreground: #a8a39a;
-  --accent: #2a2823;
-  --accent-foreground: #f4f3f0;
-  --destructive: #d9694e;
-  --border: #3a3833;
-  --input: #3a3833;
-  --ring: #6f89e0;
-  --sidebar: #1c1b19;
-  --sidebar-foreground: #f4f3f0;
-  --sidebar-primary: #f4f3f0;
-  --sidebar-primary-foreground: #1c1b19;
-  --sidebar-accent: #2a2823;
-  --sidebar-accent-foreground: #f4f3f0;
-  --sidebar-border: #3a3833;
-  --sidebar-ring: #6f89e0;
+  --ink: #f5f5f5;
+  --ink-soft: #d6d6d6;
+  --text-muted: #8f8f8f;
+  --text-faint: #5c5c5c;
+  --canvas: #141414;
+  --canvas-soft: #1e1e1e;
+  --field: #222222;
+  --hairline-soft: #222222;
+  --hairline: #303030;
+  --on-primary: #141414;
+  --brand-accent: #3d8bff;
+
+  --good: #6aa587;
+  --warn: #c09a4a;
+  --bad: #d97a66;
+
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--canvas);
+  --card-foreground: var(--ink);
+  --popover: var(--canvas);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--on-primary);
+  --secondary: var(--canvas-soft);
+  --secondary-foreground: var(--ink);
+  --muted: var(--canvas-soft);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--canvas-soft);
+  --accent-foreground: var(--ink);
+  --destructive: var(--bad);
+  --border: var(--hairline);
+  --input: var(--field);
+  --ring: var(--ink);
+  --sidebar: var(--canvas);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--on-primary);
+  --sidebar-accent: var(--canvas-soft);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--ink);
 }
 
 @layer base {
@@ -143,8 +193,143 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-variant-numeric: tabular-nums;
   }
   html {
     @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ── DESIGN.md §Typography ──────────────────────────────────────────────
+   The full ladder at the specified sizes, weights and line-heights. Inter is
+   the substitute DESIGN.md names for Saans; per its own note the 652/456
+   positions map onto Inter's variable axis directly, and line-heights are
+   reduced by ~0.05 because Inter has a larger x-height than Saans. Zero
+   letter-spacing at every size. */
+@layer components {
+  .type-display   { font-size: 80px; font-weight: 652; line-height: 0.95; letter-spacing: 0; }
+  .type-heading-1 { font-size: 56px; font-weight: 652; line-height: 0.95; letter-spacing: 0; }
+  .type-heading-2 { font-size: 44px; font-weight: 652; line-height: 1.08; letter-spacing: 0; }
+  .type-heading-3 { font-size: 32px; font-weight: 652; line-height: 1.08; letter-spacing: 0; }
+  .type-heading-4 { font-size: 24px; font-weight: 652; line-height: 1.2;  letter-spacing: 0; }
+  .type-title     { font-size: 20px; font-weight: 600; line-height: 1.25; letter-spacing: 0; }
+  .type-body-lg   { font-size: 20px; font-weight: 300; line-height: 1.33; letter-spacing: 0; }
+  .type-body      { font-size: 16px; font-weight: 456; line-height: 1.33; letter-spacing: 0; }
+  .type-body-sm   { font-size: 14px; font-weight: 456; line-height: 1.38; letter-spacing: 0; }
+  .type-link      { font-size: 16px; font-weight: 600; line-height: 1.33; letter-spacing: 0; }
+  .type-label     { font-size: 12px; font-weight: 600; line-height: 1.28; letter-spacing: 0; }
+  .type-caption   { font-size: 12px; font-weight: 456; line-height: 1.28; letter-spacing: 0; }
+
+  /* ── Surfaces ──
+     Elevation is fill difference and hairlines. No drop shadows anywhere. */
+
+  /* Level 2 — 1px hairline-soft outline on white. Content cards. */
+  .surface-card {
+    background-color: var(--canvas);
+    border: 1px solid var(--hairline-soft);
+    border-radius: var(--radius-md);
+  }
+  /* Level 1 — canvas-soft fill, no border. Featured / secondary surfaces. */
+  .surface-soft {
+    background-color: var(--canvas-soft);
+    border-radius: var(--radius-md);
+  }
+  /* Inverse — ink fill, light text. */
+  .surface-inverse {
+    background-color: var(--ink);
+    color: var(--on-primary);
+    border-radius: var(--radius-md);
+  }
+  /* Row divider inside a card — the faintest edge in the ladder. */
+  .row-divider {
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  /* ── text-input / text-input-focused ──
+     Field tint fill, no border at rest; focus is a 2px ink ring. */
+  .field-input {
+    background-color: var(--field);
+    color: var(--ink);
+    border: 0;
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+  .field-input::placeholder {
+    color: var(--text-faint);
+  }
+  .field-input:focus-visible,
+  .field-shell:focus-within {
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+  .field-shell {
+    background-color: var(--field);
+    border-radius: var(--radius-sm);
+  }
+
+  /* ── app-icon-squircle — the signature 30% corner radius ── */
+  .squircle {
+    border-radius: 30%;
+  }
+
+  /* ── Thinking indicator ──
+     A light sweep travelling across the label while the agent works, plus a
+     breathing dot. Both are built from the monochrome ladder (faint → ink →
+     faint) rather than from a colored spinner, so an animated state stays
+     inside the system. */
+  .thinking-shimmer {
+    background-image: linear-gradient(
+      100deg,
+      var(--text-faint) 30%,
+      var(--ink) 48%,
+      var(--ink) 52%,
+      var(--text-faint) 70%
+    );
+    background-size: 250% 100%;
+    background-repeat: no-repeat;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: cadence-shimmer 1.9s linear infinite;
+  }
+
+  .thinking-dot {
+    background-color: var(--ink);
+    animation: cadence-breathe 1.9s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thinking-shimmer {
+      background-image: none;
+      color: var(--text-muted);
+      -webkit-text-fill-color: var(--text-muted);
+      animation: none;
+    }
+    .thinking-dot {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+}
+
+@keyframes cadence-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+
+@keyframes cadence-breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
   }
 }

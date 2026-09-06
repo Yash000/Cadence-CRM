@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
+import { Pill, Tag } from '../ui/pill';
 import { eventTypeTag, formatEventType } from '../../lib/format';
 import type { SimulatorCustomerOption } from '../../lib/queries';
 import type { RecentEvent } from '../../lib/events-db';
@@ -102,14 +101,14 @@ export function SimulatorForm({
   }
 
   return (
-    <div className="mt-4 grid grid-cols-[360px_1fr] gap-3.5">
-      <Card className="p-3.5">
-        <div className="mb-2 text-[12px] font-semibold">Send a simulated event</div>
+    <div className="mt-6 grid grid-cols-[380px_1fr] items-start gap-4">
+      <div className="surface-card p-5">
+        <div className="mb-4 type-title">Send a simulated event</div>
 
-        <label className="mb-2 block text-[11px] text-muted-foreground">
+        <label className="mb-4 block type-caption text-muted-foreground">
           Event type
           <select
-            className="mt-1 w-full rounded-md border border-hairline bg-background px-2 py-1.5 text-[12px]"
+            className="field-input mt-1.5 h-10 w-full px-4 type-body-sm"
             value={type}
             onChange={(e) => onTypeChange(e.target.value as TrackedEventType)}
           >
@@ -121,10 +120,10 @@ export function SimulatorForm({
           </select>
         </label>
 
-        <label className="mb-2 block text-[11px] text-muted-foreground">
+        <label className="mb-4 block type-caption text-muted-foreground">
           Customer (optional — resolved by Shopify customer id, same as the real snippet)
           <select
-            className="mt-1 w-full rounded-md border border-hairline bg-background px-2 py-1.5 text-[12px]"
+            className="field-input mt-1.5 h-10 w-full px-4 type-body-sm"
             value={customerId}
             onChange={(e) => setCustomerId(e.target.value)}
           >
@@ -137,69 +136,65 @@ export function SimulatorForm({
           </select>
         </label>
 
-        <label className="mb-2 block text-[11px] text-muted-foreground">
+        <label className="mb-4 block type-caption text-muted-foreground">
           Session id
-          <div className="mt-1 flex gap-1.5">
+          <div className="mt-1.5 flex gap-2">
             <input
-              className="w-full rounded-md border border-hairline bg-background px-2 py-1.5 font-mono text-[11px]"
+              className="field-input h-10 w-full px-4 font-code text-[12px]"
               value={sessionId}
               onChange={(e) => setSessionId(e.target.value)}
             />
-            <Button type="button" variant="outline" size="sm" onClick={() => setSessionId(newSessionId())}>
+            <Pill variant="outline" size="sm" onClick={() => setSessionId(newSessionId())}>
               New
-            </Button>
+            </Pill>
           </div>
         </label>
 
-        <label className="mb-2 block text-[11px] text-muted-foreground">
+        <label className="mb-5 block type-caption text-muted-foreground">
           Payload (JSON)
           <textarea
-            className="mt-1 h-32 w-full rounded-md border border-hairline bg-background px-2 py-1.5 font-mono text-[11px]"
+            className="field-input mt-1.5 h-36 w-full px-4 py-3 font-code text-[12px]"
             value={payloadText}
             onChange={(e) => setPayloadText(e.target.value)}
             spellCheck={false}
           />
         </label>
 
-        <Button type="button" onClick={onSend} disabled={sending} className="w-full">
+        <Pill onClick={onSend} disabled={sending} className="w-full">
           {sending ? 'Sending…' : 'Send event'}
-        </Button>
+        </Pill>
 
         {result && (
           <div
-            className={`mt-2 rounded-md border px-2 py-1.5 text-[11px] ${
-              result.ok
-                ? 'border-[#cfe4d8] bg-[#eef6f1] text-good'
-                : 'border-[#f0ddd7] bg-[#fbf1ee] text-bad'
+            className={`mt-4 rounded-sm bg-canvas-soft px-4 py-3 type-caption ${
+              result.ok ? 'text-good' : 'text-bad'
             }`}
           >
             {result.message}
           </div>
         )}
-      </Card>
+      </div>
 
-      <Card className="p-3.5">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="text-[12px] font-semibold">Recently landed in `events`</div>
-          <Button type="button" variant="ghost" size="xs" onClick={refreshEvents}>
+      <div className="surface-card p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="type-title">Recently landed in events</div>
+          <Pill variant="soft" size="sm" onClick={refreshEvents}>
             Refresh
-          </Button>
+          </Pill>
         </div>
         {events.length === 0 ? (
-          <div className="text-[11px] text-muted-foreground">No events yet — send one on the left.</div>
+          <div className="type-body-sm text-muted-foreground">No events yet — send one on the left.</div>
         ) : (
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             {events.map((e) => (
               <div
                 key={e.id}
-                className="flex items-start gap-2 rounded-md border border-hairline bg-secondary/30 px-2 py-1.5 text-[11px]"
+                className="flex items-start gap-3 rounded-sm bg-canvas-soft px-4 py-3"
               >
-                <span className="mt-0.5 rounded border border-hairline bg-card px-1 font-mono text-[9.5px] text-muted-foreground">
-                  {eventTypeTag(e.type)}
-                </span>
+                <Tag className="mt-0.5 flex-none bg-canvas">{eventTypeTag(e.type)}</Tag>
                 <div className="min-w-0 flex-1">
-                  <div className="font-medium">{formatEventType(e.type)}</div>
-                  <div className="truncate text-muted-foreground">
+                  <div className="type-body-sm font-semibold">{formatEventType(e.type)}</div>
+                  <div className="truncate type-caption text-muted-foreground">
                     {e.customerId ? `customer ${e.customerId.slice(0, 8)}` : 'anonymous'} ·{' '}
                     {e.sessionId ?? 'no session'} · {new Date(e.occurredAt).toLocaleString()}
                   </div>
@@ -208,7 +203,7 @@ export function SimulatorForm({
             ))}
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { Pill } from '../ui/pill';
 
 export function RescoreButton({ customerId }: { customerId: string }) {
   const router = useRouter();
@@ -39,16 +40,11 @@ export function RescoreButton({ customerId }: { customerId: string }) {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
-      {error && <span className="text-[10px] text-bad">{error}</span>}
-      <button
-        type="button"
-        onClick={run}
-        disabled={busy}
-        className="rounded border border-hairline bg-card px-1.5 py-0.5 font-mono text-[9.5px] text-ink-soft hover:bg-secondary disabled:opacity-50"
-      >
-        {busy ? 'RESCORING…' : 'RESCORE'}
-      </button>
+    <div className="flex items-center gap-2">
+      {error && <span className="type-caption text-bad">{error}</span>}
+      <Pill variant="outline" size="sm" onClick={run} disabled={busy}>
+        {busy ? 'Rescoring…' : 'Rescore'}
+      </Pill>
     </div>
   );
 }

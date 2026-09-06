@@ -19,21 +19,60 @@ import {
   relativeTime,
 } from '../../../lib/format';
 import { RescoreButton } from '../../../components/customer/rescore-button';
+import { Tag, pillVariants } from '../../../components/ui/pill';
 
 export const dynamic = 'force-dynamic';
 
-const TIMELINE_TAG_STYLE: Record<string, string> = {
-  ORDER: 'border-[#c3cff0] bg-[#f5f7fd] text-accent-blue',
-  CONSENT: 'border-hairline bg-secondary text-ink-soft',
-  VIEW: 'border-hairline bg-secondary text-ink-soft',
-  CART: 'border-[#cfe4d8] bg-[#eef6f1] text-good',
-  CHK: 'border-[#c3cff0] bg-[#f5f7fd] text-accent-blue',
-  DROP: 'border-[#f0ddd7] bg-[#fbf1ee] text-bad',
-  PAGE: 'border-hairline bg-secondary text-ink-soft',
+// Timeline markers are stadium chips on the canvas-soft tint. Only the text
+// carries a semantic hue — the tinted fills the previous design used (pale
+// blue, pale green, pale pink) are exactly the colored surfaces DESIGN.md
+// rules out.
+const TIMELINE_TAG_TEXT: Record<string, string> = {
+  ORDER: 'text-ink',
+  CONSENT: 'text-ink-soft',
+  VIEW: 'text-ink-soft',
+  CART: 'text-good',
+  CHK: 'text-ink',
+  DROP: 'text-bad',
+  PAGE: 'text-ink-soft',
 };
 
 function timelineTagClass(tag: string) {
-  return TIMELINE_TAG_STYLE[tag] ?? 'border-hairline bg-secondary text-ink-soft';
+  return TIMELINE_TAG_TEXT[tag] ?? 'text-ink-soft';
+}
+
+function ScoreRow({
+  label,
+  value,
+  valueClass,
+  reason,
+  bar,
+}: {
+  label: string;
+  value: string;
+  valueClass?: string;
+  reason?: string | null;
+  bar?: number | null;
+}) {
+  return (
+    <div className="row-divider py-4 last:border-b-0">
+      <div className="flex items-baseline gap-2">
+        <span className="flex-1 type-body-sm text-ink-soft">{label}</span>
+        <span className={`type-heading-4 ${valueClass ?? ''}`}>{value}</span>
+      </div>
+      {bar != null && (
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-field">
+          <div className="h-1.5 rounded-full bg-ink" style={{ width: `${bar}%` }} />
+        </div>
+      )}
+      {reason && (
+        <div className="mt-2.5 flex gap-2 type-caption">
+          <span className="shrink-0 text-faint">Why</span>
+          <span className="text-muted-foreground">{reason}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default async function Customer360Page({
@@ -54,211 +93,166 @@ export default async function Customer360Page({
   const orderEntries = timeline.filter((e) => e.kind === 'order').length;
   const eventEntries = timeline.filter((e) => e.kind === 'event').length;
 
+  const facts: { label: string; value: React.ReactNode }[] = [
+    { label: 'Phone', value: profile.phoneE164 ?? '—' },
+    {
+      label: 'Email',
+      value: <span className="block truncate">{profile.email ?? '—'}</span>,
+    },
+    { label: 'Orders', value: profile.orderCount },
+    { label: 'Lifetime', value: formatINR(profile.lifetimeValue) },
+    { label: 'AOV', value: formatINR(profile.aov) },
+    { label: 'Segment', value: <Tag>{formatSegment(profile.segment)}</Tag> },
+    {
+      label: 'RFM',
+      value: `R${profile.rfmR ?? '—'} F${profile.rfmF ?? '—'} M${profile.rfmM ?? '—'}`,
+    },
+  ];
+
   return (
-    <div className="px-4.5 py-3.5 pb-7">
-      <div className="mb-3 flex items-center gap-2.5">
-        <Link
-          href="/customers"
-          className="rounded border border-hairline bg-card px-2.5 py-1 text-[11.5px] text-ink-soft hover:bg-secondary"
-        >
+    <div className="px-6 pb-12">
+      <div className="mb-6 flex items-center gap-3">
+        <Link href="/customers" className={pillVariants({ variant: 'soft', size: 'sm' })}>
           ← Customers
         </Link>
-        <div className="font-mono text-[10.5px] text-muted-foreground">
-          CUSTOMER 360 · {profile.id.slice(0, 8)}
-        </div>
+        <div className="type-caption text-faint">Customer 360 · {profile.id.slice(0, 8)}</div>
       </div>
 
-      <div className="grid grid-cols-[300px_1fr] items-start gap-3">
+      <div className="grid grid-cols-[340px_1fr] items-start gap-4">
         {/* Left: profile + scores + consent */}
-        <div className="flex flex-col gap-3">
-          <div className="rounded-md border border-hairline bg-card p-3.5">
-            <div className="mb-2.5 flex items-center gap-2.5">
-              <div className="flex h-9.5 w-9.5 flex-none items-center justify-center rounded-full bg-secondary text-[14px] font-semibold text-ink-soft">
+        <div className="flex flex-col gap-4">
+          <div className="surface-card p-5">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex size-11 flex-none items-center justify-center rounded-full bg-canvas-soft type-body font-semibold text-ink-soft">
                 {initials(profile.firstName, profile.lastName)}
               </div>
               <div className="min-w-0">
-                <div className="text-[15px] font-semibold">{name}</div>
-                <div className="font-mono text-[10.5px] text-muted-foreground">
+                <div className="truncate type-title">{name}</div>
+                <div className="type-caption text-faint">
                   {profile.city ?? '—'} · since {formatDate(profile.createdAt)}
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5 text-[11.5px]">
-              <div className="flex">
-                <span className="w-20 text-muted-foreground">Phone</span>
-                <span className="font-mono">{profile.phoneE164 ?? '—'}</span>
-              </div>
-              <div className="flex">
-                <span className="w-20 text-muted-foreground">Email</span>
-                <span className="truncate font-mono text-[10.5px]">{profile.email ?? '—'}</span>
-              </div>
-              <div className="flex">
-                <span className="w-20 text-muted-foreground">Orders</span>
-                <span className="font-mono">{profile.orderCount}</span>
-              </div>
-              <div className="flex">
-                <span className="w-20 text-muted-foreground">Lifetime</span>
-                <span className="font-mono">{formatINR(profile.lifetimeValue)}</span>
-              </div>
-              <div className="flex">
-                <span className="w-20 text-muted-foreground">AOV</span>
-                <span className="font-mono">{formatINR(profile.aov)}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="w-20 text-muted-foreground">Segment</span>
-                <span className="rounded bg-secondary px-1.5 py-0.5 text-[10.5px] font-medium text-ink-soft">
-                  {formatSegment(profile.segment)}
-                </span>
-              </div>
-              <div className="flex">
-                <span className="w-20 text-muted-foreground">RFM</span>
-                <span className="font-mono">
-                  R{profile.rfmR ?? '—'} F{profile.rfmF ?? '—'} M{profile.rfmM ?? '—'}
-                </span>
-              </div>
+            <div className="flex flex-col gap-2.5 type-body-sm">
+              {facts.map((f) => (
+                <div key={f.label} className="flex items-center gap-3">
+                  <span className="w-20 flex-none type-caption text-muted-foreground">
+                    {f.label}
+                  </span>
+                  <span className="min-w-0 flex-1 text-ink">{f.value}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Scores — every number sits next to its reason */}
-          <div className="rounded-md border border-hairline bg-card">
-            <div className="flex items-center border-b border-[#eeece7] px-3 py-2.5">
-              <div className="text-[13px] font-semibold">Scores</div>
+          <div className="surface-card">
+            <div className="row-divider flex items-center gap-3 px-5 py-4">
+              <div className="type-title">Scores</div>
               <div className="flex-1" />
-              <div className="flex items-center gap-2">
-                <div className="font-mono text-[9.5px] text-muted-foreground">
-                  {profile.computedAt ? `RECOMPUTED ${formatDate(profile.computedAt)}` : 'NOT SCORED'}
-                </div>
-                <RescoreButton customerId={profile.id} />
+              <div className="type-caption text-faint">
+                {profile.computedAt
+                  ? `Recomputed ${formatDate(profile.computedAt)}`
+                  : 'Not scored'}
               </div>
+              <RescoreButton customerId={profile.id} />
             </div>
-            <div className="px-3 pb-1">
-              <div className="border-b border-[#f2f0ec] py-2.5">
-                <div className="flex items-baseline gap-2">
-                  <span className="flex-1 text-[11.5px] text-ink-soft">Churn risk</span>
-                  <span className={`font-mono text-[17px] font-medium ${churnRiskColor(profile.churnRisk)}`}>
-                    {profile.churnRisk ?? '—'}
-                  </span>
-                </div>
-                {profile.churnRisk != null && (
-                  <div className="my-1.5 h-1.25 overflow-hidden rounded bg-secondary">
-                    <div
-                      className="h-1.25 bg-accent-blue"
-                      style={{ width: `${profile.churnRisk}%` }}
-                    />
-                  </div>
-                )}
-                {profile.churnReason && (
-                  <div className="flex gap-1.5">
-                    <span className="font-mono text-[9px] text-muted-foreground">WHY</span>
-                    <span className="text-[11px] leading-relaxed text-ink-soft">{profile.churnReason}</span>
-                  </div>
-                )}
-              </div>
-              <div className="border-b border-[#f2f0ec] py-2.5">
-                <div className="flex items-baseline gap-2">
-                  <span className="flex-1 text-[11.5px] text-ink-soft">Predicted LTV</span>
-                  <span className="font-mono text-[17px] font-medium">{formatINR(profile.predictedLtv)}</span>
-                </div>
-                {profile.ltvReason && (
-                  <div className="mt-1.5 flex gap-1.5">
-                    <span className="font-mono text-[9px] text-muted-foreground">WHY</span>
-                    <span className="text-[11px] leading-relaxed text-ink-soft">{profile.ltvReason}</span>
-                  </div>
-                )}
-              </div>
-              <div className="py-2.5">
-                <div className="flex items-baseline gap-2">
-                  <span className="flex-1 text-[11.5px] text-ink-soft">Next order</span>
-                  <span className="font-mono text-[17px] font-medium">{formatDate(profile.nextOrderDate)}</span>
-                </div>
-                {profile.nextOrderReason && (
-                  <div className="mt-1.5 flex gap-1.5">
-                    <span className="font-mono text-[9px] text-muted-foreground">WHY</span>
-                    <span className="text-[11px] leading-relaxed text-ink-soft">{profile.nextOrderReason}</span>
-                  </div>
-                )}
-              </div>
+            <div className="px-5">
+              <ScoreRow
+                label="Churn risk"
+                value={String(profile.churnRisk ?? '—')}
+                valueClass={churnRiskColor(profile.churnRisk)}
+                bar={profile.churnRisk}
+                reason={profile.churnReason}
+              />
+              <ScoreRow
+                label="Predicted LTV"
+                value={formatINR(profile.predictedLtv)}
+                reason={profile.ltvReason}
+              />
+              <ScoreRow
+                label="Next order"
+                value={formatDate(profile.nextOrderDate)}
+                reason={profile.nextOrderReason}
+              />
             </div>
           </div>
 
           {/* Consent & reachability */}
-          <div className="rounded-md border border-hairline bg-card">
-            <div className="border-b border-[#eeece7] px-3 py-2.5 text-[13px] font-semibold">
-              Consent &amp; reachability
-            </div>
-            <div className="flex flex-col gap-2 px-3 py-2.5">
+          <div className="surface-card">
+            <div className="row-divider px-5 py-4 type-title">Consent &amp; reachability</div>
+            <div className="flex flex-col gap-3 px-5 py-4">
               {consents.length === 0 && (
-                <div className="text-[11px] text-muted-foreground">No consent records on file.</div>
+                <div className="type-body-sm text-muted-foreground">
+                  No consent records on file.
+                </div>
               )}
               {consents.map((c) => (
-                <div key={c.channel} className="flex items-center gap-2 text-[11.5px]">
+                <div key={c.channel} className="flex items-center gap-2.5 type-body-sm">
                   <span
-                    className={`h-1.5 w-1.5 flex-none rounded-full ${
+                    className={`size-1.5 flex-none rounded-full ${
                       c.status === 'opted_in'
                         ? 'bg-good'
                         : c.status === 'opted_out'
                           ? 'bg-bad'
-                          : 'bg-muted-foreground'
+                          : 'bg-faint'
                     }`}
                   />
                   <span className="flex-1">{formatChannel(c.channel)}</span>
-                  <span className={`font-mono text-[9.5px] ${consentStatusColor(c.status)}`}>
-                    {formatConsentStatus(c.status).toUpperCase()} · {formatDate(c.updatedAt)}
+                  <span className={`type-caption ${consentStatusColor(c.status)}`}>
+                    {formatConsentStatus(c.status)} · {formatDate(c.updatedAt)}
                   </span>
                 </div>
               ))}
-              <div className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
-                Consent is stored per channel. No messaging channel is live yet (§F5 is blocked
-                on Twilio), so reachability here reflects consent state only, not send history.
+              <div className="mt-1 type-caption text-muted-foreground">
+                Consent is stored per channel. No messaging channel is live yet (§F5 is blocked on
+                Twilio), so reachability here reflects consent state only, not send history.
               </div>
             </div>
           </div>
         </div>
 
         {/* Right: unified timeline */}
-        <div className="rounded-md border border-hairline bg-card">
-          <div className="sticky top-0 z-10 flex items-center gap-2 rounded-t-md border-b border-[#eeece7] bg-card px-3 py-2.5">
-            <div className="text-[13px] font-semibold">Unified timeline</div>
+        <div className="surface-card">
+          <div className="row-divider sticky top-0 z-10 flex items-center gap-3 rounded-t-md bg-canvas px-5 py-4">
+            <div className="type-title">Unified timeline</div>
             <div className="flex-1" />
-            <div className="font-mono text-[10px] text-muted-foreground">
+            <div className="type-caption text-faint">
               {orderEntries} orders · {eventEntries} events · {consents.length} consent record
               {consents.length === 1 ? '' : 's'}
             </div>
           </div>
-          <div className="px-3 pb-3.5">
+          <div className="px-5 py-3">
             {timeline.length === 0 && (
-              <div className="py-6 text-center text-[11.5px] text-muted-foreground">
+              <div className="py-10 text-center type-body-sm text-muted-foreground">
                 No activity on file for this customer yet.
               </div>
             )}
             {timeline.map((e, i) => (
-              <div key={`${e.kind}-${e.occurredAt}-${i}`} className="flex gap-2.5 py-1.75">
-                <div className="flex w-8.5 flex-none flex-col items-center gap-1">
-                  <div
-                    className={`w-8.5 rounded border py-0.5 text-center font-mono text-[9px] font-semibold ${timelineTagClass(e.tag)}`}
+              <div key={`${e.kind}-${e.occurredAt}-${i}`} className="flex gap-3 py-1.5">
+                <div className="flex w-14 flex-none flex-col items-center gap-1.5">
+                  <span
+                    className={`inline-flex h-[22px] w-full items-center justify-center rounded-full bg-canvas-soft type-caption font-semibold ${timelineTagClass(e.tag)}`}
                   >
                     {e.tag}
-                  </div>
-                  <div className="w-px flex-1 bg-[#f2f0ec]" />
+                  </span>
+                  <span className="w-px flex-1 bg-hairline-soft" />
                 </div>
-                <div className="min-w-0 flex-1 rounded border border-[#f2f0ec] bg-[#fbfaf8] px-2.5 py-2">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-[12.5px] font-semibold">{e.title}</span>
+                <div className="min-w-0 flex-1 rounded-sm bg-canvas-soft px-4 py-3">
+                  <div className="flex items-baseline gap-3">
+                    <span className="type-body-sm font-semibold">{e.title}</span>
                     <div className="flex-1" />
-                    <span
-                      className="font-mono text-[9.5px] text-muted-foreground"
-                      title={formatDateTime(e.occurredAt)}
-                    >
+                    <span className="type-caption text-faint" title={formatDateTime(e.occurredAt)}>
                       {relativeTime(e.occurredAt)}
                     </span>
                   </div>
-                  <div className="mt-0.5 text-[12px] leading-relaxed text-ink-soft">{e.body}</div>
+                  <div className="mt-1 type-body-sm text-ink-soft">{e.body}</div>
                   {e.meta && e.meta.length > 0 && (
-                    <div className="mt-1.5 flex flex-wrap gap-1">
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {e.meta.map((m, mi) => (
                         <span
                           key={mi}
-                          className="rounded border border-hairline bg-card px-1.5 py-0.5 font-mono text-[9.5px] text-ink-soft"
+                          className="inline-flex h-[22px] items-center rounded-full bg-canvas px-2.5 type-caption text-ink-soft"
                         >
                           {m}
                         </span>
