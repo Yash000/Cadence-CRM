@@ -49,7 +49,7 @@ export interface DraftResult {
   aiGenerated: boolean;
 }
 
-async function recentOrderContext(customerId: string | null): Promise<string> {
+export async function recentOrderContext(customerId: string | null): Promise<string> {
   if (!customerId) return 'No matched customer — this message is from an unknown contact.';
   const { orders, orderItems, products } = schema;
   const rows = await db

@@ -1,0 +1,7 @@
+# core.autocrlf=true is set globally on this machine. If entrypoint.sh ever
+# reaches the image with CRLF line endings, the container dies at startup with
+# "no such file or directory" — pointing at the shebang, not at the real cause,
+# which makes it a genuinely nasty half-hour to debug. Pin it.
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.json text eol=lf

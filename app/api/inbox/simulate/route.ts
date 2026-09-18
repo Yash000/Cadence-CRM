@@ -24,6 +24,7 @@ import {
   type ConvStatus,
 } from '../../../../lib/inbox-db';
 import { generateReplyDraft } from '../../../../lib/inbox-draft';
+import { generateReplyDraftViaN8n } from '../../../../lib/inbox-draft-via-n8n';
 import { db, schema } from '../../../../db/index';
 import { eq } from 'drizzle-orm';
 
@@ -73,13 +74,20 @@ export async function POST(request: Request): Promise<NextResponse> {
           .limit(1);
         customerName = [c?.firstName, c?.lastName].filter(Boolean).join(' ') || null;
       }
-      const draft = await generateReplyDraft({
+      // INBOX_DRAFT_VIA_N8N_WEBHOOK is a demo-only toggle: when set, drafts
+      // route through n8n's own copy of this logic (workflow 05) instead of
+      // running in-process, so it shows up as a live execution in n8n's UI.
+      // Unset in every normal deployment -- see lib/inbox-draft-via-n8n.ts.
+      const draftCtx = {
         conversationId: inbound.conversationId,
         customerId: inbound.customerId,
         customerName,
         channel: input.channel,
         inboundBody: input.body,
-      });
+      };
+      const draft = process.env.INBOX_DRAFT_VIA_N8N_WEBHOOK
+        ? await generateReplyDraftViaN8n(draftCtx)
+        : await generateReplyDraft(draftCtx);
       const inserted = await insertOutboundDraft({
         conversationId: inbound.conversationId,
         body: draft.reply,

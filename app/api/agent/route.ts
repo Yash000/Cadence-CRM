@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ask, MAX_HISTORY_TURNS, MAX_QUESTION_LENGTH } from '../../../lib/agent/ask';
+import { askViaN8n } from '../../../lib/agent/ask-via-n8n';
 import { checkRateLimit, clientKey, RATE_LIMIT } from '../../../lib/agent/rate-limit';
 
 // Node runtime: the agent uses the `pg` driver. Never cached — every question
@@ -60,7 +61,15 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const result = await ask(parsed.data.question, parsed.data.history ?? []);
+    // AGENT_VIA_N8N_WEBHOOK is a demo-only toggle: when set, questions route
+    // through n8n's own copy of the agent (workflow 04) instead of running
+    // in-process, so a live execution shows up in n8n's UI. Unset in every
+    // normal deployment -- see lib/agent/ask-via-n8n.ts for what is lost
+    // (conversation memory, sql-guard.ts, real token/cost accounting) by
+    // routing this way.
+    const result = process.env.AGENT_VIA_N8N_WEBHOOK
+      ? await askViaN8n(parsed.data.question, parsed.data.history ?? [])
+      : await ask(parsed.data.question, parsed.data.history ?? []);
     return NextResponse.json(result);
   } catch (err) {
     // A misconfiguration (missing OPENROUTER_API_KEY, missing

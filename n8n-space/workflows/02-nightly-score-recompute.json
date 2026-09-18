@@ -1,0 +1,148 @@
+{
+  "id": "cadence02scorerecp",
+  "name": "02 · Nightly score recompute",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a2000000-0000-4000-8000-000000000001",
+      "name": "02:30 IST daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        300
+      ],
+      "notes": "GENERIC_TIMEZONE is Asia/Kolkata (set in the Dockerfile), so this cron is IST, not UTC. NOTE: this trigger does not itself run the recompute — see the next node's notes."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- The recompute itself is a NODE.JS script (scripts/recompute-scores.mjs,\n-- run via `npm run score`), not SQL -- there is no recompute_all_scores()\n-- function for this node to call, and an earlier version of this workflow\n-- wrongly suggested one. A single Postgres node cannot invoke it.\n--\n-- So this checks COVERAGE (how many customers currently have a score), not\n-- FRESHNESS (whether a recompute ran recently) -- there is deliberately no\n-- `where computed_at > ...` filter. An earlier version had one, and on any\n-- machine where `npm run score` had not been run in the last 24h it read\n-- zero rows and false-failed every single time, which is exactly what it did\n-- on first use here.\nselect count(*) as scored,\n       max(computed_at) as computed_at\nfrom v_customer_scores;"
+      },
+      "id": "a2000000-0000-4000-8000-000000000002",
+      "name": "Score coverage check",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -140,
+        300
+      ],
+      "notes": "Read-only, against the agent role. To make this workflow actually TRIGGER a recompute (not just check one happened), add an Execute Command node running `npm run score` against a mounted copy of the repo, or an HTTP node calling a new endpoint that wraps scripts/recompute-scores.mjs -- neither exists yet."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "stale-check",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              },
+              "leftValue": "={{ Number($json.scored) }}",
+              "rightValue": 700
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2000000-0000-4000-8000-000000000003",
+      "name": "Fewer scored than expected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        80,
+        300
+      ],
+      "notes": "~800 customers have a score in a healthy state. Under 700 means coverage has dropped — a customer table grew without a matching recompute, or scoring silently failed for a chunk of them — worth knowing before the morning outreach in workflow 03 reads incomplete scores. leftValue wraps $json.scored in Number(...) because Postgres count(*) is a bigint, and the pg driver returns bigints as STRINGS (avoids silent precision loss past 2^53) — comparing that string directly against a number literal fails with \"Wrong type: '801' is a string but was expecting a number\", regardless of the node's typeValidation setting."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Coverage gap, not necessarily a crash: this fires whether nobody has run\n// `npm run score` in a while, or a real recompute genuinely failed partway.\n// Throwing marks the execution red in the Executions list either way, which\n// is the point -- workflow 03 should not read scores in this state.\nthrow new Error(\n  `Only ${$json.scored} customers have a computed score, expected ~800. Run 'npm run score' to refresh them.`\n);"
+      },
+      "id": "a2000000-0000-4000-8000-000000000004",
+      "name": "Fail loudly",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { ok: true, scored: $json.scored, computed_at: $json.computed_at } }];"
+      },
+      "id": "a2000000-0000-4000-8000-000000000005",
+      "name": "Healthy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "02:30 IST daily": {
+      "main": [
+        [
+          {
+            "node": "Score coverage check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fewer scored than expected?": {
+      "main": [
+        [
+          {
+            "node": "Fail loudly",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Healthy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score coverage check": {
+      "main": [
+        [
+          {
+            "node": "Fewer scored than expected?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  }
+}

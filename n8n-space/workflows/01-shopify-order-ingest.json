@@ -1,0 +1,113 @@
+{
+  "id": "cadence01shopifyin",
+  "name": "01 · Shopify order → customer upsert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shopify-order",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Shopify webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        300
+      ],
+      "webhookId": "a1000000-0000-4000-8000-000000000001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify Shopify's HMAC before trusting a single field.\n//\n// The raw body is required: re-serialising the parsed JSON changes whitespace\n// and key order, the digest stops matching, and every legitimate order is\n// rejected. That is why the webhook node above sets rawBody.\n//\n// timingSafeEqual, not ===, because a plain comparison returns early on the\n// first differing byte and leaks the digest one character at a time.\nconst crypto = require('crypto');\n\nconst secret = $env.SHOPIFY_API_SECRET;\nif (!secret) {\n  throw new Error('SHOPIFY_API_SECRET is not set on this instance.');\n}\n\nconst sent = $input.first().json.headers['x-shopify-hmac-sha256'];\nconst raw = $input.first().binary\n  ? Buffer.from($input.first().binary.data.data, 'base64')\n  : Buffer.from(JSON.stringify($input.first().json.body));\n\nconst expected = crypto.createHmac('sha256', secret).update(raw).digest('base64');\n\nconst a = Buffer.from(expected);\nconst b = Buffer.from(sent ?? '');\nif (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {\n  throw new Error('HMAC mismatch — request did not come from Shopify.');\n}\n\nconst order = JSON.parse(raw.toString('utf8'));\n\n// Flatten to exactly the columns the upsert writes. Shopify sends far more\n// than this; carrying the rest through only makes the execution log harder to\n// read during a demo.\nreturn [{\n  json: {\n    shopify_order_id: String(order.id),\n    order_number: order.name,\n    email: order.email ?? null,\n    phone: order.phone ?? order.customer?.phone ?? null,\n    total: order.total_price,\n    discount_total: order.total_discounts ?? '0.00',\n    currency: order.currency,\n    financial_status: order.financial_status,\n    processed_at: order.processed_at,\n    cancelled_at: order.cancelled_at ?? null,\n    line_count: (order.line_items ?? []).length,\n    unit_count: (order.line_items ?? []).reduce((n, li) => n + (li.quantity ?? 0), 0),\n    product_titles: (order.line_items ?? []).map((li) => li.title)\n  }\n}];"
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Verify HMAC & flatten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        300
+      ],
+      "notes": "Reads $env.SHOPIFY_API_SECRET — the SAME variable app/api/webhooks/shopify/route.ts uses, and the same value as SHOPIFY_API_SECRET in .env.local (Shopify's app client secret, shpss_…). An earlier version of this node read $env.SHOPIFY_WEBHOOK_SECRET, a name that exists nowhere in this project, so it threw on every real delivery before reaching the database. The container must be started with -e SHOPIFY_API_SECRET=… for this to work at all; n8n has no access to .env.local."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Idempotent on purpose: Shopify retries a webhook it did not get a 2xx\n-- for, so the same order legitimately arrives more than once. Keyed on\n-- shopify_order_id so a retry updates rather than duplicating.\ninsert into orders (\n  shopify_order_id, order_number, total, discount_total, currency,\n  financial_status, processed_at, cancelled_at, line_count, unit_count,\n  product_titles\n) values (\n  $1, $2, $3::numeric, $4::numeric, $5, $6::financial_status_t,\n  $7::timestamptz, $8::timestamptz, $9::int, $10::int, $11::text[]\n)\non conflict (shopify_order_id) do update set\n  financial_status = excluded.financial_status,\n  cancelled_at     = excluded.cancelled_at,\n  total            = excluded.total\nreturning id, order_number, financial_status;",
+        "options": {
+          "queryReplacement": "={{ $json.shopify_order_id }},{{ $json.order_number }},{{ $json.total }},{{ $json.discount_total }},{{ $json.currency }},{{ $json.financial_status }},{{ $json.processed_at }},{{ $json.cancelled_at }},{{ $json.line_count }},{{ $json.unit_count }},{{ $json.product_titles }}"
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Upsert order",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        80,
+        300
+      ],
+      "notes": "Needs a WRITE credential, not cadence_agent — that role is read-only by design. Use the scoped cadence_n8n_writer role (insert+update on orders only), NOT the app's superuser DATABASE_URL: n8n credentials are not covered by the same review path as app code, and this node only needs one INSERT … ON CONFLICT."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, order: $json.order_number }) }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "200 OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        300,
+        300
+      ],
+      "notes": "Shopify retries for ~48h unless it gets a 2xx. Always answer."
+    }
+  ],
+  "connections": {
+    "Shopify webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify HMAC & flatten",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify HMAC & flatten": {
+      "main": [
+        [
+          {
+            "node": "Upsert order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert order": {
+      "main": [
+        [
+          {
+            "node": "200 OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  }
+}

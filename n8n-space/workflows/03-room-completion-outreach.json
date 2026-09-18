@@ -1,0 +1,187 @@
+{
+  "id": "cadence03roomreach",
+  "name": "03 · Room completion outreach",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a3000000-0000-4000-8000-000000000001",
+      "name": "09:00 IST daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Customers whose attach window on a started room is about to close.\n--\n-- window_closes_in_days is attach_window_days minus days_since_last_piece,\n-- so NEGATIVE means the window already shut and the moment has passed. The\n-- 0..7 band is the last week in which a suggestion is still timely.\n--\n-- consent_email is checked here rather than before the send: a query that\n-- cannot return a non-consenting customer is a stronger guarantee than a\n-- branch someone can later reorder.\nselect\n  rc.customer_id,\n  c.customer_name,\n  c.city,\n  c.segment,\n  rc.room,\n  rc.completion_pct,\n  rc.anchor_title,\n  rc.next_best_title,\n  rc.next_best_price,\n  rc.next_best_attach_rate,\n  rc.room_value_remaining,\n  rc.window_closes_in_days\nfrom v_room_completion rc\njoin v_customer_360 c on c.customer_id = rc.customer_id\nwhere rc.next_best_title is not null\n  and rc.window_closes_in_days between 0 and 7\n  and c.consent_email = true\n  and c.has_email = true\norder by rc.room_value_remaining desc\nlimit 25;"
+      },
+      "id": "a3000000-0000-4000-8000-000000000002",
+      "name": "Rooms closing this week",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -360,
+        300
+      ],
+      "notes": "Uses the read-only agent credential (CADENCE_AGENT_DSN). v_room_completion and v_customer_360 are both inside the five views that role may read."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "attach-rate",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              },
+              "leftValue": "={{ $json.next_best_attach_rate }}",
+              "rightValue": 0.25
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3000000-0000-4000-8000-000000000003",
+      "name": "Attach rate ≥ 25%?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        300
+      ],
+      "notes": "Suggesting a piece only a quarter of anchor-buyers ever add is a guess. Below the line it goes to a rep instead of an automated send."
+    },
+    {
+      "parameters": {
+        "jsCode": "// One message per customer, naming the actual piece and the actual room.\n//\n// Deliberately not model-generated: this send is fully automated, and a\n// template is auditable in a way a per-customer generation is not. The AI\n// drafting path in the app is the one a rep approves before it goes out.\nconst rupees = (n) =>\n  '\\u20b9' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 0 });\n\nconst room = $json.room.replace('-', ' ');\nconst pct = $json.completion_pct;\n\nreturn [{\n  json: {\n    customer_id: $json.customer_id,\n    subject: `Your ${room} is ${pct}% complete`,\n    body: [\n      `Hi ${$json.customer_name},`,\n      ``,\n      `Your ${room} is coming together \\u2014 ${pct}% complete since you chose the ${$json.anchor_title}.`,\n      ``,\n      `The piece most people add next is the ${$json.next_best_title} (${rupees($json.next_best_price)}).`,\n      ``,\n      `\\u2014 Cadence`\n    ].join('\\n'),\n    _debug_attach_rate: $json.next_best_attach_rate,\n    _debug_window_days: $json.window_closes_in_days\n  }\n}];"
+      },
+      "id": "a3000000-0000-4000-8000-000000000004",
+      "name": "Draft message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        200
+      ],
+      "notes": "Runs once per item — 25 rows in, 25 drafts out."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: 'Cadence <onboarding@resend.dev>', to: ['delivered@resend.dev'], subject: $json.subject, text: $json.body }) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 2,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "id": "a3000000-0000-4000-8000-000000000005",
+      "name": "Send via Resend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        200
+      ],
+      "notes": "from is 'onboarding@resend.dev' because RESEND_FROM is not set in .env.local and a custom domain must be verified in the Resend account before it can send — see lib/messaging.ts's own fallback. `to` is 'delivered@resend.dev', one of Resend's own reserved test addresses (delivered/bounced/complained/suppressed) — without a verified domain, Resend rejects any other recipient outright, including placeholders like rep@example.com, which two earlier versions of this node both used. v_customer_360 masks PII and exposes has_email, never the address itself, so there is no real address to send to yet either way — point this at a real recipient (and a verified sending domain) only once the send is approved."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Low-confidence suggestions become a rep's queue, not an automated send.\nreturn [{\n  json: {\n    queue: 'manual-review',\n    customer_id: $json.customer_id,\n    room: $json.room,\n    suggestion: $json.next_best_title,\n    attach_rate: $json.next_best_attach_rate,\n    reason: 'attach rate below the 25% automation threshold'\n  }\n}];"
+      },
+      "id": "a3000000-0000-4000-8000-000000000006",
+      "name": "Queue for a rep",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "09:00 IST daily": {
+      "main": [
+        [
+          {
+            "node": "Rooms closing this week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rooms closing this week": {
+      "main": [
+        [
+          {
+            "node": "Attach rate ≥ 25%?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach rate ≥ 25%?": {
+      "main": [
+        [
+          {
+            "node": "Draft message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Queue for a rep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft message": {
+      "main": [
+        [
+          {
+            "node": "Send via Resend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  }
+}
