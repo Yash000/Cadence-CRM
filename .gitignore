@@ -41,3 +41,7 @@ data/shopify-ids.rasaya.bak.json
 *.log
 .DS_Store
 Thumbs.db
+
+.claude/
+PRD*
+PRD-01-Shopify-Store.md

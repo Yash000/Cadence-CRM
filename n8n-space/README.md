@@ -13,10 +13,38 @@ Currently deployed **locally via Docker**. See `SETUP.md` to run it, and
 | Workflow | Trigger | What it shows |
 |---|---|---|
 | `01-shopify-order-ingest` | Webhook | Event ingestion — HMAC verify, transform, idempotent upsert |
-| `02-nightly-score-recompute` | Schedule (02:30 IST) | Batch automation on a timer, with a coverage check |
+| `02-nightly-score-recompute` | Schedule (02:30 IST) | Triggers the real scoring job, then independently verifies it landed |
 | `03-room-completion-outreach` | Schedule (09:00 IST) | Branching + an external send |
 | `04-ask-cadence-agent` | Webhook (Chat Trigger) | The AI agent itself, running natively in n8n |
 | `05-inbox-reply-draft` | Webhook | A single structured LLM call — the *other* AI shape, deliberately not an agent |
+
+Workflow 02 is the one place n8n actually *writes*, and it does so at arm's
+length. It POSTs to `/api/internal/recompute-scores` in the Next.js app, which
+runs `db/scoring.sql` for every customer (~1s for 801 — measured, it is one
+set-based statement, not a per-customer loop). The scoring logic stays in the
+app, so there is still exactly one definition of what a score means; n8n owns
+only the schedule.
+
+The node *after* it then re-reads `v_customer_scores` through the read-only
+`cadence_agent` role and fails the run if coverage is short. That separation is
+deliberate: a verifier holding the writer's privileges verifies less, and a
+write that returns HTTP 200 without writing anything still gets caught.
+
+The endpoint requires a shared secret in `x-cadence-trigger-secret`
+(`SCORING_TRIGGER_SECRET` in `.env.local`, compared with `timingSafeEqual`),
+refuses every request when that variable is unset rather than running
+unauthenticated, and rejects `GET` so a prefetch or crawler cannot rescore the
+book. In n8n the secret is a **credential**, not a container env var, so it
+stays out of `docker inspect` and needed no container rebuild.
+
+Two things to know if it errors:
+
+- **Host address.** The node calls `http://host.docker.internal:3000/…` —
+  inside the container, plain `localhost` means the container itself. Change
+  the port on that node if your dev server comes up on 3001.
+- **The app must be running.** n8n triggers the recompute; it does not contain
+  it. With the Next.js app down, this node fails and the run goes red, which is
+  the honest outcome.
 
 Workflow 03 reads `v_room_completion`, finds customers whose attach window is
 about to close on a room they have started but not finished, branches on
@@ -121,6 +149,7 @@ cannot live in git. Create them once in the editor:
 | Postgres (writer) | 01 | write role |
 | Header Auth | 03 | `Authorization: Bearer <RESEND_API_KEY>` |
 | OpenRouter | 04, 05 | `OPENROUTER_API_KEY` — same key and model (`openai/gpt-5-mini`) as `lib/agent/model.ts` (shared credential, reused across both workflows) |
+| Header Auth (recompute) | 02 | `x-cadence-trigger-secret` = `SCORING_TRIGGER_SECRET` from `.env.local` |
 
 The two Postgres roles are deliberately separate. `cadence_agent` can `SELECT`
 from five views and nothing else, runs read-only with a 5s statement timeout,

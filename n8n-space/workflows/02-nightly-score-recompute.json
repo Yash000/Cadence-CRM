@@ -18,35 +18,36 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -360,
-        300
+        -368,
+        304
       ],
-      "notes": "GENERIC_TIMEZONE is Asia/Kolkata (set in the Dockerfile), so this cron is IST, not UTC. NOTE: this trigger does not itself run the recompute — see the next node's notes."
+      "notes": "GENERIC_TIMEZONE is Asia/Kolkata (set in the Dockerfile), so this cron is IST, not UTC."
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "-- The recompute itself is a NODE.JS script (scripts/recompute-scores.mjs,\n-- run via `npm run score`), not SQL -- there is no recompute_all_scores()\n-- function for this node to call, and an earlier version of this workflow\n-- wrongly suggested one. A single Postgres node cannot invoke it.\n--\n-- So this checks COVERAGE (how many customers currently have a score), not\n-- FRESHNESS (whether a recompute ran recently) -- there is deliberately no\n-- `where computed_at > ...` filter. An earlier version had one, and on any\n-- machine where `npm run score` had not been run in the last 24h it read\n-- zero rows and false-failed every single time, which is exactly what it did\n-- on first use here.\nselect count(*) as scored,\n       max(computed_at) as computed_at\nfrom v_customer_scores;"
+        "query": "-- Independent verification that the recompute upstream actually landed.\n-- Deliberately NOT trusting the HTTP 200 from 'Trigger recompute': this\n-- re-reads the result through the READ-ONLY cadence_agent role, so a write\n-- that reported success but wrote nothing still fails the workflow.\n--\n-- Checks COVERAGE (how many customers have a score), not FRESHNESS -- there\n-- is deliberately no `where computed_at > ...` filter. An earlier version\n-- had one and false-failed on every machine where nobody had run the job in\n-- the last 24h. computed_at is still selected so a human can see it.\nselect count(*) as scored,\n       max(computed_at) as computed_at\nfrom v_customer_scores;",
+        "options": {}
       },
       "id": "a2000000-0000-4000-8000-000000000002",
       "name": "Score coverage check",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        -140,
-        300
+        76,
+        304
       ],
-      "notes": "Read-only, against the agent role. To make this workflow actually TRIGGER a recompute (not just check one happened), add an Execute Command node running `npm run score` against a mounted copy of the repo, or an HTTP node calling a new endpoint that wraps scripts/recompute-scores.mjs -- neither exists yet."
+      "notes": "Read-only cadence_agent role, on purpose: this node verifies the write the previous node asked for, and a verifier that shares the writer’s privileges verifies less. The recompute is triggered by the HTTP node upstream, which calls POST /api/internal/recompute-scores."
     },
     {
       "parameters": {
         "conditions": {
           "options": {
-            "version": 2,
             "caseSensitive": true,
-            "typeValidation": "loose"
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
           },
-          "combinator": "and",
           "conditions": [
             {
               "id": "stale-check",
@@ -57,7 +58,8 @@
               "leftValue": "={{ Number($json.scored) }}",
               "rightValue": 700
             }
-          ]
+          ],
+          "combinator": "and"
         },
         "options": {}
       },
@@ -66,22 +68,22 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        80,
-        300
+        300,
+        304
       ],
-      "notes": "~800 customers have a score in a healthy state. Under 700 means coverage has dropped — a customer table grew without a matching recompute, or scoring silently failed for a chunk of them — worth knowing before the morning outreach in workflow 03 reads incomplete scores. leftValue wraps $json.scored in Number(...) because Postgres count(*) is a bigint, and the pg driver returns bigints as STRINGS (avoids silent precision loss past 2^53) — comparing that string directly against a number literal fails with \"Wrong type: '801' is a string but was expecting a number\", regardless of the node's typeValidation setting."
+      "notes": "~800 customers have a score in a healthy state. Under 700 after a recompute means the run upstream partly failed, or the customer table grew faster than scoring covers it — worth knowing before the morning outreach in workflow 03 reads incomplete scores."
     },
     {
       "parameters": {
-        "jsCode": "// Coverage gap, not necessarily a crash: this fires whether nobody has run\n// `npm run score` in a while, or a real recompute genuinely failed partway.\n// Throwing marks the execution red in the Executions list either way, which\n// is the point -- workflow 03 should not read scores in this state.\nthrow new Error(\n  `Only ${$json.scored} customers have a computed score, expected ~800. Run 'npm run score' to refresh them.`\n);"
+        "jsCode": "// The recompute ran (or claimed to) and coverage is still short. Throwing\n// marks the execution red in the Executions list, which is the point --\n// workflow 03 should not send outreach off incomplete scores.\nthrow new Error(\n  `Only ${$json.scored} customers have a computed score after the recompute, expected ~800. ` +\n  `Check the 'Trigger recompute' node's response and the app's [recompute-all] server log.`\n);"
       },
       "id": "a2000000-0000-4000-8000-000000000004",
       "name": "Fail loudly",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        300,
-        200
+        524,
+        208
       ]
     },
     {
@@ -93,9 +95,29 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        300,
+        524,
         400
       ]
+    },
+    {
+      "id": "a2000000-0000-4000-8000-000000000006",
+      "name": "Trigger recompute",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -260,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3000/api/internal/recompute-scores",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "notes": "Calls POST /api/internal/recompute-scores, which runs db/scoring.sql for every customer (~1s for 801). host.docker.internal is how this container reaches the app on the host -- plain localhost here would mean the container itself. PORT: set to 3000; change it if your dev server comes up on 3001. The secret is an n8n credential (x-cadence-trigger-secret), not a container env var. This node is the ONLY thing in n8n that can write scores -- the coverage check downstream deliberately keeps the read-only cadence_agent role."
     }
   ],
   "connections": {
@@ -103,7 +125,7 @@
       "main": [
         [
           {
-            "node": "Score coverage check",
+            "node": "Trigger recompute",
             "type": "main",
             "index": 0
           }
@@ -138,11 +160,23 @@
           }
         ]
       ]
+    },
+    "Trigger recompute": {
+      "main": [
+        [
+          {
+            "node": "Score coverage check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1",
-    "saveManualExecutions": true
+    "saveManualExecutions": true,
+    "binaryMode": "separate"
   }
 }
