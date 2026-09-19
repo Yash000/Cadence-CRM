@@ -36,6 +36,7 @@ tmp/
 # Claude Code session output/traces — screenshots, drafts, deliverable zips
 # generated while working in this repo, not part of the app
 Claude outputs/
+linkedin-screenshots/
 .claude/settings.local.json
 
 # Coursework submission artifacts — not part of the app
