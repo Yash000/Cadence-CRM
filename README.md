@@ -9,9 +9,8 @@ omnichannel inbox with AI-drafted replies.
 This repo is the CRM application plus its data tooling. The storefront theme lives
 alongside it in [`homestyle-theme/`](homestyle-theme/) (a Shopify Dawn fork).
 
-- **Spec:** [PRD-01 — Storefront](PRD-01-Shopify-Store.md) · [PRD-02 — AI CRM](PRD-02-AI-CRM.md)
-- **Design system:** [DESIGN.md](DESIGN.md)
-- **Build plan / status:** [docs/plans/cadence-build-plan.md](docs/plans/cadence-build-plan.md)
+> Internal specs, the design system doc, and the build-plan/status doc are kept
+> locally (not published in this repo) — ask the maintainer if you need them.
 
 > **Note on branding.** The project was originally scoped around a skincare brand
 > called *Rasaya*; it was rebranded to *HomeStyle Furniture*. Some spec documents
@@ -95,6 +94,25 @@ scripts/recompute-scores.mjs (db/scoring.sql)  ──▶  customer_scores
 Inbox simulator / seed  ──▶  /api/inbox/simulate  ──▶  conversations, messages
 AI agent  ──AGENT_DATABASE_URL──▶  v_customer_360 · v_order_facts · v_customer_scores · v_conversation_summary
 ```
+
+## Automation layer (n8n)
+
+[`n8n-space/`](n8n-space/) runs a separate [n8n](https://n8n.io) instance in local
+Docker — the event-driven half of the system, distinct from the Next.js app,
+sharing only the Supabase database. Five workflows: Shopify order ingest,
+nightly score recompute (triggers the real `db/scoring.sql` job, then
+independently verifies the write landed), room-completion outreach via Resend,
+Ask Cadence rebuilt as an n8n AI Agent, and inbox reply-drafting as a
+structured LLM call. See [`n8n-space/README.md`](n8n-space/README.md) for what
+each shows and [`n8n-space/SETUP.md`](n8n-space/SETUP.md) to run it.
+
+By default nothing in `app/`, `components/`, or `lib/` talks to n8n. Two
+opt-in `.env.local` toggles (`AGENT_VIA_N8N_WEBHOOK`,
+`INBOX_DRAFT_VIA_N8N_WEBHOOK`) route the real `/ask` and inbox-draft requests
+through n8n instead, for demos — each needs a `npm run dev` restart to take
+effect, and each drops some real-path logic (conversation memory, `sql-guard.ts`,
+real token accounting) that the in-process path has. Unset both for normal
+development.
 
 ## Security posture
 

@@ -33,6 +33,15 @@ tmp/
 .tmp/
 *.tmp
 
+# Claude Code session output/traces — screenshots, drafts, deliverable zips
+# generated while working in this repo, not part of the app
+Claude outputs/
+.claude/settings.local.json
+
+# Coursework submission artifacts — not part of the app
+Cadence-CRM-Group9-Report.docx
+Deliverables-A-B/
+
 # Rebrand leftovers — pre-HomeStyle backups kept locally, not in the repo
 *.bak
 *.bak.json
@@ -43,5 +52,10 @@ data/shopify-ids.rasaya.bak.json
 Thumbs.db
 
 .claude/
+
+# Internal planning docs — specs, design system, build status, report.
+# Kept locally; not part of the published repo.
 PRD*
-PRD-01-Shopify-Store.md
+DESIGN.md
+docs/plans/cadence-build-plan.md
+Cadence-CRM-Report.docx
