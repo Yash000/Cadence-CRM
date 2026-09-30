@@ -1,0 +1,23 @@
+{
+  "name": "cadence-crm-video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts CadenceWalkthrough out/cadence-walkthrough.mp4",
+    "still": "remotion still src/index.ts CadenceWalkthrough out/thumbnail.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.526",
+    "@remotion/google-fonts": "^4.0.526",
+    "@remotion/transitions": "4.0.526",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.526"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "typescript": "5.6.3"
+  }
+}
